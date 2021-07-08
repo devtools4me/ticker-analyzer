@@ -22,6 +22,7 @@ docker push registry.heroku.com/ticker-analyzer/web
 heroku container:release web --app=ticker-analyzer
 heroku open --app=ticker-analyzer
 https://ticker-analyzer.herokuapp.com/check
+heroku logs --app ticker-analyzer
 ```
 
 ### Destroy
