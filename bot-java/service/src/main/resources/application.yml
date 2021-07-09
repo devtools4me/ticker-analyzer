@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: ticker-analyzer
+  profiles:
+    active: local
+
+bot:
+  userName: "TickerAnalyzerBot"
+  token: "1841422646:AAFCsCISuUn-BSKYWe2wHzpGi66yeMXKszk"
