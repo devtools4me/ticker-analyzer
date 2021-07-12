@@ -1,28 +1,24 @@
 package me.devtools4.telegram.controller;
 
-import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.Quote;
-import java.io.IOException;
+import me.devtools4.telegram.api.TickerApi;
+import me.devtools4.telegram.service.TickerService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TickerController {
+public class TickerController implements TickerApi {
 
-  private final Query1Api api;
+  private final TickerService service;
 
-  public TickerController(Query1Api api) {
-    this.api = api;
+  public TickerController(TickerService service) {
+    this.service = service;
   }
 
-  @GetMapping("/ticker/{id}")
-  public Quote ticker(@PathVariable("id") String id) throws IOException {
-    return api.quote(id)
-        .getQuoteResponse()
-        .getResult()
-        .stream()
-        .findFirst()
-        .orElse(null);
+  @Override
+  @GetMapping(TickerApi.QUOTE_ID)
+  public Quote quote(@PathVariable("id") String id) {
+    return service.quote(id);
   }
 }

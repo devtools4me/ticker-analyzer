@@ -2,8 +2,10 @@ package com.yahoo.finanance.query1;
 
 import com.dslplatform.json.CompiledJson;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 @CompiledJson
 public class Quote {
   private String language;
@@ -15,7 +17,7 @@ public class Quote {
   private Double ytdReturn;
   private Double trailingThreeMonthReturns;
   private Double trailingThreeMonthNavReturns;
-  private Integer sharesOutstanding;
+  private Long sharesOutstanding;
   private Double fiftyDayAverage;
   private Double fiftyDayAverageChange;
   private Double fiftyDayAverageChangePercent;

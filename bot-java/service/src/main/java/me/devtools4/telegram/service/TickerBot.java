@@ -10,10 +10,12 @@ public class TickerBot extends TelegramLongPollingBot {
 
   private final String userName;
   private final String token;
+  private final CommandHandler handler;
 
-  public TickerBot(String userName, String token) {
+  public TickerBot(String userName, String token, CommandHandler handler) {
     this.userName = userName;
     this.token = token;
+    this.handler = handler;
   }
 
   @Override
@@ -36,7 +38,8 @@ public class TickerBot extends TelegramLongPollingBot {
 
       SendMessage message = new SendMessage();
       message.setChatId(chatId.toString());
-      message.setText(text);
+      message.setText(handler.handle(text));
+      message.setParseMode("html");
       try {
         execute(message);
       } catch (Exception e) {
