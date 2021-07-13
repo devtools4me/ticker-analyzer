@@ -1,0 +1,55 @@
+package me.devtools4.telegram.service;
+
+import lombok.extern.slf4j.Slf4j;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+@Slf4j
+public class TickerWebHookBot extends TelegramWebhookBot {
+
+  private final String userName;
+  private final String token;
+  private final String botPath;
+  private final CommandHandler handler;
+
+  public TickerWebHookBot(String userName, String token, String botPath, CommandHandler handler) {
+    this.userName = userName;
+    this.token = token;
+    this.botPath = botPath;
+    this.handler = handler;
+  }
+
+  @Override
+  public String getBotUsername() {
+    return userName;
+  }
+
+  @Override
+  public String getBotToken() {
+    return token;
+  }
+
+  @Override
+  public String getBotPath() {
+    return botPath;
+  }
+
+  @Override
+  public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+    if (update.hasMessage() && update.getMessage().hasText()) {
+      log.info("update={}", update);
+
+      var text = update.getMessage().getText();
+      var chatId = update.getMessage().getChatId();
+
+      SendMessage message = new SendMessage();
+      message.setChatId(chatId.toString());
+      message.setText(handler.handle(text));
+      message.setParseMode("HTML");
+      return message;
+    }
+    return null;
+  }
+}
