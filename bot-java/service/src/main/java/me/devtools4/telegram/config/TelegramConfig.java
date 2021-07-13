@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-@Profile("!tele-webhook")
+@Profile("!webhook")
 public class TelegramConfig {
   @Value("${bot.userName}")
   private String userName;

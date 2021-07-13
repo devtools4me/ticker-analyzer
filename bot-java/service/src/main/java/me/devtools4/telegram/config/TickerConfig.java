@@ -14,11 +14,14 @@ import feign.Request.Options;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
 import java.util.concurrent.TimeUnit;
+import me.devtools4.telegram.controller.TickerRequestInterceptor;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
 import me.devtools4.telegram.service.TickerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 public class TickerConfig {
 
@@ -54,5 +57,15 @@ public class TickerConfig {
         .logLevel(Level.BASIC)
         .options(new Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
         .target(Query1Api.class, query1Url);
+  }
+
+  @Bean
+  public WebMvcConfigurer webMvcConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new TickerRequestInterceptor());
+      }
+    };
   }
 }

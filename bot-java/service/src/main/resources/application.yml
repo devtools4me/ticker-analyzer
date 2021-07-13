@@ -5,7 +5,7 @@ spring:
   application:
     name: ticker-analyzer
   profiles:
-    active: local
+    active: webhook
 
 yahoo:
   finance:
@@ -15,4 +15,5 @@ yahoo:
 bot:
   userName: "TickerAnalyzerBot"
   token: "1841422646:AAFCsCISuUn-BSKYWe2wHzpGi66yeMXKszk"
-  botPath: https://ticker-analyzer.herokuapp.com
+  url: https://ticker-analyzer.herokuapp.com
+  botPath: webhook

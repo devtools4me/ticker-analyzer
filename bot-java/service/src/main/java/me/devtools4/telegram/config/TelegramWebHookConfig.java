@@ -9,13 +9,16 @@ import org.springframework.context.annotation.Profile;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 
-@Profile("tele-webhook")
+@Profile("webhook")
 public class TelegramWebHookConfig {
   @Value("${bot.userName}")
   private String userName;
 
   @Value("${bot.token}")
   private String token;
+
+  @Value("${bot.url}")
+  private String url;
 
   @Value("${bot.botPath}")
   private String botPath;
@@ -26,8 +29,8 @@ public class TelegramWebHookConfig {
   }
 
   @Bean(initMethod = "register")
-  public TickerWebHookRegister tickerWebHookRegister(
-      TelegramBotsApi telegramBotsApi, TickerWebHookBot tickerBot, SetWebhook setWebhook) {
+  public TickerWebHookRegister tickerWebHookRegister(TelegramBotsApi telegramBotsApi,
+      TickerWebHookBot tickerBot, SetWebhook setWebhook) {
     return new TickerWebHookRegister(telegramBotsApi, tickerBot, setWebhook);
   }
 
@@ -36,7 +39,7 @@ public class TelegramWebHookConfig {
     return SetWebhook.builder()
         .dropPendingUpdates(true)
         .maxConnections(5)
-//        .ipAddress()
+        .url(url)
         .build();
   }
 }
