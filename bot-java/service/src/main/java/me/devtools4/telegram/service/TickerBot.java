@@ -39,7 +39,7 @@ public class TickerBot extends TelegramLongPollingBot {
       SendMessage message = new SendMessage();
       message.setChatId(chatId.toString());
       message.setText(handler.handle(text));
-      message.setParseMode("html");
+      message.setParseMode("HTML");
       try {
         execute(message);
       } catch (Exception e) {
