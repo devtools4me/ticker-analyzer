@@ -107,16 +107,14 @@ public class Quote {
   }
 
   public Function<Object, Object> dividendDateStr() {
-    return (obj) -> calendar2str().apply(dividendDate);
+    return x -> calendar2str().apply(dividendDate);
   }
 
   public Function<Object, Object> earningsTimestampStr() {
-    return (obj) -> calendar2str().apply(earningsTimestamp);
+    return x -> calendar2str().apply(earningsTimestamp);
   }
 
   public Function<Object, Object> trailingAnnualDividendYieldStr() {
-    return (obj) -> Optional.ofNullable(trailingAnnualDividendYield)
-        .map(x -> new DecimalFormat("#0.00%").format(x))
-        .orElse("");
+    return x -> new DecimalFormat("#0.00%").format(trailingAnnualDividendYield);
   }
 }
