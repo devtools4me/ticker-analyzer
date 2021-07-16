@@ -24,7 +24,7 @@ public class TickerController implements TickerApi {
 
   @Override
   @GetMapping(TickerApi.HISTORY_ID)
-  public String history(String id) {
+  public String history(@PathVariable("id") String id) {
     return service.history(id);
   }
 }
