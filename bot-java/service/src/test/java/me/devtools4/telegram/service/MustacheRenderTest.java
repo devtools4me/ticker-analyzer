@@ -4,7 +4,6 @@ import com.dslplatform.json.DslJson;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.yahoo.finanance.query1.QuoteResponseResponse;
 import java.io.IOException;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 public class MustacheRenderTest {
@@ -19,7 +18,7 @@ public class MustacheRenderTest {
 
   @Test
   public void test() throws IOException {
-    try (var is = getClass().getClassLoader().getResourceAsStream("AAPL.json")) {
+    try (var is = getClass().getClassLoader().getResourceAsStream("INTC.json")) {
       var r = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       var q = r.getQuoteResponse().getResult().get(0);
       System.out.println(q);

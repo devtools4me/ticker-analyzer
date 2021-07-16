@@ -1,6 +1,12 @@
 package com.yahoo.finanance.query1;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
+import com.dslplatform.json.TimestampConverter;
+import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Optional;
+import java.util.function.Function;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,66 +14,109 @@ import lombok.ToString;
 @ToString
 @CompiledJson
 public class Quote {
+
   private String language;
   private String region;
   private String quoteType;
   private String quoteSourceName;
-  private Boolean triggerable;
+  private boolean triggerable;
   private String currency;
-  private Double ytdReturn;
-  private Double trailingThreeMonthReturns;
-  private Double trailingThreeMonthNavReturns;
-  private Long sharesOutstanding;
-  private Double fiftyDayAverage;
-  private Double fiftyDayAverageChange;
-  private Double fiftyDayAverageChangePercent;
-  private Double twoHundredDayAverage;
-  private Double twoHundredDayAverageChange;
-  private Double twoHundredDayAverageChangePercent;
-  private Long marketCap;
-  private Integer sourceIntegererval;
-  private Integer exchangeDataDelayedBy;
-  private Boolean tradeable;
+  private String marketState;
   private String exchange;
-  private String LongName;
+  private String longName;
   private String messageBoardId;
   private String exchangeTimezoneName;
-  private String exchangeTimezoneShortName;
-  private Integer gmtOffSetMilliseconds;
   private String market;
-  private Boolean esgPopulated;
-  private String marketState;
-  private String shortName;
-  private Long firstTradeDateMilliseconds;
-  private Integer priceHInteger;
-  private Double postMarketChangePercent;
-  private Integer postMarketTime;
-  private Double postMarketPrice;
-  private Double postMarketChange;
-  private Double regularMarketChange;
-  private Double regularMarketChangePercent;
-  private Integer regularMarketTime;
-  private Double regularMarketPrice;
-  private Double regularMarketDayHigh;
+  private long firstTradeDateMilliseconds;
+  private int priceHint;
+  private double postMarketChangePercent;
+  private int postMarketTime;
+  private double postMarketPrice;
+  private double postMarketChange;
+  private double regularMarketChange;
+  private double regularMarketChangePercent;
+  private int regularMarketTime;
+  private double regularMarketPrice;
+  private double regularMarketDayHigh;
   private String regularMarketDayRange;
-  private Double regularMarketDayLow;
-  private Integer regularMarketVolume;
-  private Double regularMarketPreviousClose;
-  private Double bid;
-  private Double ask;
-  private Integer bidSize;
-  private Integer askSize;
+  private double regularMarketDayLow;
+  private int regularMarketVolume;
+  private double regularMarketPreviousClose;
+  private double bid;
+  private double ask;
+  private int bidSize;
+  private int askSize;
   private String fullExchangeName;
   private String financialCurrency;
-  private Double regularMarketOpen;
-  private Integer averageDailyVolume3Month;
-  private Integer averageDailyVolume10Day;
-  private Double fiftyTwoWeekLowChange;
-  private Double fiftyTwoWeekLowChangePercent;
+  private double regularMarketOpen;
+  private int averageDailyVolume3Month;
+  private int averageDailyVolume10Day;
+  private double fiftyTwoWeekLowChange;
+  private double fiftyTwoWeekLowChangePercent;
   private String fiftyTwoWeekRange;
-  private Double fiftyTwoWeekHighChange;
-  private Double fiftyTwoWeekHighChangePercent;
-  private Double fiftyTwoWeekLow;
-  private Double fiftyTwoWeekHigh;
+  private double fiftyTwoWeekHighChange;
+  private double fiftyTwoWeekHighChangePercent;
+  private double fiftyTwoWeekLow;
+  private double fiftyTwoWeekHigh;
+
+  @JsonAttribute(converter = TimestampConverter.class)
+  private Calendar dividendDate;
+
+  @JsonAttribute(converter = TimestampConverter.class)
+  private Calendar earningsTimestamp;
+
+  @JsonAttribute(converter = TimestampConverter.class)
+  private Calendar earningsTimestampStart;
+
+  @JsonAttribute(converter = TimestampConverter.class)
+  private Calendar earningsTimestampEnd;
+
+  private double trailingAnnualDividendRate;
+  private double trailingPE;
+  private double trailingAnnualDividendYield;
+  private double epsTrailingTwelveMonths;
+  private double epsForward;
+  private double epsCurrentYear;
+  private double priceEpsCurrentYear;
+  private long sharesOutstanding;
+  private double bookValue;
+  private double fiftyDayAverage;
+  private double fiftyDayAverageChange;
+  private double fiftyDayAverageChangePercent;
+  private double twoHundredDayAverage;
+  private double twoHundredDayAverageChange;
+  private double twoHundredDayAverageChangePercent;
+  private long marketCap;
+  private double forwardPE;
+  private double priceToBook;
+  private int sourceInterval;
+  private int exchangeDataDelayedBy;
+  private String averageAnalystRating;
+  private boolean tradeable;
+  private String shortName;
+  private String exchangeTimezoneShortName;
+  private int gmtOffSetMilliseconds;
+  private boolean esgPopulated;
+  private String displayName;
   private String symbol;
+
+  public static Function<Calendar, String> calendar2str() {
+    return time -> Optional.ofNullable(time)
+        .map(x -> x.getTime().toString())
+        .orElse("");
+  }
+
+  public Function<Object, Object> dividendDateStr() {
+    return (obj) -> calendar2str().apply(dividendDate);
+  }
+
+  public Function<Object, Object> earningsTimestampStr() {
+    return (obj) -> calendar2str().apply(earningsTimestamp);
+  }
+
+  public Function<Object, Object> trailingAnnualDividendYieldStr() {
+    return (obj) -> Optional.ofNullable(trailingAnnualDividendYield)
+        .map(x -> new DecimalFormat("#0.00%").format(x))
+        .orElse("");
+  }
 }

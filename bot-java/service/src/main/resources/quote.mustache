@@ -1,7 +1,7 @@
 <b>{{symbol}}</b>
-<pre>language: {{language}}</pre>
-<pre>region: {{region}}</pre>
-<pre>quoteType: {{quoteType}}</pre>
-<pre>quoteSourceName: {{quoteSourceName}}</pre>
-<pre>triggerable: {{triggerable}}</pre>
+<pre>name: {{language}}</pre>
 <pre>currency: {{currency}}</pre>
+<pre>stockExchange: {{fullExchangeName}}</pre>
+<pre>quote: Ask: {{ask}}, Bid: {{bid}}, Price: {{regularMarketPrice}}, Prev close: {{regularMarketPreviousClose}}</pre>
+<pre>stats: EPS: {{epsTrailingTwelveMonths}}, PE: {{trailingPE}}, Earnings announcement: {{#earningsTimestampStr}}{{/earningsTimestampStr}}</pre>
+<pre>dividend: Pay date: {{#dividendDateStr}}{{/dividendDateStr}}, Annual yield: {{#trailingAnnualDividendYieldStr}}{{/trailingAnnualDividendYieldStr}}</pre>
