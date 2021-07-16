@@ -21,4 +21,10 @@ public class TickerController implements TickerApi {
   public Quote quote(@PathVariable("id") String id) {
     return service.quote(id);
   }
+
+  @Override
+  @GetMapping(TickerApi.HISTORY_ID)
+  public String history(String id) {
+    return service.history(id);
+  }
 }
