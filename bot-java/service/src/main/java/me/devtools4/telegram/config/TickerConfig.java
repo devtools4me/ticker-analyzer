@@ -22,9 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class TickerConfig {
 
@@ -70,10 +67,5 @@ public class TickerConfig {
         registry.addInterceptor(new TickerRequestInterceptor());
       }
     };
-  }
-
-  @Bean
-  public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
-    return new TelegramBotsApi(DefaultBotSession.class);
   }
 }

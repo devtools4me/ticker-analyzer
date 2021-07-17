@@ -37,6 +37,11 @@ public class TickerWebHookBot extends TelegramWebhookBot {
   }
 
   @Override
+  public void onRegister() {
+    log.info("TickerWebHookBot has been registered, botPath={}", botPath);
+  }
+
+  @Override
   public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
     if (update.hasMessage() && update.getMessage().hasText()) {
       log.info("update={}", update);
