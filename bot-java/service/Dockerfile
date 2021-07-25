@@ -1,4 +1,4 @@
-FROM openjdk:16-jdk-alpine
+FROM openjdk:11.0-jdk-oracle
 
 RUN mkdir -p /apps
 COPY ./target/*.jar /apps/app.jar
