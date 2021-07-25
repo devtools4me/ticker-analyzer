@@ -41,10 +41,12 @@ public class CommandHandler {
       message.setParseMode("HTML");
       sender.execute(message);
     } else if (patterns.stream().anyMatch(text::startsWith)) {
-      var period = patterns.stream().filter(text::startsWith).findFirst()
-          .flatMap(Period::from)
+      var p = patterns.stream()
+          .filter(text::startsWith)
+          .findFirst()
           .orElseThrow(() -> new IllegalArgumentException(text));
-      var id = text.replace(HISTORY + "/" + period.getPeriod() + "/", "");
+      var period = Period.convert(p.replace(HISTORY + "/", ""));
+      var id = text.replace(p + "/", "");
       var bytes = service.history(id, period);
       var message = new SendPhoto();
       message.setChatId(chatId);

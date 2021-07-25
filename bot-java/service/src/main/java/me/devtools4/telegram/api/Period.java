@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public enum Period {
   OneMonth("1m"),
@@ -55,9 +54,5 @@ public enum Period {
       default:
         throw new IllegalArgumentException("Unsupported " + period);
     }
-  }
-
-  public static Optional<Period> from(String s) {
-    return Arrays.stream(values()).filter(x -> x.getPeriod().equals(s)).findFirst();
   }
 }

@@ -10,9 +10,11 @@ import com.yahoo.finanance.query1.Quote;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.df.Ohlcv;
 
+@Slf4j
 public class TickerService {
 
   private final Query1Api api;
@@ -31,6 +33,8 @@ public class TickerService {
   }
 
   public byte[] history(String id, Period period) {
+    log.info("id={}, period={}", id, period);
+
     var times = period.times()
         .stream()
         .map(Query1Api::timestamp)
