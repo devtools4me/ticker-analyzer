@@ -30,10 +30,6 @@ public class TickerService {
         .orElse(null);
   }
 
-  public byte[] history(String id) {
-    return history(id, Period.OneMonth);
-  }
-
   public byte[] history(String id, Period period) {
     var times = period.times()
         .stream()

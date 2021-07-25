@@ -27,7 +27,7 @@ public class TickerController implements TickerApi {
   @Override
   @GetMapping(TickerApi.HISTORY_ID)
   public String history(@PathVariable("id") String id) {
-    var bytes = service.history(id);
+    var bytes = service.history(id, Period.OneMonth);
     return new String(Base64.encode(bytes));
   }
 

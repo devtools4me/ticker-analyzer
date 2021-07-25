@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public enum Period {
   OneMonth("1m"),
@@ -14,21 +15,21 @@ public enum Period {
   TenYears("10y"),
   TwentyYears("20y");
 
-  private final String value;
+  private final String period;
 
-  Period(String value) {
-    this.value = value;
+  Period(String period) {
+    this.period = period;
   }
 
   public static Period convert(String s) {
     return Arrays.stream(Period.values())
-        .filter(x -> x.getValue().equals(s))
+        .filter(x -> x.getPeriod().equals(s))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unsupported value=[" + s + "]"));
   }
 
-  public String getValue() {
-    return value;
+  public String getPeriod() {
+    return period;
   }
 
   public List<LocalDateTime> times() {
@@ -52,7 +53,11 @@ public enum Period {
       case TwentyYears:
         return LocalDateTime.now().minus(20, ChronoUnit.YEARS);
       default:
-        throw new IllegalArgumentException("Unsupported " + value);
+        throw new IllegalArgumentException("Unsupported " + period);
     }
+  }
+
+  public static Optional<Period> from(String s) {
+    return Arrays.stream(values()).filter(x -> x.getPeriod().equals(s)).findFirst();
   }
 }
