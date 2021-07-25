@@ -3,6 +3,7 @@ package me.devtools4.telegram.controller;
 import com.yahoo.finanance.query1.Quote;
 import me.devtools4.telegram.api.TickerApi;
 import me.devtools4.telegram.service.TickerService;
+import org.bouncycastle.util.encoders.Base64;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ public class TickerController implements TickerApi {
   @Override
   @GetMapping(TickerApi.HISTORY_ID)
   public String history(@PathVariable("id") String id) {
-    return service.history(id);
+    var bytes = service.history(id);
+    return new String(Base64.encode(bytes));
   }
 }

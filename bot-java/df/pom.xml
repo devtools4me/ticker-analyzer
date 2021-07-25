@@ -10,17 +10,28 @@
     <relativePath>../</relativePath>
   </parent>
 
-  <artifactId>yfinance-rest</artifactId>
+  <artifactId>ticker-analyzer-df</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-core</artifactId>
-      <version>11.0</version>
+      <groupId>com.d3xsystems</groupId>
+      <artifactId>d3x-morpheus-core</artifactId>
+      <version>1.0.31</version>
     </dependency>
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
+      <groupId>com.d3xsystems</groupId>
+      <artifactId>d3x-morpheus-viz</artifactId>
+      <version>1.0.31</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.15</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jcommon</artifactId>
+      <version>1.0.17</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -28,25 +39,8 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.29</version>
-    </dependency>
-    <dependency>
-      <groupId>com.dslplatform</groupId>
-      <artifactId>dsl-json-java8</artifactId>
-      <version>1.9.3</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>2.10.5</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.10.5</version>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
     </dependency>
 
     <dependency>

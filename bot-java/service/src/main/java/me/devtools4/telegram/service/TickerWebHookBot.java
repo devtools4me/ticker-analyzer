@@ -3,7 +3,6 @@ package me.devtools4.telegram.service;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
@@ -48,12 +47,11 @@ public class TickerWebHookBot extends TelegramWebhookBot {
 
       var text = update.getMessage().getText();
       var chatId = update.getMessage().getChatId();
-
-      SendMessage message = new SendMessage();
-      message.setChatId(chatId.toString());
-      message.setText(handler.handle(text));
-      message.setParseMode("HTML");
-      return message;
+      try {
+        handler.handle(this, chatId.toString(), text);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     return null;
   }

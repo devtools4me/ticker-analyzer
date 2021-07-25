@@ -26,6 +26,11 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
+      <groupId>me.devtools4.telegram</groupId>
+      <artifactId>ticker-analyzer-df</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
@@ -50,26 +55,6 @@
       <groupId>com.github.spullara.mustache.java</groupId>
       <artifactId>compiler</artifactId>
       <version>0.9.4</version>
-    </dependency>
-    <dependency>
-      <groupId>com.d3xsystems</groupId>
-      <artifactId>d3x-morpheus-core</artifactId>
-      <version>1.0.31</version>
-    </dependency>
-    <dependency>
-      <groupId>com.d3xsystems</groupId>
-      <artifactId>d3x-morpheus-viz</artifactId>
-      <version>1.0.31</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>1.0.15</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jfree</groupId>
-      <artifactId>jcommon</artifactId>
-      <version>1.0.17</version>
     </dependency>
 
     <dependency>
