@@ -17,9 +17,11 @@ import java.util.concurrent.TimeUnit;
 import me.devtools4.telegram.controller.TickerRequestInterceptor;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
+import me.devtools4.telegram.service.StringToPeriodConverter;
 import me.devtools4.telegram.service.TickerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -65,6 +67,11 @@ public class TickerConfig {
       @Override
       public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TickerRequestInterceptor());
+      }
+
+      @Override
+      public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToPeriodConverter());
       }
     };
   }
