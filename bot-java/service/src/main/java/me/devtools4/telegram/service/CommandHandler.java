@@ -2,6 +2,7 @@ package me.devtools4.telegram.service;
 
 import static me.devtools4.telegram.api.TickerApi.HISTORY;
 import static me.devtools4.telegram.api.TickerApi.QUOTE;
+import static me.devtools4.telegram.api.TickerApi.SMA;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -53,6 +54,10 @@ public class CommandHandler {
                 InlineKeyboardButton.builder()
                     .text(HISTORY)
                     .callbackData(HISTORY)
+                    .build(),
+                InlineKeyboardButton.builder()
+                    .text(SMA)
+                    .callbackData(SMA)
                     .build()
             ))
             .build());
