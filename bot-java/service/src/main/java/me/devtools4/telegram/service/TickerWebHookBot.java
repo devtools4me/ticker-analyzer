@@ -52,6 +52,11 @@ public class TickerWebHookBot extends TelegramWebhookBot {
       } catch (Exception e) {
         e.printStackTrace();
       }
+    } else if (update.hasCallbackQuery()) {
+      var data = update.getCallbackQuery().getData();
+      var messageId = update.getCallbackQuery().getMessage().getMessageId();
+      var chatId = update.getCallbackQuery().getMessage().getChatId();
+      handler.query(this, chatId.toString(), messageId, data);
     }
     return null;
   }

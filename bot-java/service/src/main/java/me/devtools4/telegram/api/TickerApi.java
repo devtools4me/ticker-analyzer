@@ -4,6 +4,7 @@ import com.yahoo.finanance.query1.Quote;
 
 public interface TickerApi {
 
+  String START = "/start";
   String QUOTE = "/quote";
   String QUOTE_ID = QUOTE + "/{id}";
   String HISTORY = "/history";
