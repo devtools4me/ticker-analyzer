@@ -50,6 +50,10 @@ public class TickerService {
     }
   }
 
+  public byte[] sma(String id, Period period) {
+    return new byte[] {};
+  }
+
   private static String interval(Period period) {
     switch (period) {
       case OneMonth:
