@@ -51,7 +51,21 @@ public class TickerService {
   }
 
   public byte[] sma(String id, Period period) {
-    return new byte[] {};
+    log.info("id={}, period={}", id, period);
+
+    var times = period.times()
+        .stream()
+        .map(Query1Api::timestamp)
+        .collect(Collectors.toList());
+    var res = api.download(id, interval(period), times.get(0), times.get(1));
+    var csv = bodyAsString(res);
+    var ohlcv = new Ohlcv(csv);
+    try (var os = new ByteArrayOutputStream()) {
+      ohlcv.smaPng(os, 500, 500);
+      return os.toByteArray();
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
+    }
   }
 
   private static String interval(Period period) {
