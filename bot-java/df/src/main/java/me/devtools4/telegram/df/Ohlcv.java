@@ -20,7 +20,7 @@ public class Ohlcv {
   public void png(OutputStream os, PngProps props) throws IOException {
     try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
       var df = DataFrame.read(is).csv(LocalDate.class, x -> {
-        x.setRowKeyColumnName("Date");
+        x.setRowKeyColumnName(props.getRowKeyColumnName());
       });
 
       var columnName = props.getColumnName();
@@ -40,7 +40,7 @@ public class Ohlcv {
   public void smaPng(OutputStream os, PngProps props) throws IOException {
     try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
       var df = DataFrame.read(is).csv(LocalDate.class, x -> {
-        x.setRowKeyColumnName("Date");
+        x.setRowKeyColumnName(props.getRowKeyColumnName());
       });
 
       var columnName = props.getColumnName();

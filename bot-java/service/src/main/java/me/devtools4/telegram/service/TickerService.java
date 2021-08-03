@@ -45,6 +45,7 @@ public class TickerService {
     var ohlcv = new Ohlcv(csv);
     try (var os = new ByteArrayOutputStream()) {
       ohlcv.png(os, PngProps.builder()
+          .rowKeyColumnName("Date")
           .columnName("Adj Close")
           .width(500)
           .height(500)
@@ -67,6 +68,7 @@ public class TickerService {
     var ohlcv = new Ohlcv(csv);
     try (var os = new ByteArrayOutputStream()) {
       ohlcv.smaPng(os, PngProps.builder()
+          .rowKeyColumnName("Date")
           .columnName("Adj Close")
           .width(600)
           .height(500)

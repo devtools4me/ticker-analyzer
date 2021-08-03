@@ -7,7 +7,8 @@ import lombok.NonNull;
 @Data
 @Builder
 public class PngProps {
-
+  @NonNull
+  private String rowKeyColumnName;
   @NonNull
   private String columnName;
   @NonNull

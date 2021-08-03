@@ -12,6 +12,7 @@ public class OhlcvRun {
       var csv = IOUtils.toString(is, Charset.defaultCharset());
       var ohlcv = new Ohlcv(csv);
       ohlcv.smaPng(os, PngProps.builder()
+          .rowKeyColumnName("Date")
           .columnName("Adj Close")
           .width(600)
           .height(500)
