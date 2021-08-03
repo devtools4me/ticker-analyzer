@@ -80,12 +80,12 @@ public class TickerService {
   private static String interval(Period period) {
     switch (period) {
       case OneMonth:
-        return DAY;
       case ThreeMonths:
       case SixMonths:
-        return WEEK;
+        return DAY;
       case OneYear:
       case FiveYears:
+        return WEEK;
       case TenYears:
       case TwentyYears:
         return MONTH;
