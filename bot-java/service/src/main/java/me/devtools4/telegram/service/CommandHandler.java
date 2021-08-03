@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
 import me.devtools4.telegram.api.Period;
 import org.apache.commons.io.IOUtils;
@@ -32,6 +33,7 @@ public class CommandHandler {
     this.render = render;
   }
 
+  @Trace(level = "INFO")
   public void handle(String chatId, String text, ApiMethodConsumer consumer) {
     var typing = new SendChatAction();
     typing.setChatId(chatId);
@@ -103,6 +105,7 @@ public class CommandHandler {
     }
   }
 
+  @Trace(level = "INFO")
   public void query(String chatId, Integer messageId, String data, ApiMethodConsumer consumer) {
     Optional<String> answer = Optional.empty();
     var cmd = Command.of(data);

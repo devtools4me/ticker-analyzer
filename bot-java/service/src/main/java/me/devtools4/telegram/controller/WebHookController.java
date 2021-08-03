@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @RestController
-@Profile("webhook")
+@Profile("webhook-bot")
 public class WebHookController {
 
   private final TickerWebHookBot bot;

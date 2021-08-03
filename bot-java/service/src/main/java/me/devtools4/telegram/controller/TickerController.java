@@ -37,4 +37,18 @@ public class TickerController implements TickerApi {
     var bytes = service.history(id, period);
     return new String(Base64.encode(bytes));
   }
+
+  @Override
+  @GetMapping(TickerApi.SMA_ID)
+  public String sma(@PathVariable("id") String id) {
+    var bytes = service.sma(id, Period.OneMonth);
+    return new String(Base64.encode(bytes));
+  }
+
+  @Override
+  @GetMapping(TickerApi.SMA_PERIOD_ID)
+  public String sma(@PathVariable("id") String id, @PathVariable("period") Period period) {
+    var bytes = service.sma(id, period);
+    return new String(Base64.encode(bytes));
+  }
 }

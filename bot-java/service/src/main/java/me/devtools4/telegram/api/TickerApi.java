@@ -21,4 +21,8 @@ public interface TickerApi {
   String history(String id);
 
   String history(String id, Period period);
+
+  String sma(String id);
+
+  String sma(String id, Period period);
 }

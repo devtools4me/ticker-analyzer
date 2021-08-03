@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-@Profile("!webhook")
+@Profile("polling-bot")
 public class TelegramConfig {
 
   @Value("${bot.userName}")

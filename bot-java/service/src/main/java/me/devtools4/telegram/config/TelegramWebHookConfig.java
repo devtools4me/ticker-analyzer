@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.generics.WebhookBot;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Slf4j
-@Profile("webhook")
+@Profile("webhook-bot")
 public class TelegramWebHookConfig {
   @Value("${bot.userName}")
   private String userName;
