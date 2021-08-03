@@ -17,47 +17,49 @@ public class Ohlcv {
     this.csv = csv;
   }
 
-  public void png(OutputStream os, int width, int height) throws IOException {
+  public void png(OutputStream os, PngProps props) throws IOException {
     try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
       var df = DataFrame.read(is).csv(LocalDate.class, x -> {
         x.setRowKeyColumnName("Date");
       });
 
+      var columnName = props.getColumnName();
       var close = df.cols()
-          .select(column -> column.key().equalsIgnoreCase("Close"));
+          .select(column -> column.key().equalsIgnoreCase(columnName));
 
       Chart.create().asSwing().withLinePlot(close, chart -> {
         chart.title().withText("Close");
         chart.plot().style("Close").withLineWidth(1f).withColor(Color.BLUE);
         chart.plot().axes().domain().label().withText("Date");
         chart.plot().axes().range(0).label().withText("Price");
-        chart.writerPng(os, width, height, false);
+        chart.writerPng(os, props.getWidth(), props.getHeight(), false);
       });
     }
   }
 
-  public void smaPng(OutputStream os, int width, int height) throws IOException {
+  public void smaPng(OutputStream os, PngProps props) throws IOException {
     try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
       var df = DataFrame.read(is).csv(LocalDate.class, x -> {
         x.setRowKeyColumnName("Date");
       });
 
+      var columnName = props.getColumnName();
       var close = df.cols()
-          .select(column -> column.key().equalsIgnoreCase("Adj Close"));
+          .select(column -> column.key().equalsIgnoreCase(columnName));
 
       var shortSize = 40;
       var st = close
           .cols()
           .stats().rolling(shortSize).mean()
           .cols()
-          .replaceKey("Adj Close", "Short Term");
+          .replaceKey(columnName, "Short Term");
 
       var longSize = 70;
       var lt = close
           .cols()
           .stats().rolling(longSize).mean()
           .cols()
-          .replaceKey("Adj Close", "Long Term");
+          .replaceKey(columnName, "Long Term");
 
       var sam = DataFrame.concatColumns(close, st, lt);
 
@@ -65,11 +67,11 @@ public class Ohlcv {
         chart.title().withText("Close");
         chart.plot().axes().domain().label().withText("Date");
         chart.plot().axes().range(0).label().withText("Price");
-        chart.plot().style("Adj Close").withLineWidth(1f).withColor(Color.BLUE);
+        chart.plot().style(columnName).withLineWidth(1f).withColor(Color.BLUE);
         chart.plot().style("Short Term").withLineWidth(1f).withColor(Color.GREEN);
         chart.plot().style("Long Term").withLineWidth(1f).withColor(Color.ORANGE);
         chart.legend().on().bottom();
-        chart.writerPng(os, width, height, false);
+        chart.writerPng(os, props.getWidth(), props.getHeight(), false);
       });
     }
   }

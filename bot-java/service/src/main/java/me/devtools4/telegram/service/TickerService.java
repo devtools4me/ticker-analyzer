@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.df.Ohlcv;
+import me.devtools4.telegram.df.PngProps;
 
 @Slf4j
 public class TickerService {
@@ -43,7 +44,11 @@ public class TickerService {
     var csv = bodyAsString(res);
     var ohlcv = new Ohlcv(csv);
     try (var os = new ByteArrayOutputStream()) {
-      ohlcv.png(os, 500, 500);
+      ohlcv.png(os, PngProps.builder()
+          .columnName("Adj Close")
+          .width(500)
+          .height(500)
+          .build());
       return os.toByteArray();
     } catch (IOException ex) {
       throw new IllegalArgumentException(ex);
@@ -61,7 +66,11 @@ public class TickerService {
     var csv = bodyAsString(res);
     var ohlcv = new Ohlcv(csv);
     try (var os = new ByteArrayOutputStream()) {
-      ohlcv.smaPng(os, 500, 500);
+      ohlcv.smaPng(os, PngProps.builder()
+          .columnName("Adj Close")
+          .width(600)
+          .height(500)
+          .build());
       return os.toByteArray();
     } catch (IOException ex) {
       throw new IllegalArgumentException(ex);

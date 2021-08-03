@@ -11,7 +11,11 @@ public class OhlcvRun {
          var os = new FileOutputStream("test.png", false)) {
       var csv = IOUtils.toString(is, Charset.defaultCharset());
       var ohlcv = new Ohlcv(csv);
-      ohlcv.smaPng(os, 600, 500);
+      ohlcv.smaPng(os, PngProps.builder()
+          .columnName("Adj Close")
+          .width(600)
+          .height(500)
+          .build());
       os.flush();
     }
   }
