@@ -9,6 +9,7 @@ mvn clean install
 ## Run
 
 ```
+--spring.config.location=conf/application.yml
 ```
 
 ## Heroku

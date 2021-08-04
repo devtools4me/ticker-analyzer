@@ -28,13 +28,12 @@ public class TickerService {
       case OneMonth:
       case ThreeMonths:
       case SixMonths:
-        return DAY;
       case OneYear:
       case FiveYears:
-        return WEEK;
+        return DAY;
       case TenYears:
       case TwentyYears:
-        return MONTH;
+        return WEEK;
       default:
         throw new IllegalArgumentException("Unsupported " + period);
     }

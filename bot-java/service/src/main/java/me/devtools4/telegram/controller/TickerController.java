@@ -4,7 +4,11 @@ import com.yahoo.finanance.query1.Quote;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.api.TickerApi;
 import me.devtools4.telegram.service.TickerService;
-import org.bouncycastle.util.encoders.Base64;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,29 +30,32 @@ public class TickerController implements TickerApi {
 
   @Override
   @GetMapping(TickerApi.HISTORY_ID)
-  public String history(@PathVariable("id") String id) {
-    var bytes = service.history(id, Period.OneMonth);
-    return new String(Base64.encode(bytes));
+  public ResponseEntity<Resource> history(@PathVariable("id") String id) {
+    return ok(id, service.history(id, Period.OneMonth));
   }
 
   @Override
   @GetMapping(TickerApi.HISTORY_PERIOD_ID)
-  public String history(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    var bytes = service.history(id, period);
-    return new String(Base64.encode(bytes));
+  public ResponseEntity<Resource> history(@PathVariable("id") String id, @PathVariable("period") Period period) {
+    return ok(id, service.history(id, period));
   }
 
   @Override
   @GetMapping(TickerApi.SMA_ID)
-  public String sma(@PathVariable("id") String id) {
-    var bytes = service.sma(id, Period.OneMonth);
-    return new String(Base64.encode(bytes));
+  public ResponseEntity<Resource> sma(@PathVariable("id") String id) {
+    return ok(id, service.sma(id, Period.OneMonth));
   }
 
   @Override
   @GetMapping(TickerApi.SMA_PERIOD_ID)
-  public String sma(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    var bytes = service.sma(id, period);
-    return new String(Base64.encode(bytes));
+  public ResponseEntity<Resource> sma(@PathVariable("id") String id, @PathVariable("period") Period period) {
+    return ok(id, service.sma(id, period));
+  }
+
+  private static ResponseEntity<Resource> ok(String id, byte[] bytes) {
+    return ResponseEntity.ok()
+        .contentType(MediaType.IMAGE_PNG)
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + id + ".png\"")
+        .body(new ByteArrayResource(bytes));
   }
 }

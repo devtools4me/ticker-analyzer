@@ -1,6 +1,8 @@
 package me.devtools4.telegram.api;
 
 import com.yahoo.finanance.query1.Quote;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 public interface TickerApi {
 
@@ -18,11 +20,11 @@ public interface TickerApi {
 
   Quote quote(String id);
 
-  String history(String id);
+  ResponseEntity<Resource> history(String id);
 
-  String history(String id, Period period);
+  ResponseEntity<Resource> history(String id, Period period);
 
-  String sma(String id);
+  ResponseEntity<Resource> sma(String id);
 
-  String sma(String id, Period period);
+  ResponseEntity<Resource> sma(String id, Period period);
 }
