@@ -14,6 +14,10 @@ import lombok.ToString;
 @ToString
 @CompiledJson
 public class Quote {
+  public enum QuoteType {
+    ETF,
+    EQUITY
+  }
 
   private String language;
   private String region;
@@ -99,6 +103,9 @@ public class Quote {
   private boolean esgPopulated;
   private String displayName;
   private String symbol;
+
+  private String expenseRatio;
+  private String aum;
 
   public static Function<Calendar, String> calendar2str() {
     return time -> Optional.ofNullable(time)

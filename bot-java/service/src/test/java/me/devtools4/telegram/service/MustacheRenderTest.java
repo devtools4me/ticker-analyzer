@@ -21,6 +21,8 @@ public class MustacheRenderTest {
     try (var is = getClass().getClassLoader().getResourceAsStream("INTC.json")) {
       var r = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       var q = r.getQuoteResponse().getResult().get(0);
+      q.setExpenseRatio("0.95%");
+      q.setAum("$8.64M");
       System.out.println(q);
       var out = mustacheRender.html(q);
       System.out.println(out);

@@ -7,6 +7,9 @@ spring:
   profiles:
     active: webhook-bot
 
+etf:
+  csv: /apps/all.csv
+
 yahoo:
   finance:
     query1:

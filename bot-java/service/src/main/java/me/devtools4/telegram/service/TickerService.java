@@ -1,26 +1,29 @@
 package me.devtools4.telegram.service;
 
 import static com.yahoo.finanance.query1.Query1Api.DAY;
-import static com.yahoo.finanance.query1.Query1Api.MONTH;
 import static com.yahoo.finanance.query1.Query1Api.WEEK;
 import static com.yahoo.finanance.query1.Query1Api.bodyAsString;
 
 import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.Quote;
+import com.yahoo.finanance.query1.Quote.QuoteType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Period;
+import me.devtools4.telegram.df.EtfRepository;
 import me.devtools4.telegram.df.Ohlcv;
 import me.devtools4.telegram.df.PngProps;
 
 public class TickerService {
 
   private final Query1Api api;
+  private final EtfRepository etfRepository;
 
-  public TickerService(Query1Api api) {
+  public TickerService(Query1Api api, EtfRepository etfRepository) {
     this.api = api;
+    this.etfRepository = etfRepository;
   }
 
   private static String interval(Period period) {
@@ -46,6 +49,16 @@ public class TickerService {
         .getResult()
         .stream()
         .findFirst()
+        .map(x -> {
+          if (QuoteType.ETF.name().equals(x.getQuoteType())) {
+            etfRepository.find(id)
+                .ifPresent(etf -> {
+                  x.setExpenseRatio(etf.getExpenseRatio());
+                  x.setAum(etf.getAum());
+                });
+          }
+          return x;
+        })
         .orElse(null);
   }
 
