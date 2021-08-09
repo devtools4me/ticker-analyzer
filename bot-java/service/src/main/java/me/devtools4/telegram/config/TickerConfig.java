@@ -31,7 +31,8 @@ public class TickerConfig {
   public MustacheRender mustacheRender() {
     MustacheFactory mf = new DefaultMustacheFactory();
     Mustache m = mf.compile("quote.mustache");
-    return new MustacheRender(m);
+    Mustache error = mf.compile("error.mustache");
+    return new MustacheRender(m, error);
   }
 
   @Bean

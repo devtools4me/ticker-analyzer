@@ -13,11 +13,12 @@ public class MustacheRenderTest {
   public MustacheRenderTest() {
     var mf = new DefaultMustacheFactory();
     var m = mf.compile("quote.mustache");
-    mustacheRender = new MustacheRender(m);
+    var error = mf.compile("error.mustache");
+    mustacheRender = new MustacheRender(m, error);
   }
 
   @Test
-  public void test() throws IOException {
+  public void testHtml() throws IOException {
     try (var is = getClass().getClassLoader().getResourceAsStream("INTC.json")) {
       var r = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       var q = r.getQuoteResponse().getResult().get(0);
@@ -27,5 +28,11 @@ public class MustacheRenderTest {
       var out = mustacheRender.html(q);
       System.out.println(out);
     }
+  }
+
+  @Test
+  public void testError() {
+    var out = mustacheRender.error(new IllegalArgumentException("TEST"));
+    System.out.println(out);
   }
 }
