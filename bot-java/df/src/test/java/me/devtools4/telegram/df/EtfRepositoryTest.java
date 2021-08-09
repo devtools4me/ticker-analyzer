@@ -3,7 +3,6 @@ package me.devtools4.telegram.df;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +25,8 @@ public class EtfRepositoryTest {
   }
 
   @Test
-  public void testFind() throws IOException {
-    var opt = sut.find("SOGU");
+  public void testFind() {
+    var opt = sut.find("sogu");
     assertThat(opt.isPresent(), is(true));
     opt.ifPresent(x -> {
       assertThat(x.getName(), is("The Short De-SPAC ETF"));
@@ -36,5 +35,11 @@ public class EtfRepositoryTest {
       assertThat(x.getExpenseRatio(), is("0.95%"));
       assertThat(x.getAum(), is("$8.64M"));
     });
+  }
+
+  @Test
+  public void testNotFound() {
+    var opt = sut.find("sogu1");
+    assertThat(opt.isPresent(), is(false));
   }
 }

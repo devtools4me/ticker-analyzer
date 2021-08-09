@@ -9,12 +9,10 @@ import java.util.Optional;
 
 public class EtfRepository {
 
-  private final DataFrame<String, String> df;
+  private final DataFrame<Integer, String> df;
 
   public EtfRepository(InputStream is) {
-    df = DataFrame.read(is).csv(String.class, x -> {
-      x.setRowKeyColumnName("Symbol");
-    });
+    df = DataFrame.read(is).csv();
   }
 
   public static EtfRepository of(String csv) {
@@ -26,7 +24,9 @@ public class EtfRepository {
   }
 
   public Optional<Etf> find(String symbol) {
-    return Optional.ofNullable(df.row(symbol))
+    return Optional.ofNullable(df.rows().select(y -> y.getValue("Symbol").equals(symbol.toUpperCase())))
+        .filter(x -> x.rowCount() > 0)
+        .map(x -> x.row(0))
         .map(x -> Etf.builder()
             .symbol(symbol)
             .startDate(x.getValue("Start Date"))
