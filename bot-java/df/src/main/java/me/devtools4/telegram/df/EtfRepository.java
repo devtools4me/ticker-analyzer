@@ -24,9 +24,7 @@ public class EtfRepository {
   }
 
   public Optional<Etf> find(String symbol) {
-    return Optional.ofNullable(df.rows().select(y -> y.getValue("Symbol").equals(symbol.toUpperCase())))
-        .filter(x -> x.rowCount() > 0)
-        .map(x -> x.row(0))
+    return df.rows().first(x -> x.getValue("Symbol").equals(symbol.toUpperCase()))
         .map(x -> Etf.builder()
             .symbol(symbol)
             .startDate(x.getValue("Start Date"))
