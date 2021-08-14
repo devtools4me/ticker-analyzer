@@ -40,68 +40,79 @@ public class CommandHandler {
     typing.setAction(ActionType.TYPING);
     consumer.accept(typing);
 
-    var cmd = Command.of(text);
-    var params = cmd.params(text);
-    switch (cmd) {
-      case START: {
-        var message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText("What would you like to receive?");
-        message.setReplyMarkup(InlineKeyboardMarkup.builder()
-            .keyboardRow(List.of(
-                InlineKeyboardButton.builder()
-                    .text(QUOTE)
-                    .callbackData(QUOTE)
-                    .build(),
-                InlineKeyboardButton.builder()
-                    .text(HISTORY)
-                    .callbackData(HISTORY)
-                    .build(),
-                InlineKeyboardButton.builder()
-                    .text(SMA)
-                    .callbackData(SMA)
-                    .build()
-            ))
-            .build());
-        consumer.accept(message);
-        break;
+    try {
+      var cmd = Command.of(text);
+      var params = cmd.params(text);
+      switch (cmd) {
+        case START: {
+          var message = new SendMessage();
+          message.setChatId(chatId);
+          message.setText("What would you like to receive?");
+          message.setReplyMarkup(InlineKeyboardMarkup.builder()
+              .keyboardRow(List.of(
+                  InlineKeyboardButton.builder()
+                      .text(QUOTE)
+                      .callbackData(QUOTE)
+                      .build(),
+                  InlineKeyboardButton.builder()
+                      .text(HISTORY)
+                      .callbackData(HISTORY)
+                      .build(),
+                  InlineKeyboardButton.builder()
+                      .text(SMA)
+                      .callbackData(SMA)
+                      .build()
+              ))
+              .build());
+          consumer.accept(message);
+          break;
+        }
+        case QUOTE: {
+          var quote = service.quote(params.get("id"));
+          var html = render.html(quote);
+          var message = new SendMessage();
+          message.setChatId(chatId);
+          message.setText(html);
+          message.setParseMode("HTML");
+          consumer.accept(message);
+          break;
+        }
+        case HISTORY: {
+          var id = params.get("id");
+          var period = params.containsKey("period") ?
+              Period.convert(params.get("period")) :
+              Period.OneMonth;
+          var bytes = service.history(id, period);
+          var message = new SendPhoto();
+          message.setChatId(chatId);
+          message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
+          consumer.accept(message);
+          break;
+        }
+        case SMA: {
+          var id = params.get("id");
+          var period = params.containsKey("period") ?
+              Period.convert(params.get("period")) :
+              Period.OneMonth;
+          var bytes = service.sma(id, period);
+          var message = new SendPhoto();
+          message.setChatId(chatId);
+          message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
+          consumer.accept(message);
+          break;
+        }
+        default:
+          throw new IllegalArgumentException("cmd=" + cmd + ", text=" + text);
       }
-      case QUOTE: {
-        var quote = service.quote(params.get("id"));
-        var html = render.html(quote);
-        var message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(html);
-        message.setParseMode("HTML");
-        consumer.accept(message);
-        break;
-      }
-      case HISTORY: {
-        var id = params.get("id");
-        var period = params.containsKey("period") ?
-            Period.convert(params.get("period")) :
-            Period.OneMonth;
-        var bytes = service.history(id, period);
-        var message = new SendPhoto();
-        message.setChatId(chatId);
-        message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
-        consumer.accept(message);
-        break;
-      }
-      case SMA: {
-        var id = params.get("id");
-        var period = params.containsKey("period") ?
-            Period.convert(params.get("period")) :
-            Period.OneMonth;
-        var bytes = service.sma(id, period);
-        var message = new SendPhoto();
-        message.setChatId(chatId);
-        message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
-        consumer.accept(message);
-        break;
-      }
-      default:
-        throw new IllegalArgumentException("cmd=" + cmd + ", text=" + text);
+    } catch (Throwable ex) {
+      log.warn("Error: {}", ex.getMessage(), ex);
+
+      var error = render.error(ex);
+      var message = new SendMessage();
+      message.setChatId(chatId);
+      message.setText(error);
+      message.setParseMode("HTML");
+      consumer.accept(message);
     }
   }
 
