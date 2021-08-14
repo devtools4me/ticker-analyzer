@@ -1,6 +1,10 @@
 package me.devtools4.ticker
 
 package object api {
+  val QUOTE = "/quote"
+  val HISTORY = "/history"
+  val SMA = "/sma"
+
   sealed trait Period
 
   case object UnknownPeriod extends Period
@@ -27,29 +31,44 @@ package object api {
     }
   }
 
-  sealed trait Command {}
+  sealed trait TickerCmd {}
 
-  case class UnknownCommand(s: String) extends Command
-  case object Start extends Command
-  case class Quote(symbol: String) extends Command
-  case class History(symbol: String, period: Period) extends Command
-  case class Sma(symbol: String, period: Period) extends Command
+  case class UnknownCmd(s: String) extends TickerCmd
+  case object Start extends TickerCmd
+  case class Quote(symbol: String) extends TickerCmd
+  case class History(symbol: String, period: Period) extends TickerCmd
+  case class Sma(symbol: String, period: Period) extends TickerCmd
 
-  object Command {
-    def apply(s: String): Command = s.split("/").toList match {
+  object TickerCmd {
+    def apply(s: String): TickerCmd = s.split("/").toList match {
       case List("", "start") => Start
       case List("", "quote", sym) => Quote(sym)
       case List("", "history", sym) => History(sym, OneMonth)
       case List("", "history", p, sym) => Period(p) match {
-        case UnknownPeriod => UnknownCommand(s)
+        case UnknownPeriod => UnknownCmd(s)
         case period => History(sym, period)
       }
       case List("", "sma", sym) => Sma(sym, OneMonth)
       case List("", "sma", p, sym) => Period(p) match {
-        case UnknownPeriod => UnknownCommand(s)
+        case UnknownPeriod => UnknownCmd(s)
         case period => Sma(sym, period)
       }
-      case list => UnknownCommand(s"[$s] => $list")
+      case list => UnknownCmd(s"[$s] => $list")
+    }
+  }
+
+  sealed trait TickerQuery
+  case class UnknownQuery(s: String) extends TickerQuery
+  case object QuoteQuery extends TickerQuery
+  case object HistoryQuery extends TickerQuery
+  case object SmaQuery extends TickerQuery
+
+  object TickerQuery {
+    def apply(s: String): TickerQuery = s match {
+      case "/quote" => QuoteQuery
+      case "/history" => HistoryQuery
+      case "/sma" => SmaQuery
+      case x => UnknownQuery(x)
     }
   }
 }
