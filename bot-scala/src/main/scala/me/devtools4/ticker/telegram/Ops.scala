@@ -3,11 +3,13 @@ package me.devtools4.ticker.telegram
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import me.devtools4.ticker.api.{HISTORY, QUOTE, SMA}
 import org.telegram.telegrambots.meta.api.methods.ActionType
-import org.telegram.telegrambots.meta.api.methods.send.{SendChatAction, SendMessage}
+import org.telegram.telegrambots.meta.api.methods.send.{SendChatAction, SendMessage, SendPhoto}
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
+import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
+import java.io.ByteArrayInputStream
 import scala.jdk.CollectionConverters._
 
 object Ops {
@@ -43,6 +45,16 @@ object Ops {
       ).asJava).build)
     .build()
 
+  def sendMessage2(cid: Long, html: String): SendMessage = SendMessage.builder()
+    .chatId(cid.toString)
+    .text(html)
+    .parseMode("HTML")
+    .build()
+
+  def sendPhoto(cid: Long, bytes: Array[Byte], fileName: String): SendPhoto = SendPhoto.builder()
+    .chatId(cid.toString)
+    .photo(new InputFile(new ByteArrayInputStream(bytes), fileName))
+    .build()
 }
 
 object MustacheOps {

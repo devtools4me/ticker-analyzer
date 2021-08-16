@@ -24,6 +24,7 @@ allprojects {
     def http4sVersion = '0.23.1'
     def telegramVersion = '5.3.0'
     def mustacheVersion = '0.9.4'
+    def morpheusVersion = '1.0.31'
     def logbackVersion = '1.2.3'
     def slf4jVersion = '1.7.22'
 
@@ -35,6 +36,10 @@ allprojects {
                 "org.http4s:http4s-dsl_$scalaMajor:$http4sVersion",
                 "org.telegram:telegrambots:$telegramVersion",
                 "com.github.spullara.mustache.java:compiler:$mustacheVersion",
+                "com.d3xsystems:d3x-morpheus-core:$morpheusVersion",
+                "com.d3xsystems:d3x-morpheus-viz:$morpheusVersion",
+                "org.jfree:jfreechart:1.0.15",
+                "org.jfree:jcommon:1.0.17",
                 "ch.qos.logback:logback-core:$logbackVersion",
                 "ch.qos.logback:logback-classic:$logbackVersion",
                 "org.slf4j:slf4j-api:$slf4jVersion"
