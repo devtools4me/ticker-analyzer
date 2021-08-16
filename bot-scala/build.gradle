@@ -22,6 +22,7 @@ allprojects {
     def scalaMajor = '2.13'
     def scalaMinor = '4'
     def http4sVersion = '0.23.1'
+    def circeVersion = "0.14.0"
     def telegramVersion = '5.3.0'
     def mustacheVersion = '0.9.4'
     def morpheusVersion = '1.0.31'
@@ -34,6 +35,9 @@ allprojects {
                 "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2",
                 "org.http4s:http4s-blaze-server_$scalaMajor:$http4sVersion",
                 "org.http4s:http4s-dsl_$scalaMajor:$http4sVersion",
+                "io.circe:circe-core_$scalaMajor:$circeVersion",
+                "io.circe:circe-generic_$scalaMajor:$circeVersion",
+                "io.circe:circe-parser_$scalaMajor:$circeVersion",
                 "org.telegram:telegrambots:$telegramVersion",
                 "com.github.spullara.mustache.java:compiler:$mustacheVersion",
                 "com.d3xsystems:d3x-morpheus-core:$morpheusVersion",
