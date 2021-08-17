@@ -9,13 +9,16 @@ import io.circe.parser._
 import io.circe.syntax._
 
 @RunWith(classOf[JUnitRunner])
-class QuoteTest  extends AnyFunSuite {
+class QuoteTest extends AnyFunSuite {
   test("quote decode") {
-    val json = Source.fromResource("INTC.json").mkString
-    val q = decode[QuoteResponseResponse](json)
-    assertResult(true)(q.isRight)
-//    q.foreach { x =>
-//      assertResult(json)(x.asJson)
-//    }
+    List("CXSE.json", "GLD.json", "INTC.json", "VIOO.json").foreach { fn =>
+      val json = Source.fromResource(fn).mkString
+      val q = decode[QuoteResponseResponse](json)
+      q match {
+        case Left(err) => println(err)
+        case _ =>
+      }
+      assertResult(true)(q.isRight)
+    }
   }
 }

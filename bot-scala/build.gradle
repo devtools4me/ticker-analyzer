@@ -23,6 +23,7 @@ allprojects {
     def scalaMinor = '4'
     def http4sVersion = '0.23.1'
     def circeVersion = "0.14.0"
+    def sttpVersion = '3.3.13'
     def telegramVersion = '5.3.0'
     def mustacheVersion = '0.9.4'
     def morpheusVersion = '1.0.31'
@@ -38,6 +39,7 @@ allprojects {
                 "io.circe:circe-core_$scalaMajor:$circeVersion",
                 "io.circe:circe-generic_$scalaMajor:$circeVersion",
                 "io.circe:circe-parser_$scalaMajor:$circeVersion",
+                "com.softwaremill.sttp.client3:core_$scalaMajor:$sttpVersion",
                 "org.telegram:telegrambots:$telegramVersion",
                 "com.github.spullara.mustache.java:compiler:$mustacheVersion",
                 "com.d3xsystems:d3x-morpheus-core:$morpheusVersion",
