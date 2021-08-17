@@ -3,7 +3,8 @@ package com.yahoo.finanance.query1
 import io.circe._
 import io.circe.generic.semiauto._
 
-import java.util.Calendar
+import java.time.{LocalDateTime, ZoneId}
+import java.util.{Calendar, Date}
 
 case class Quote(
                   language: String,
@@ -95,11 +96,13 @@ object Quote {
   implicit val calendarDecoder: Decoder[Calendar] =
     (c: HCursor) => c.as[Long].map(x => calendar(x))
 
-  private def calendar(timestamp: Long): Calendar = {
+  def calendar(timestamp: Long): Calendar = {
     val calendar = Calendar.getInstance
     calendar.setTimeInMillis(timestamp * 1000)
     calendar
   }
 
-  private def timestamp(calendar: Calendar): Long = calendar.getTimeInMillis / 1000
+  def timestamp(calendar: Calendar): Long = calendar.getTimeInMillis / 1000
+
+  def timestamp(time: LocalDateTime): Long = Date.from(time.atZone(ZoneId.systemDefault).toInstant).getTime / 1000
 }
