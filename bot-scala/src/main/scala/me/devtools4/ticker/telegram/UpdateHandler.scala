@@ -1,13 +1,15 @@
 package me.devtools4.ticker.telegram
 
+import com.yahoo.finanance.query1.Query1Api
 import me.devtools4.ticker.api._
+import me.devtools4.ticker.df.str2is
 import me.devtools4.ticker.telegram.Ops._
 import org.telegram.telegrambots.meta.api.objects.Update
 
 import scala.io.Source
 import scala.util.{Failure, Try, Using}
 
-class UpdateHandler() {
+class UpdateHandler(client: Query1Api) {
 
   def handle(update: Update, consumer: ApiMethodConsumer): Unit = {
     TelegramUpdate(update) match {
@@ -37,7 +39,7 @@ class UpdateHandler() {
   }
 
   private def html(res: String): Try[String] =
-    Using(getClass.getClassLoader.getResourceAsStream(res)) { is =>
+    str2is(res) { is =>
       Source.fromInputStream(is).mkString
     }
 }
