@@ -1,10 +1,13 @@
 package com.yahoo.finanance.query1
 
+import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import io.circe._
 import io.circe.generic.semiauto._
 
+import java.io.StringWriter
 import java.time.{LocalDateTime, ZoneId}
 import java.util.{Calendar, Date}
+import scala.util.Using
 
 case class Quote(
                   language: String,
@@ -84,7 +87,9 @@ case class Quote(
                   symbol: String,
                   expenseRatio: Option[String],
                   aum: Option[String]
-                )
+                ) {
+  def as[T](implicit f: Quote => T): T = f(this)
+}
 
 object Quote {
   implicit val encoder: Encoder[Quote] = deriveEncoder[Quote]
@@ -105,4 +110,20 @@ object Quote {
   def timestamp(calendar: Calendar): Long = calendar.getTimeInMillis / 1000
 
   def timestamp(time: LocalDateTime): Long = Date.from(time.atZone(ZoneId.systemDefault).toInstant).getTime / 1000
+
+  lazy val mf = new DefaultMustacheFactory
+  lazy val quoteMustache: Mustache = mf.compile("quote.mustache")
+  lazy val errorMustache: Mustache = mf.compile("error.mustache")
+
+  implicit def html: Quote => String = q =>
+    Using(new StringWriter())(w => {
+      quoteMustache.execute(w, q).flush()
+      w.toString
+    }).get
+
+  def error: Throwable => String = err =>
+    Using(new StringWriter())(w => {
+      errorMustache.execute(w, err).flush()
+      w.toString
+    }).get
 }

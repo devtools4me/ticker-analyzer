@@ -30,6 +30,25 @@ class Ohlcv(df: DataFrame[LocalDate, String]) {
       chart.writerPng(os, w, h, false);
     }))
   }
+
+  def smaPng(col: String, w: Integer, h: Integer): Try[Array[Byte]] =
+    Using(new ByteArrayOutputStream()) { os =>
+      smaPng(os, col, w, h)
+      os.toByteArray
+    }
+
+  def smaPng(os: OutputStream, col: String, w: Integer, h: Integer): Unit = {
+    val close = df.cols.select(
+      new AsJavaPredicate[DataFrameColumn[LocalDate, String]](x => x.key.equalsIgnoreCase(col))
+    )
+    Chart.create.asSwing.withLinePlot(close, new AsJavaConsumer[Chart[XyPlot[java.time.LocalDate]]](chart => {
+      chart.title().withText("Close");
+      chart.plot().style("Close").withLineWidth(1f).withColor(Color.BLUE);
+      chart.plot().axes().domain().label().withText("Date");
+      chart.plot().axes().range(0).label().withText("Price");
+      chart.writerPng(os, w, h, false);
+    }))
+  }
 }
 
 object Ohlcv {

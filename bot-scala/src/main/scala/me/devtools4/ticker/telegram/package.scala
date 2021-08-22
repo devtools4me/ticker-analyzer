@@ -1,9 +1,10 @@
 package me.devtools4.ticker
 
-import me.devtools4.ticker.api.{Start, TickerCmd, TickerQuery, UnknownCmd, UnknownQuery}
+import me.devtools4.ticker.api.{TickerCmd, TickerQuery, UnknownCmd, UnknownQuery}
 import org.telegram.telegrambots.meta.api.objects.Update
 
 package object telegram {
+
   sealed trait TelegramUpdate
 
   case class UnknownUpdate(s: String) extends TelegramUpdate

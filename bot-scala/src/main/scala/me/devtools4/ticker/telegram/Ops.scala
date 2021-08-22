@@ -1,6 +1,5 @@
 package me.devtools4.ticker.telegram
 
-import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import me.devtools4.ticker.api.{HISTORY, QUOTE, SMA}
 import org.telegram.telegrambots.meta.api.methods.ActionType
 import org.telegram.telegrambots.meta.api.methods.send.{SendChatAction, SendMessage, SendPhoto}
@@ -57,7 +56,3 @@ object Ops {
     .build()
 }
 
-object MustacheOps {
-  lazy val mf = new DefaultMustacheFactory
-  lazy val quote: Mustache = mf.compile("quote.mustache")
-}

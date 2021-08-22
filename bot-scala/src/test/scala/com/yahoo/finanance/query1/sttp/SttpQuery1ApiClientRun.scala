@@ -10,7 +10,9 @@ object SttpQuery1ApiClientRun extends App {
   client.quote("VIOO")
     .map(x => x.quoteResponse.result) match {
     case Left(err) => println(err)
-    case Right(x) => x.foreach(println(_))
+    case Right(x) => x.foreach { x =>
+      println(x.as[String])
+    }
   }
 
   client.download("GDL", "1d",
