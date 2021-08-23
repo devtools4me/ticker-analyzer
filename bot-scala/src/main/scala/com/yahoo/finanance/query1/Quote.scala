@@ -7,7 +7,7 @@ import io.circe.generic.semiauto._
 import java.io.StringWriter
 import java.time.{LocalDateTime, ZoneId}
 import java.util.{Calendar, Date}
-import scala.util.Using
+import scala.util.{Try, Using}
 
 case class Quote(
                   language: String,
@@ -88,7 +88,7 @@ case class Quote(
                   expenseRatio: Option[String],
                   aum: Option[String]
                 ) {
-  def as[T](implicit f: Quote => T): T = f(this)
+  def as[T](implicit f: Quote => Try[T]): Try[T] = f(this)
 }
 
 object Quote {
@@ -115,15 +115,15 @@ object Quote {
   lazy val quoteMustache: Mustache = mf.compile("quote.mustache")
   lazy val errorMustache: Mustache = mf.compile("error.mustache")
 
-  implicit def html: Quote => String = q =>
+  implicit def html: Quote => Try[String] = q =>
     Using(new StringWriter())(w => {
       quoteMustache.execute(w, q).flush()
       w.toString
-    }).get
+    })
 
-  def error: Throwable => String = err =>
+  def error: Throwable => Try[String] = err =>
     Using(new StringWriter())(w => {
       errorMustache.execute(w, err).flush()
       w.toString
-    }).get
+    })
 }

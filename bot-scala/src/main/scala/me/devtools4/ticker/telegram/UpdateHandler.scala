@@ -1,6 +1,7 @@
 package me.devtools4.ticker.telegram
 
 import com.yahoo.finanance.query1.Quote
+import com.yahoo.finanance.query1.Quote._
 import me.devtools4.ticker.api._
 import me.devtools4.ticker.df.str2is
 import me.devtools4.ticker.service.TickerService
@@ -18,9 +19,7 @@ class UpdateHandler(ts: TickerService) {
         cmd match {
           case StartCmd => consumer.accept(sendMessage(cid))
           case QuoteCmd(sym) => ts.quote(sym)
-            .toOption
-            .flatMap(x => x.headOption)
-            .map(x => x.as[String])
+            .flatMap(x => x.as[String].toOption)
             .map(sendMessage2(cid, _))
             .foreach(consumer.accept)
           case HistoryCmd(sym, period) => ts.history(sym, period)
@@ -29,13 +28,15 @@ class UpdateHandler(ts: TickerService) {
           case SmaCmd(sym, period) => ts.sma(sym, period)
             .map(sendPhoto(cid, _, s"$sym.png"))
             .foreach(consumer.accept)
-          case _ => consumer.accept(sendMessage2(cid, Quote.error(new IllegalAccessException(cmd.toString))))
+          case _ => Quote.error(new IllegalArgumentException(cmd.toString))
+            .map(sendMessage2(cid, _))
+            .foreach(consumer.accept)
         }
       case QueryCallback(cid, mid, q) =>
         consumer.accept(typing(cid))
-        html(q).map { html =>
-          consumer.accept(editMessageText(cid, mid, html))
-        }
+        html(q)
+          .map(editMessageText(cid, mid, _))
+          .foreach(consumer.accept)
       case _ =>
     }
   }

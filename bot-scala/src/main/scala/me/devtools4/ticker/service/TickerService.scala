@@ -7,10 +7,11 @@ import me.devtools4.ticker.df.{Etfs, Ohlcv}
 import scala.util.{Failure, Success, Try}
 
 class TickerService(client: Query1Api, etfs: Etfs) {
-  def quote(sym: String): Try[List[Quote]] = client.quote(sym)
-    .fold(x => Failure(new IllegalArgumentException(x)), Success(_))
+  def quote(sym: String): Option[Quote] = client.quote(sym)
+    .toOption
     .map(_.quoteResponse.result)
-    .map(x => x.map(enrich))
+    .flatMap(_.headOption)
+    .map(enrich)
 
   def history(sym: String, period: Period): Try[Array[Byte]] = {
     val times = period.times match {
