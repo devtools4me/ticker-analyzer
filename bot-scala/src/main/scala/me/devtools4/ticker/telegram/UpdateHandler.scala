@@ -18,6 +18,8 @@ class UpdateHandler(ts: TickerService) {
         cmd match {
           case StartCmd => consumer.accept(sendMessage(cid))
           case QuoteCmd(sym) => ts.quote(sym)
+            .toOption
+            .flatMap(x => x.headOption)
             .map(x => x.as[String])
             .map(sendMessage2(cid, _))
             .foreach(consumer.accept)

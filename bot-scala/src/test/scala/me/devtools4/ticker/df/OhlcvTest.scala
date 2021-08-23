@@ -9,9 +9,9 @@ import scala.util.Success
 
 @RunWith(classOf[JUnitRunner])
 class OhlcvTest extends AnyFunSuite {
+  val csv = Source.fromResource("QCOM.csv").mkString
 
   test("png") {
-    val csv = Source.fromResource("QCOM.csv").mkString
     val x = for {
       ohlcv <- Ohlcv.of(csv)
       bytes <- ohlcv.png("Adj Close", 500, 500)
@@ -24,6 +24,25 @@ class OhlcvTest extends AnyFunSuite {
 
     assertResult(Success(true)) {
       fos4any("test.png") { os =>
+        os.write(bytes)
+        true
+      }
+    }
+  }
+
+  test("sma") {
+    val x = for {
+      ohlcv <- Ohlcv.of(csv)
+      bytes <- ohlcv.smaPng("Adj Close", 500, 500)
+    } yield {
+      bytes
+    }
+    assertResult(true)(x.isSuccess)
+    val bytes = x.get
+    assertResult(43500)(bytes.length)
+
+    assertResult(Success(true)) {
+      fos4any("sma.png") { os =>
         os.write(bytes)
         true
       }

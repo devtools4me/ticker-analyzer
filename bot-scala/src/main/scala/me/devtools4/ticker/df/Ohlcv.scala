@@ -41,12 +41,28 @@ class Ohlcv(df: DataFrame[LocalDate, String]) {
     val close = df.cols.select(
       new AsJavaPredicate[DataFrameColumn[LocalDate, String]](x => x.key.equalsIgnoreCase(col))
     )
-    Chart.create.asSwing.withLinePlot(close, new AsJavaConsumer[Chart[XyPlot[java.time.LocalDate]]](chart => {
-      chart.title().withText("Close");
-      chart.plot().style("Close").withLineWidth(1f).withColor(Color.BLUE);
-      chart.plot().axes().domain().label().withText("Date");
-      chart.plot().axes().range(0).label().withText("Price");
-      chart.writerPng(os, w, h, false);
+    val shortSize = 40
+    val st = close
+      .cols()
+      .stats().rolling(shortSize).mean()
+      .cols()
+      .replaceKey(col, "Short Term")
+    val longSize = 70
+    val lt = close
+      .cols()
+      .stats().rolling(longSize).mean()
+      .cols()
+      .replaceKey(col, "Long Term")
+    val sam = DataFrame.concatColumns(close, st, lt);
+    Chart.create().asSwing().withLinePlot(sam, new AsJavaConsumer[Chart[XyPlot[java.time.LocalDate]]](chart => {
+      chart.title().withText("Close")
+      chart.plot().axes().domain().label().withText("Date")
+      chart.plot().axes().range(0).label().withText("Price")
+      chart.plot().style(col).withLineWidth(1f).withColor(Color.BLUE);
+      chart.plot().style("Short Term").withLineWidth(1f).withColor(Color.GREEN);
+      chart.plot().style("Long Term").withLineWidth(1f).withColor(Color.ORANGE);
+      chart.legend().on().bottom();
+      chart.writerPng(os, w, h, false)
     }))
   }
 }
