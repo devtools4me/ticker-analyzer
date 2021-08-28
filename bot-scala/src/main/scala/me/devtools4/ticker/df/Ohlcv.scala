@@ -68,8 +68,9 @@ class Ohlcv(df: DataFrame[LocalDate, String]) {
 }
 
 object Ohlcv {
+  import me.devtools4.ticker.ops._
   def of(csv: String): Try[Ohlcv] = {
-    str2is(csv) { is =>
+    csv.toIS { is =>
       val df = DataFrame.read(is).csv(
         classOf[LocalDate],
         new AsJavaConsumer[CsvSource.Options](x => x.setRowKeyColumnName("Date"))

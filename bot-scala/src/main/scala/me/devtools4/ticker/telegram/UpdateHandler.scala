@@ -3,13 +3,9 @@ package me.devtools4.ticker.telegram
 import com.yahoo.finanance.query1.Quote
 import com.yahoo.finanance.query1.Quote._
 import me.devtools4.ticker.api._
-import me.devtools4.ticker.df.str2is
 import me.devtools4.ticker.service.TickerService
 import me.devtools4.ticker.telegram.Ops._
 import org.telegram.telegrambots.meta.api.objects.Update
-
-import scala.io.Source
-import scala.util.{Failure, Try}
 
 class UpdateHandler(ts: TickerService) {
   def handle(update: Update, consumer: ApiMethodConsumer): Unit = {
@@ -34,22 +30,17 @@ class UpdateHandler(ts: TickerService) {
         }
       case QueryCallback(cid, mid, q) =>
         consumer.accept(typing(cid))
-        html(q)
-          .map(editMessageText(cid, mid, _))
-          .foreach(consumer.accept)
+        consumer.accept(editMessageText(cid, mid, html(q)))
       case _ =>
     }
   }
 
-  private def html(query: TickerQuery): Try[String] = query match {
-    case QuoteQuery => html("quote.html")
-    case HistoryQuery => html("history.html")
-    case SmaQuery => html("sma.html")
-    case _ => Failure(new IllegalArgumentException(TickerQuery.toString))
-  }
+  import me.devtools4.ticker.ops._
 
-  private def html(res: String): Try[String] =
-    str2is(res) { is =>
-      Source.fromInputStream(is).mkString
-    }
+  private def html(query: TickerQuery): String = query match {
+    case QuoteQuery => ResourceName("quote.html").str
+    case HistoryQuery => ResourceName("history.html").str
+    case SmaQuery => ResourceName("sma.html").str
+    case _ => ResourceName("error.html").str
+  }
 }

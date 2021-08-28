@@ -7,6 +7,8 @@ import org.scalatestplus.junit.JUnitRunner
 import scala.io.Source
 import scala.util.Success
 
+import me.devtools4.ticker.ops._
+
 @RunWith(classOf[JUnitRunner])
 class OhlcvTest extends AnyFunSuite {
   val csv = Source.fromResource("QCOM.csv").mkString
@@ -23,7 +25,7 @@ class OhlcvTest extends AnyFunSuite {
     assertResult(37622)(bytes.length)
 
     assertResult(Success(true)) {
-      fos4any("test.png") { os =>
+      FileName("test.png").toOS { os =>
         os.write(bytes)
         true
       }
@@ -42,7 +44,7 @@ class OhlcvTest extends AnyFunSuite {
     assertResult(43500)(bytes.length)
 
     assertResult(Success(true)) {
-      fos4any("sma.png") { os =>
+      FileName("sma.png").toOS { os =>
         os.write(bytes)
         true
       }
