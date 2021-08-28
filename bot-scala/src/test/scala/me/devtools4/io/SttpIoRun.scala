@@ -2,55 +2,36 @@ package me.devtools4.io
 
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import com.yahoo.finanance.query1.{Quote, QuoteResponseResponse}
+import com.yahoo.finanance.query1.Quote._
 import com.yahoo.finanance.query1.sttp.SttpQuery1ApiClient
-import sttp.client3.quick.{backend, basicRequest}
-import io.circe.parser._
-import sttp.client3._
-
-import Quote._
-
-import scala.util.{Failure, Success}
 
 object SttpIoRun extends App {
 
   import me.devtools4.ticker.df._
-  import me.devtools4.ticker.ops._
 
   implicit val runtime: IORuntime = cats.effect.unsafe.implicits.global
 
-  val basePath = "https://query1.finance.yahoo.com"
-  val client = SttpQuery1ApiClient(basePath)
+  val client = SttpQuery1ApiClient("https://query1.finance.yahoo.com")
   val sym = "SPY"
 
-  val opt = client.quote(sym)
-    .toOption
-    .map(_.quoteResponse.result)
-    .flatMap(_.headOption)
-
-  val t = etfs("all.csv")
-
-  for {
-    res <- client.quote(sym).toOption
-    q <- res.quoteResponse.result.headOption
-    all <- etfs("all.csv").toOption
-    etf <- all.find(sym)
-  } yield {
-    println(q.copyWith(etf.expenseRatio, etf.aum).html)
-  }
-
   val program = for {
-    x <- IO {
-      basicRequest.get(uri"$basePath/v7/finance/quote?symbols=$sym").send(backend).body
-        .flatMap(x => decode[QuoteResponseResponse](x))
+    q <- IO {
+      client.quote(sym).toOption
+        .flatMap(_.quoteResponse.result.headOption)
     }
-    t <- IO {
-      x.fold(l => Failure(new RuntimeException(l.toString)), r => Success(r))
+    etf <- IO {
+      etfs("all.csv").toOption
+        .flatMap(_.find(sym))
     }
-    _ <- IO {
-      println(t)
+    html <- IO {
+      (q, etf) match {
+        case (Some(qq), Some(ee)) =>
+          qq.copyWith(ee.expenseRatio, ee.aum).html
+        case _ => ???
+      }
     }
   } yield {
+    println(html)
   }
 
   program.unsafeRunSync()
