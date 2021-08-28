@@ -1,5 +1,6 @@
 package me.devtools4.ticker.df
 
+import me.devtools4.ticker.api.Etf
 import org.junit.runner.RunWith
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.junit.JUnitRunner
@@ -8,7 +9,7 @@ import java.time.LocalDate
 
 @RunWith(classOf[JUnitRunner])
 class EtfsTest extends AnyFunSuite {
-  private val sut = Etfs.of("all.csv").get
+  private val sut = etfs("all.csv").get
 
   test("etfs") {
     assertResult(Some(Etf(

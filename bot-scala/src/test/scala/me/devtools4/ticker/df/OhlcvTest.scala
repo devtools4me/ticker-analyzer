@@ -15,7 +15,7 @@ class OhlcvTest extends AnyFunSuite {
 
   test("png") {
     val x = for {
-      ohlcv <- Ohlcv.of(csv)
+      ohlcv <- df(csv)
       bytes <- ohlcv.png("Adj Close", 500, 500)
     } yield {
       bytes
@@ -34,7 +34,7 @@ class OhlcvTest extends AnyFunSuite {
 
   test("sma") {
     val x = for {
-      ohlcv <- Ohlcv.of(csv)
+      ohlcv <- df(csv)
       bytes <- ohlcv.smaPng("Adj Close", 500, 500)
     } yield {
       bytes
