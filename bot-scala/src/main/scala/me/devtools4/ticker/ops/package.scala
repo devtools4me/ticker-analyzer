@@ -3,7 +3,7 @@ package me.devtools4.ticker
 import java.io.{BufferedOutputStream, ByteArrayInputStream, FileOutputStream, InputStream, OutputStream}
 import java.nio.charset.StandardCharsets
 import scala.io.Source
-import scala.util.{Try, Using}
+import scala.util.{Failure, Success, Try, Using}
 
 package object ops {
   case class ResourceName(value: String)
@@ -22,5 +22,9 @@ package object ops {
   implicit class StringHelper(s: String) {
     def toIS[A](f: InputStream => A): Try[A] =
       Using(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)))(f)
+  }
+
+  implicit class EitherHelper[E, A](val either: Either[E, A]) extends AnyVal {
+    def _toTry: Try[A] = either.fold(t => Failure(new RuntimeException(s"$t")), v => Success(v))
   }
 }

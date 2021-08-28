@@ -43,10 +43,11 @@ class TickerService(client: Query1Api, etfs: Etfs) {
     }
   }
 
-  private def enrich(q: Quote): Quote = etfs.find(q.symbol) match {
-    case Some(etf) => q.copy(
-      expenseRatio = Option(etf.expenseRatio),
-      aum = Option(etf.aum))
-    case _ => q
+  private def enrich(q: Quote): Quote = {
+    import Quote._
+    etfs.find(q.symbol) match {
+      case Some(etf) => q.copyWith(etf.expenseRatio, etf.aum)
+      case _ => q
+    }
   }
 }

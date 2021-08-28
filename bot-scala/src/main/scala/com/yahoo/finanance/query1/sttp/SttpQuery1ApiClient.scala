@@ -23,5 +23,9 @@ class SttpQuery1ApiClient(basePath: String, backend: SttpBackend[Identity, Any])
 }
 
 object SttpQuery1ApiClient {
-  def apply(basePath: String): SttpQuery1ApiClient = new SttpQuery1ApiClient(basePath, HttpURLConnectionBackend())
+  def apply(basePath: String): SttpQuery1ApiClient =
+    SttpQuery1ApiClient(basePath, HttpURLConnectionBackend())
+
+  def apply(basePath: String, backend: SttpBackend[Identity, Any]): SttpQuery1ApiClient =
+    new SttpQuery1ApiClient(basePath, backend)
 }

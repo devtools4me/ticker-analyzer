@@ -11,7 +11,7 @@ object SttpQuery1ApiClientRun extends App {
     .map(x => x.quoteResponse.result) match {
     case Left(err) => println(err)
     case Right(x) => x.foreach { x =>
-      println(x.as[String])
+      println(x.html)
     }
   }
 

@@ -87,9 +87,7 @@ case class Quote(
                   symbol: String,
                   expenseRatio: Option[String],
                   aum: Option[String]
-                ) {
-  def as[T](implicit f: Quote => Try[T]): Try[T] = f(this)
-}
+                )
 
 object Quote {
   implicit val encoder: Encoder[Quote] = deriveEncoder[Quote]
@@ -115,15 +113,22 @@ object Quote {
   lazy val quoteMustache: Mustache = mf.compile("quote.mustache")
   lazy val errorMustache: Mustache = mf.compile("error.mustache")
 
-  implicit def html: Quote => Try[String] = q =>
-    Using(new StringWriter())(w => {
+  implicit class QuoteHelper(q: Quote) {
+    def copyWith(expenseRatio: String, aum: String): Quote = q.copy(
+      expenseRatio = Option(expenseRatio),
+      aum = Option(aum))
+
+    def html: Try[String] = Using(new StringWriter())(w => {
       quoteMustache.execute(w, q).flush()
       w.toString
     })
+  }
 
-  def error: Throwable => Try[String] = err =>
-    Using(new StringWriter())(w => {
+  implicit class ThrowableHelper(err: Throwable) {
+    def html: Try[String] = Using(new StringWriter())(w => {
       errorMustache.execute(w, err).flush()
       w.toString
     })
+  }
+
 }

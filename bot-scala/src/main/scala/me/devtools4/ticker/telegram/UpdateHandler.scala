@@ -15,7 +15,7 @@ class UpdateHandler(ts: TickerService) {
         cmd match {
           case StartCmd => consumer.accept(sendMessage(cid))
           case QuoteCmd(sym) => ts.quote(sym)
-            .flatMap(x => x.as[String].toOption)
+            .flatMap(x => x.html.toOption)
             .map(sendMessage2(cid, _))
             .foreach(consumer.accept)
           case HistoryCmd(sym, period) => ts.history(sym, period)
@@ -24,7 +24,8 @@ class UpdateHandler(ts: TickerService) {
           case SmaCmd(sym, period) => ts.sma(sym, period)
             .map(sendPhoto(cid, _, s"$sym.png"))
             .foreach(consumer.accept)
-          case _ => Quote.error(new IllegalArgumentException(cmd.toString))
+          case _ => new IllegalArgumentException(cmd.toString)
+            .html
             .map(sendMessage2(cid, _))
             .foreach(consumer.accept)
         }
