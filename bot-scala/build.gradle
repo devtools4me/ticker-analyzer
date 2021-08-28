@@ -21,6 +21,7 @@ allprojects {
 
     def scalaMajor = '2.13'
     def scalaMinor = '4'
+    def catsVersion = '2.2.0'
     def http4sVersion = '0.23.1'
     def circeVersion = "0.14.0"
     def sttpVersion = '3.3.13'
@@ -33,6 +34,7 @@ allprojects {
     dependencies {
         compile(
                 "org.scala-lang:scala-library:$scalaMajor.$scalaMinor",
+                "org.typelevel:cats-core_$scalaMajor:$catsVersion",
                 "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2",
                 "org.http4s:http4s-blaze-server_$scalaMajor:$http4sVersion",
                 "org.http4s:http4s-dsl_$scalaMajor:$http4sVersion",
