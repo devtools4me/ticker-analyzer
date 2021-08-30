@@ -1,38 +1,43 @@
 package me.devtools4.io
 
-import cats.effect.IO
-import cats.effect.unsafe.IORuntime
+import cats.effect._
+import cats.implicits._
 import com.yahoo.finanance.query1.Quote._
 import com.yahoo.finanance.query1.sttp.SttpQuery1ApiClient
+import me.devtools4.io.debug._
+import me.devtools4.ticker.repository.CsvEtfRepository
 
-object SttpIoRun extends App {
+object SttpIoRun extends IOApp {
+  private val client = SttpQuery1ApiClient("https://query1.finance.yahoo.com")
+  private val ETFs = CsvEtfRepository("all.csv").get
 
-  import me.devtools4.ticker.df._
+  def f(i: IO[Unit]): IO[IO[Unit]] = IO(i)
 
-  implicit val runtime: IORuntime = cats.effect.unsafe.implicits.global
+  def run(args: List[String]): IO[ExitCode] = {
 
-  val client = SttpQuery1ApiClient("https://query1.finance.yahoo.com")
-  val sym = "SPY"
-
-  val program = for {
-    q <- IO {
-      client.quote(sym).toOption
-        .flatMap(_.quoteResponse.result.headOption)
-    }
-    etf <- IO {
-      etfs("all.csv").toOption
-        .flatMap(_.find(sym))
-    }
-    html <- IO {
-      (q, etf) match {
-        case (Some(qq), Some(ee)) =>
-          qq.copyWith(ee.expenseRatio, ee.aum).html
-        case _ => ???
-      }
-    }
-  } yield {
-    println(html)
+    List(program("VIOO"), program("SPY"), program("GLDM"))
+      .parSequence
+      .debug
+      .map(println(_))
+      .as(ExitCode.Success)
   }
 
-  program.unsafeRunSync()
+  def program(sym: String): IO[Product] = {
+    val a = IO.blocking {
+      client.quote(sym).toOption
+        .flatMap(_.quoteResponse.result.headOption)
+    }.debug
+    val b = ETFs
+      .find(sym)
+      .debug
+    (a, b).parMapN { (x, y) =>
+      (x, y) match {
+        case (Some(q), h :: t) =>
+          q.copyWith(h.expenseRatio, h.aum).html
+        case (Some(q), _) =>
+          q
+        case _ => throw new RuntimeException()
+      }
+    }.debug
+  }
 }
