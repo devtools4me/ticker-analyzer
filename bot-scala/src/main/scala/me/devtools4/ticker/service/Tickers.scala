@@ -2,9 +2,10 @@ package me.devtools4.ticker.service
 
 import com.yahoo.finanance.query1.Quote
 import me.devtools4.ticker.api.Period
+import me.devtools4.ticker.ops._
 
 trait Tickers[F[_]] {
-  def quote(sym: String): F[Quote]
+  def quote(sym: String): F[Either[String, Quote]]
 
   def history(sym: String, period: Period): F[Array[Byte]]
 
@@ -19,17 +20,17 @@ import me.devtools4.ticker.df._
 import me.devtools4.ticker.repository.EtfRepository
 
 class IoTickers(client: Query1ApiP[IO], repo: EtfRepository[IO]) extends Tickers[IO] {
-  override def quote(sym: String): IO[Quote] = {
+  override def quote(sym: String): IO[Either[String, Quote]] = {
     val a = client.quote(sym)
-      .map(x => x.quoteResponse.result)
+      .map(x => x.fold(Left(_), q => Right(q.quoteResponse.result)))
     val b = repo.find(sym)
     (a, b).parMapN { (x, y) =>
       (x, y) match {
-        case (q :: _, e :: _) =>
-          q.copyWith(e.expenseRatio, e.aum)
-        case (q :: _, _) =>
-          q
-        case _ => throw new RuntimeException()
+        case (Right(q :: _), e :: _) =>
+          Right(q.copyWith(e.expenseRatio, e.aum))
+        case (Right(q :: _), _) =>
+          Right(q)
+        case _ => Left("???")
       }
     }
   }
@@ -37,6 +38,7 @@ class IoTickers(client: Query1ApiP[IO], repo: EtfRepository[IO]) extends Tickers
   override def history(sym: String, period: Period): IO[Array[Byte]] = period.times match {
     case (s, e) =>
       client.download(sym, period.interval, Quote.timestamp(s), Quote.timestamp(e))
+        .flatMap(x => IO.fromTry(x._toTry))
         .flatMap(x => IO.fromTry(df(x)))
         .flatMap(x => IO.fromTry(x.png("Adj Close", 500, 500)))
   }
@@ -44,6 +46,7 @@ class IoTickers(client: Query1ApiP[IO], repo: EtfRepository[IO]) extends Tickers
   override def sma(sym: String, period: Period): IO[Array[Byte]] = period.times match {
     case (s, e) =>
       client.download(sym, period.interval, Quote.timestamp(s), Quote.timestamp(e))
+        .flatMap(x => IO.fromTry(x._toTry))
         .flatMap(x => IO.fromTry(df(x)))
         .flatMap(x => IO.fromTry(x.smaPng("Adj Close", 500, 500)))
   }

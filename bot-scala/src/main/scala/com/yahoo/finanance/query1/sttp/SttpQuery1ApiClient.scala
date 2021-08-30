@@ -32,23 +32,22 @@ object SttpQuery1ApiClient {
 }
 
 class SttpQuery1ApiPClient(basePath: String, backend: SttpBackend[Identity, Any]) extends Query1ApiP[IO] {
-  override def quote(symbol_id: String): IO[QuoteResponseResponse] =
+  override def quote(symbol_id: String): IO[Either[String, QuoteResponseResponse]] =
     IO.blocking {
       basicRequest.get(uri"$basePath/v7/finance/quote?symbols=$symbol_id")
         .send(backend)
         .body
         .flatMap { json =>
           decode[QuoteResponseResponse](json)
-        }.fold(err => Left(new RuntimeException(err.toString)), x => Right(x))
-    }.flatMap(IO.fromEither(_))
+        }.fold(err => Left(err.toString), Right(_))
+    }
 
-  override def download(symbol_id: String, interval: String, from_date: Long, to_date: Long): IO[String] =
+  override def download(symbol_id: String, interval: String, from_date: Long, to_date: Long): IO[Either[String, String]] =
     IO.blocking {
       basicRequest.get(uri"$basePath/v7/finance/download/$symbol_id?interval=$interval&period1=$from_date&period2=$to_date")
         .send(backend)
         .body
-        .fold(err => Left(new RuntimeException(err)), x => Right(x))
-    }.flatMap(IO.fromEither(_))
+    }
 }
 
 object SttpQuery1ApiPClient {

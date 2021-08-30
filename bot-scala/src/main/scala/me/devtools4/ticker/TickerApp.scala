@@ -1,29 +1,41 @@
 package me.devtools4.ticker
 
+import cats.effect.unsafe.implicits.global
 import cats.effect.{ExitCode, IO, IOApp}
-import org.http4s.HttpRoutes
+import com.yahoo.finanance.query1.sttp.SttpQuery1ApiPClient
+import me.devtools4.ticker.repository.CsvEtfRepository
+import me.devtools4.ticker.service.IoTickers
 import org.http4s.blaze.server.BlazeServerBuilder
-import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.Router
 
 import scala.concurrent.ExecutionContext
-
-class TickerAnalyzerApi extends Http4sDsl[IO] {
-  val routes = HttpRoutes.of[IO] {
-    case GET -> Root / "ping" => Ok("pong")
-  }
-}
+import scala.io.StdIn
 
 object TickerApp extends IOApp {
-  private val httpApp = Router("/" -> new TickerAnalyzerApi().routes).orNotFound
 
-  override def run(args: List[String]): IO[ExitCode] =
-    stream(args).compile.drain.as(ExitCode.Success)
-
-  private def stream(args: List[String]): fs2.Stream[IO, ExitCode] =
-    BlazeServerBuilder[IO](ExecutionContext.global)
-      .bindHttp(8080, "0.0.0.0")
-      .withHttpApp(httpApp)
-      .serve
+  override def run(args: List[String]): IO[ExitCode] = {
+    val program = for {
+      repo <- IO.fromTry(CsvEtfRepository("all.csv"))
+      client = SttpQuery1ApiPClient("https://query1.finance.yahoo.com")
+      tickers = IoTickers(client, repo)
+      routes = new Routes(tickers).routes
+      httpApp = Router("/" -> routes).orNotFound
+      server = BlazeServerBuilder[IO](ExecutionContext.global)
+        .bindHttp(8080, "0.0.0.0")
+        .withHttpApp(httpApp)
+      fiber = server.resource.use(_ => IO(StdIn.readLine())).as(ExitCode.Success)
+    } yield fiber
+    program.attempt.unsafeRunSync() match {
+      case Left(e) =>
+        IO {
+          println("*** An error occured! ***")
+          if (e ne null) {
+            println(e.getMessage)
+          }
+          ExitCode.Error
+        }
+      case Right(r) => r
+    }
+  }
 }

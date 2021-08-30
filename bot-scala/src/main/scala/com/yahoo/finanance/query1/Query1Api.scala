@@ -7,7 +7,7 @@ trait Query1Api {
 }
 
 trait Query1ApiP[F[_]] {
-  def quote(symbol_id: String): F[QuoteResponseResponse]
+  def quote(symbol_id: String): F[Either[String, QuoteResponseResponse]]
 
-  def download(symbol_id: String, interval: String, from_date: Long, to_date: Long): F[String]
+  def download(symbol_id: String, interval: String, from_date: Long, to_date: Long): F[Either[String, String]]
 }

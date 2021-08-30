@@ -38,6 +38,7 @@ allprojects {
                 "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2",
                 "org.http4s:http4s-blaze-server_$scalaMajor:$http4sVersion",
                 "org.http4s:http4s-dsl_$scalaMajor:$http4sVersion",
+                "org.http4s:http4s-circe_$scalaMajor:$http4sVersion",
                 "io.circe:circe-core_$scalaMajor:$circeVersion",
                 "io.circe:circe-generic_$scalaMajor:$circeVersion",
                 "io.circe:circe-parser_$scalaMajor:$circeVersion",
