@@ -7,9 +7,9 @@ import me.devtools4.ticker.ops._
 trait Tickers[F[_]] {
   def quote(sym: String): F[Either[String, Quote]]
 
-  def history(sym: String, period: Period): F[Array[Byte]]
+  def history(sym: String, period: Period): F[Either[String, Array[Byte]]]
 
-  def sma(sym: String, period: Period): F[Array[Byte]]
+  def sma(sym: String, period: Period): F[Either[String, Array[Byte]]]
 }
 
 import cats.effect._
@@ -35,20 +35,20 @@ class IoTickers(client: Query1ApiP[IO], repo: EtfRepository[IO]) extends Tickers
     }
   }
 
-  override def history(sym: String, period: Period): IO[Array[Byte]] = period.times match {
+  override def history(sym: String, period: Period): IO[Either[String, Array[Byte]]] = period.times match {
     case (s, e) =>
       client.download(sym, period.interval, Quote.timestamp(s), Quote.timestamp(e))
         .flatMap(x => IO.fromTry(x._toTry))
         .flatMap(x => IO.fromTry(df(x)))
-        .flatMap(x => IO.fromTry(x.png("Adj Close", 500, 500)))
+        .flatMap(x => IO(x.png("Adj Close", 500, 500)._toEither))
   }
 
-  override def sma(sym: String, period: Period): IO[Array[Byte]] = period.times match {
+  override def sma(sym: String, period: Period): IO[Either[String, Array[Byte]]] = period.times match {
     case (s, e) =>
       client.download(sym, period.interval, Quote.timestamp(s), Quote.timestamp(e))
         .flatMap(x => IO.fromTry(x._toTry))
         .flatMap(x => IO.fromTry(df(x)))
-        .flatMap(x => IO.fromTry(x.smaPng("Adj Close", 500, 500)))
+        .flatMap(x => IO(x.smaPng("Adj Close", 500, 500)._toEither))
   }
 }
 

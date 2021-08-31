@@ -23,7 +23,7 @@ object TickersRun extends IOApp {
       .as(ExitCode.Success)
   }
 
-  def program(sym: String): IO[Product] = {
+  def program(sym: String): IO[Unit] = {
     val a = tickers.quote(sym)
       .debug
     val b = tickers.history(sym, OneYear)
@@ -32,13 +32,17 @@ object TickersRun extends IOApp {
       .debug
     (a, b, c).parMapN { (x, y, z) =>
       println(x)
-      FileName(s"$sym-hist.png").toOS { os =>
-        os.write(y)
-        true
+      y.foreach { arr =>
+        FileName(s"$sym-hist.png").toOS { os =>
+          os.write(arr)
+          true
+        }
       }
-      FileName(s"$sym-sma.png").toOS { os =>
-        os.write(z)
-        true
+      z.foreach { arr =>
+        FileName(s"$sym-sma.png").toOS { os =>
+          os.write(arr)
+          true
+        }
       }
     }.debug
   }

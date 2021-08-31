@@ -66,16 +66,16 @@ package object api {
   case object Max extends Period
 
   object Period {
-    def apply(s: String): Period = s match {
-      case "1m" => OneMonth
-      case "3m" => ThreeMonths
-      case "6m" => SixMonths
-      case "1y" => OneYear
-      case "5y" => FiveYears
-      case "10y" => TenYears
-      case "20y" => TwentyYears
-      case "max" => Max
-      case _     => UnknownPeriod
+    def apply(s: String): Either[String, Period] = s match {
+      case "1m" => Right(OneMonth)
+      case "3m" => Right(ThreeMonths)
+      case "6m" => Right(SixMonths)
+      case "1y" => Right(OneYear)
+      case "5y" => Right(FiveYears)
+      case "10y" => Right(TenYears)
+      case "20y" => Right(TwentyYears)
+      case "max" => Right(Max)
+      case _     => Left(s"UnknownPeriod $s")
     }
   }
 
@@ -93,13 +93,13 @@ package object api {
       case List("", "quote", sym) => QuoteCmd(sym)
       case List("", "history", sym) => HistoryCmd(sym, OneMonth)
       case List("", "history", p, sym) => Period(p) match {
-        case UnknownPeriod => UnknownCmd(s)
-        case period => HistoryCmd(sym, period)
+        case Left(_) => UnknownCmd(s)
+        case Right(period) => HistoryCmd(sym, period)
       }
       case List("", "sma", sym) => SmaCmd(sym, OneMonth)
       case List("", "sma", p, sym) => Period(p) match {
-        case UnknownPeriod => UnknownCmd(s)
-        case period => SmaCmd(sym, period)
+        case Left(_) => UnknownCmd(s)
+        case Right(period) => SmaCmd(sym, period)
       }
       case list => UnknownCmd(s"[$s] => $list")
     }

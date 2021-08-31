@@ -25,6 +25,10 @@ package object ops {
   }
 
   implicit class EitherHelper[E, A](val either: Either[E, A]) extends AnyVal {
-    def _toTry: Try[A] = either.fold(t => Failure(new RuntimeException(s"$t")), v => Success(v))
+    def _toTry: Try[A] = either.fold(t => Failure(new RuntimeException(s"$t")), Success(_))
+  }
+
+  implicit class TryHelper[A](val x: Try[A]) extends AnyVal {
+    def _toEither: Either[String, A] = x.fold(t => Left(s"$t"), Right(_))
   }
 }
