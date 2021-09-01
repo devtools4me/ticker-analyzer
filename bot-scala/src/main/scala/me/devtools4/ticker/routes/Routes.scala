@@ -1,4 +1,4 @@
-package me.devtools4.ticker
+package me.devtools4.ticker.routes
 
 import cats.Applicative
 import cats.effect.Sync
@@ -7,8 +7,8 @@ import com.yahoo.finanance.query1.Quote
 import me.devtools4.ticker.api.{OneMonth, Period}
 import me.devtools4.ticker.service.Tickers
 import org.http4s._
-import org.http4s.dsl._
 import org.http4s.circe._
+import org.http4s.dsl._
 import org.typelevel.ci.CIString
 
 final class Routes[F[_]: Sync](tickers: Tickers[F]) extends Http4sDsl[F] {
