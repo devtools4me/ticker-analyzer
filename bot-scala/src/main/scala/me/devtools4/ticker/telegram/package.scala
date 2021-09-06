@@ -1,7 +1,7 @@
 package me.devtools4.ticker
 
 import me.devtools4.ticker.api.{TickerCmd, TickerQuery, UnknownCmd, UnknownQuery}
-import org.telegram.telegrambots.meta.api.objects.Update
+import com.bot4s.telegram.models.Update
 
 package object telegram {
 
@@ -15,15 +15,15 @@ package object telegram {
 
   object TelegramUpdate {
     def apply(update: Update): TelegramUpdate = update match {
-      case u if (u.hasMessage && u.getMessage.hasText) => TickerCmd(u.getMessage.getText) match {
+      case u if (u.message.exists(x => x.text.isDefined)) => TickerCmd(u.message.get.text.get) match {
         case UnknownCmd(s) => UnknownUpdate(s)
-        case x => TextUpdate(u.getMessage.getChatId, x)
+        case x => TextUpdate(u.message.get.chat.id, x)
       }
-      case u if (u.hasCallbackQuery) => TickerQuery(u.getCallbackQuery.getMessage.getText) match {
+      case u if (u.callbackQuery.isDefined) => TickerQuery(u.callbackQuery.get.message.get.text.get) match {
         case UnknownQuery(s) => UnknownUpdate(s)
         case query => QueryCallback(
-          u.getCallbackQuery.getMessage.getChatId,
-          u.getCallbackQuery.getMessage.getMessageId,
+          u.callbackQuery.get.message.get.chat.id,
+          u.callbackQuery.get.message.get.messageId,
           query)
       }
       case _ => UnknownUpdate(update.toString)

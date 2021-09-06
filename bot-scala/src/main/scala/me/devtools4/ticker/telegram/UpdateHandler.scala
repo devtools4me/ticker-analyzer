@@ -1,11 +1,21 @@
 package me.devtools4.ticker.telegram
 
-import com.yahoo.finanance.query1.Quote
 import com.yahoo.finanance.query1.Quote._
 import me.devtools4.ticker.api._
 import me.devtools4.ticker.service.TickerService
 import me.devtools4.ticker.telegram.Ops._
-import org.telegram.telegrambots.meta.api.objects.Update
+import com.bot4s.telegram.methods._
+import com.bot4s.telegram.models._
+
+trait ApiMethodConsumer {
+  def accept(t: SendChatAction): Unit
+
+  def accept(t: SendMessage): Unit
+
+  def accept(t: SendPhoto): Unit
+
+  def accept(t: EditMessageText): Unit
+}
 
 class UpdateHandler(ts: TickerService) {
   def handle(update: Update, consumer: ApiMethodConsumer): Unit = {
@@ -44,4 +54,8 @@ class UpdateHandler(ts: TickerService) {
     case SmaQuery => ResourceName("sma.html").str
     case _ => ResourceName("error.html").str
   }
+}
+
+object UpdateHandler {
+  def apply(ts: TickerService): UpdateHandler = new UpdateHandler(ts)
 }

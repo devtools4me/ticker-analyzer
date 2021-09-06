@@ -11,7 +11,7 @@ import org.http4s.circe._
 import org.http4s.dsl._
 import org.typelevel.ci.CIString
 
-final class Routes[F[_]: Sync](tickers: Tickers[F]) extends Http4sDsl[F] {
+final class TickerRoutes[F[_]: Sync](tickers: Tickers[F]) extends Http4sDsl[F] {
   implicit def encodeProduct[A[_]: Applicative]: EntityEncoder[A, Quote] = jsonEncoderOf
 
   val routes: HttpRoutes[F] = HttpRoutes.of[F] {
