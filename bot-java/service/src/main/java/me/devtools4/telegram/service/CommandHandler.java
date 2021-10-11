@@ -1,5 +1,6 @@
 package me.devtools4.telegram.service;
 
+import static me.devtools4.telegram.api.TickerApi.BLSH;
 import static me.devtools4.telegram.api.TickerApi.HISTORY;
 import static me.devtools4.telegram.api.TickerApi.QUOTE;
 import static me.devtools4.telegram.api.TickerApi.SMA;
@@ -61,6 +62,10 @@ public class CommandHandler {
                   InlineKeyboardButton.builder()
                       .text(SMA)
                       .callbackData(SMA)
+                      .build(),
+                  InlineKeyboardButton.builder()
+                      .text(BLSH)
+                      .callbackData(BLSH)
                       .build()
               ))
               .build());
@@ -95,6 +100,18 @@ public class CommandHandler {
               Period.convert(params.get("period")) :
               Period.OneMonth;
           var bytes = service.sma(id, period);
+          var message = new SendPhoto();
+          message.setChatId(chatId);
+          message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
+          consumer.accept(message);
+          break;
+        }
+        case BLSH: {
+          var id = params.get("id");
+          var period = params.containsKey("period") ?
+              Period.convert(params.get("period")) :
+              Period.OneMonth;
+          var bytes = service.blsh(id, period);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));

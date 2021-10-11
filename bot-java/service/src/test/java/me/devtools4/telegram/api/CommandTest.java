@@ -18,6 +18,8 @@ public class CommandTest {
       "/history/1y/msft:/history:id=msft,period=1y",
       "/sma/msft:/sma:id=msft",
       "/sma/1y/msft:/sma:id=msft,period=1y",
+      "/blsh/msft:/blsh:id=msft",
+      "/blsh/1y/msft:/blsh:id=msft,period=1y",
       "/error:unknown:"
   }, delimiter = ':')
   public void testCommand(String text, String expected, String params) {

@@ -24,10 +24,17 @@ public enum Command {
     public Map<String, String> params(String text) {
       return Ops.params(text, Command.smaPatterns, SMA);
     }
+  },
+  BLSH("/blsh") {
+    @Override
+    public Map<String, String> params(String text) {
+      return Ops.params(text, Command.blshPatterns, BLSH);
+    }
   };
 
   private static final List<String> historyPatterns = Ops.periodPatterns(HISTORY);
   private static final List<String> smaPatterns = Ops.periodPatterns(SMA);
+  private static final List<String> blshPatterns = Ops.periodPatterns(BLSH);
 
   private final String path;
 
@@ -52,6 +59,8 @@ public enum Command {
       return HISTORY;
     } else if (smaPatterns.stream().anyMatch(text::startsWith) || text.startsWith(SMA.getPath())) {
       return SMA;
+    } else if (blshPatterns.stream().anyMatch(text::startsWith) || text.startsWith(BLSH.getPath())) {
+      return BLSH;
     } else {
       return UNKNOWN;
     }

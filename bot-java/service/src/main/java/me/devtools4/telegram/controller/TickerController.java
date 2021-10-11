@@ -52,6 +52,18 @@ public class TickerController implements TickerApi {
     return ok(id, service.sma(id, period));
   }
 
+  @Override
+  @GetMapping(TickerApi.BLSH_ID)
+  public ResponseEntity<Resource> blsh(@PathVariable("id") String id) {
+    return ok(id, service.blsh(id, Period.OneMonth));
+  }
+
+  @Override
+  @GetMapping(TickerApi.BLSH_PERIOD_ID)
+  public ResponseEntity<Resource> blsh(@PathVariable("id") String id, @PathVariable("period") Period period) {
+    return ok(id, service.blsh(id, period));
+  }
+
   private static ResponseEntity<Resource> ok(String id, byte[] bytes) {
     return ResponseEntity.ok()
         .contentType(MediaType.IMAGE_PNG)

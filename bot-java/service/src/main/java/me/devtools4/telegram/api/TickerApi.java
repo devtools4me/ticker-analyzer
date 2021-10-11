@@ -17,6 +17,10 @@ public interface TickerApi {
   String SMA_ID = SMA + "/{id}";
   String SMA_PERIOD = "/sma/{period}";
   String SMA_PERIOD_ID = SMA_PERIOD + "/{id}";
+  String BLSH = "/blsh";
+  String BLSH_ID = BLSH + "/{id}";
+  String BLSH_PERIOD = "/blsh/{period}";
+  String BLSH_PERIOD_ID = BLSH_PERIOD + "/{id}";
 
   Quote quote(String id);
 
@@ -27,4 +31,8 @@ public interface TickerApi {
   ResponseEntity<Resource> sma(String id);
 
   ResponseEntity<Resource> sma(String id, Period period);
+
+  ResponseEntity<Resource> blsh(String id);
+
+  ResponseEntity<Resource> blsh(String id, Period period);
 }

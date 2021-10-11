@@ -105,4 +105,26 @@ public class TickerService {
       throw new IllegalArgumentException(ex);
     }
   }
+
+  @Trace(level = "INFO")
+  public byte[] blsh(String id, Period period) {
+    var times = period.times()
+        .stream()
+        .map(Query1Api::timestamp)
+        .collect(Collectors.toList());
+    var res = api.download(id, interval(period), times.get(0), times.get(1));
+    var csv = bodyAsString(res);
+    var ohlcv = new Ohlcv(csv);
+    try (var os = new ByteArrayOutputStream()) {
+      ohlcv.blshPng(os, PngProps.builder()
+          .rowKeyColumnName("Date")
+          .columnName("Adj Close")
+          .width(600)
+          .height(500)
+          .build());
+      return os.toByteArray();
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
+    }
+  }
 }
