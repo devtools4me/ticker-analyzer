@@ -5,10 +5,10 @@ spring:
   application:
     name: ticker-analyzer
   profiles:
-    active: webhook-bot
+    active: local
 
 etf:
-  csv: /apps/all.csv
+  csv: /Users/sergei/asa/src/devtools4me/ticker-analyzer/bot-java/service/conf/all.csv
 
 yahoo:
   finance:
