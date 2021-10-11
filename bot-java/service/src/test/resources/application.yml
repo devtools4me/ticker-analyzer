@@ -1,3 +1,6 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: ticker-analyzer
@@ -10,7 +13,7 @@ etf:
 yahoo:
   finance:
     query1:
-      url: https://query1.finance.yahoo.com
+      url: http://localhost:8080
 
 bot:
   userName: "TickerAnalyzerBot"

@@ -10,8 +10,17 @@ import org.junit.Test;
 public class DslJsonTest {
 
   @Test
-  public void test() throws IOException {
+  public void testIntc() throws IOException {
     try (var is = getClass().getClassLoader().getResourceAsStream("INTC.json")) {
+      assertNotNull(is);
+      var res = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
+      assertNotNull(res);
+    }
+  }
+
+  @Test
+  public void testMsft() throws IOException {
+    try (var is = getClass().getClassLoader().getResourceAsStream("MSFT.json")) {
       assertNotNull(is);
       var res = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       assertNotNull(res);

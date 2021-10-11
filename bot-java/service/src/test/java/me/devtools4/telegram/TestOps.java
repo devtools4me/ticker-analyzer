@@ -1,0 +1,28 @@
+package me.devtools4.telegram;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.function.Function;
+import org.apache.commons.io.IOUtils;
+
+public class TestOps {
+
+  public static String res2str(String name) {
+    return withResource(name, x -> {
+      try {
+        return IOUtils.toString(x, Charset.defaultCharset());
+      } catch (IOException ex) {
+        throw new IllegalArgumentException(ex);
+      }
+    });
+  }
+
+  public static <T> T withResource(String name, Function<InputStream, T> func) {
+    try (var is = TickerAnalyzerAppTest.class.getClassLoader().getResourceAsStream(name)) {
+      return func.apply(is);
+    } catch (IOException e) {
+      throw new IllegalArgumentException(name);
+    }
+  }
+}
