@@ -1,6 +1,7 @@
 package me.devtools4.telegram.api;
 
 import com.yahoo.finanance.query1.Quote;
+import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
@@ -21,6 +22,8 @@ public interface TickerApi {
   String BLSH_ID = BLSH + "/{id}";
   String BLSH_PERIOD = "/blsh/{period}";
   String BLSH_PERIOD_ID = BLSH_PERIOD + "/{id}";
+
+  List<StartInfo> start();
 
   Quote quote(String id);
 

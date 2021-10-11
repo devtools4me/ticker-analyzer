@@ -1,7 +1,9 @@
 package me.devtools4.telegram.controller;
 
 import com.yahoo.finanance.query1.Quote;
+import java.util.List;
 import me.devtools4.telegram.api.Period;
+import me.devtools4.telegram.api.StartInfo;
 import me.devtools4.telegram.api.TickerApi;
 import me.devtools4.telegram.service.TickerService;
 import org.springframework.core.io.ByteArrayResource;
@@ -20,6 +22,12 @@ public class TickerController implements TickerApi {
 
   public TickerController(TickerService service) {
     this.service = service;
+  }
+
+  @Override
+  @GetMapping(TickerApi.START)
+  public List<StartInfo> start() {
+    return service.start();
   }
 
   @Override

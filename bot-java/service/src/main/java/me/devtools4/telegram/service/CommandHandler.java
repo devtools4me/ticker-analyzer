@@ -1,14 +1,9 @@
 package me.devtools4.telegram.service;
 
-import static me.devtools4.telegram.api.TickerApi.BLSH;
-import static me.devtools4.telegram.api.TickerApi.HISTORY;
-import static me.devtools4.telegram.api.TickerApi.QUOTE;
-import static me.devtools4.telegram.api.TickerApi.SMA;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
@@ -50,24 +45,14 @@ public class CommandHandler {
           message.setChatId(chatId);
           message.setText("What would you like to receive?");
           message.setReplyMarkup(InlineKeyboardMarkup.builder()
-              .keyboardRow(List.of(
-                  InlineKeyboardButton.builder()
-                      .text(QUOTE)
-                      .callbackData(QUOTE)
-                      .build(),
-                  InlineKeyboardButton.builder()
-                      .text(HISTORY)
-                      .callbackData(HISTORY)
-                      .build(),
-                  InlineKeyboardButton.builder()
-                      .text(SMA)
-                      .callbackData(SMA)
-                      .build(),
-                  InlineKeyboardButton.builder()
-                      .text(BLSH)
-                      .callbackData(BLSH)
-                      .build()
-              ))
+              .keyboardRow(service.start()
+                  .stream()
+                  .map(x ->
+                      InlineKeyboardButton.builder()
+                          .text(x.getText())
+                          .callbackData(x.getCallbackData())
+                          .build()).collect(Collectors.toList()
+                  ))
               .build());
           consumer.accept(message);
           break;

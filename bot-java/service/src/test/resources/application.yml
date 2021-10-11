@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: ticker-analyzer
+  profiles:
+    active: local
+
+etf:
+  csv: conf/all.csv
+
+yahoo:
+  finance:
+    query1:
+      url: https://query1.finance.yahoo.com
+
+bot:
+  userName: "TickerAnalyzerBot"
+  token: "1841422646:AAFCsCISuUn-BSKYWe2wHzpGi66yeMXKszk"
+  url: https://ticker-analyzer.herokuapp.com
+  botPath: webhook
