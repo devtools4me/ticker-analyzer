@@ -65,9 +65,17 @@ public class TickerAnalyzerAppTest {
           var bytes = x.getResponseBody();
           assertNotNull(bytes);
           assertThat(bytes, is(TestOps.res2bytes("data/sma-1y.png")));
+        }),
+        Arguments.of("/blsh/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
+          var bytes = x.getResponseBody();
+          assertNotNull(bytes);
+          assertThat(bytes, is(TestOps.res2bytes("data/blsh-1m.png")));
+        }),
+        Arguments.of("/blsh/1y/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
+          var bytes = x.getResponseBody();
+          assertNotNull(bytes);
+          assertThat(bytes, is(TestOps.res2bytes("data/blsh-1y.png")));
         })
-//        Arguments.of("/blsh/msft"),
-//        Arguments.of("/blsh/1y/msft")
     );
   }
 
