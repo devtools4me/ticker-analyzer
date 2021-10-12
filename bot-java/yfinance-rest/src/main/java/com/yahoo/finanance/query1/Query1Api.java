@@ -5,9 +5,9 @@ import feign.RequestLine;
 import feign.Response;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import org.apache.commons.io.IOUtils;
 
 public interface Query1Api {
@@ -27,6 +27,11 @@ public interface Query1Api {
 
   static long timestamp(LocalDateTime time) {
     return Date.from(time.atZone(ZoneId.systemDefault()).toInstant()).getTime() / 1000;
+  }
+
+  static LocalDateTime time(long timestamp) {
+    var d = new Date(timestamp * 1000);
+    return LocalDateTime.ofInstant(d.toInstant(), ZoneId.systemDefault());
   }
 
   static String bodyAsString(Response res) {
