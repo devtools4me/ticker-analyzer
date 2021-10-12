@@ -45,8 +45,12 @@ public class TickerAnalyzerAppTest {
           var bytes = x.getResponseBody();
           assertNotNull(bytes);
           assertThat(new String(bytes), is(TestOps.res2str("data/quote.json")));
+        }),
+        Arguments.of("/history/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
+          var bytes = x.getResponseBody();
+          assertNotNull(bytes);
+          assertThat(bytes, is(TestOps.res2bytes("data/history-1m.png")));
         })
-//        Arguments.of("/history/msft"),
 //        Arguments.of("/history/1y/msft"),
 //        Arguments.of("/sma/msft"),
 //        Arguments.of("/sma/1y/msft"),
