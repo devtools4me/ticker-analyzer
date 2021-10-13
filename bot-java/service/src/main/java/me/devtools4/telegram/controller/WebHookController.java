@@ -1,8 +1,7 @@
 package me.devtools4.telegram.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import me.devtools4.telegram.service.TickerWebHookBot;
-import org.springframework.context.annotation.Profile;
+import me.devtools4.telegram.service.WebhookBotTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,12 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @RestController
-@Profile("webhook-bot")
 public class WebHookController {
 
-  private final TickerWebHookBot bot;
+  private final WebhookBotTemplate bot;
 
-  public WebHookController(TickerWebHookBot bot) {
+  public WebHookController(WebhookBotTemplate bot) {
     this.bot = bot;
   }
 

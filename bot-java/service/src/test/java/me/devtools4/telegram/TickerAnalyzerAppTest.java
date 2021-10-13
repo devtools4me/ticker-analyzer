@@ -1,5 +1,6 @@
 package me.devtools4.telegram;
 
+import static me.devtools4.telegram.TestOps.res2str;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,21 +11,34 @@ import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import me.devtools4.telegram.TickerAnalyzerAppTest.TestConfig;
+import me.devtools4.telegram.service.CommandHandler;
+import me.devtools4.telegram.service.TestWebhookBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.telegram.telegrambots.meta.api.methods.ActionType;
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @Import({
-    TickerAnalyzerApp.class
+    TickerAnalyzerApp.class,
+    TestConfig.class
 })
 @ComponentScan(basePackageClasses = Query1ApiController.class)
 public class TickerAnalyzerAppTest {
@@ -34,17 +48,27 @@ public class TickerAnalyzerAppTest {
 
   private WebTestClient webClient;
 
+  @Autowired
+  private TestWebhookBot testWebhookBot;
+
+  public static class TestConfig {
+    @Bean
+    public TestWebhookBot TestWebhookBot(CommandHandler commandHandler) {
+      return new TestWebhookBot(commandHandler);
+    }
+  }
+
   private static Stream<Arguments> arguments() {
     return Stream.of(
         Arguments.of("/start", (Consumer<EntityExchangeResult<byte[]>>) x -> {
           var bytes = x.getResponseBody();
           assertNotNull(bytes);
-          assertThat(new String(bytes), is(TestOps.res2str("data/start.json")));
+          assertThat(new String(bytes), is(res2str("data/start.json")));
         }),
         Arguments.of("/quote/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
           var bytes = x.getResponseBody();
           assertNotNull(bytes);
-          assertThat(new String(bytes), is(TestOps.res2str("data/quote.json")));
+          assertThat(new String(bytes), is(res2str("data/quote.json")));
         }),
         Arguments.of("/history/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
           var bytes = x.getResponseBody();
@@ -79,6 +103,31 @@ public class TickerAnalyzerAppTest {
     );
   }
 
+  private static Stream<Arguments> webhookArguments() {
+    return Stream.of(
+        Arguments.of(update(1L, "/quote/msft"), (Consumer<TestWebhookBot>) x -> {
+          SendChatAction a = x.get(0);
+          assertNotNull(a);
+          assertThat(a.getActionType(), is(ActionType.TYPING));
+          SendMessage sm = x.get(1);
+          assertThat(sm.getChatId(), is("1"));
+          assertThat(sm.getParseMode(), is("HTML"));
+          assertThat(sm.getText(), is(res2str("data/quote.html")));
+        })
+    );
+  }
+
+  private static Update update(Long chatId, String text) {
+    var chat = new Chat();
+    chat.setId(chatId);
+    var message = new Message();
+    message.setChat(chat);
+    message.setText(text);
+    var update = new Update();
+    update.setMessage(message);
+    return update;
+  }
+
   @BeforeEach
   public void before() {
     var baseUri = "http://localhost:" + port;
@@ -92,7 +141,7 @@ public class TickerAnalyzerAppTest {
 
   @ParameterizedTest
   @MethodSource("arguments")
-  public void test(String path, Consumer<EntityExchangeResult<byte[]>> func) {
+  public void testApi(String path, Consumer<EntityExchangeResult<byte[]>> func) {
     webClient
         .get().uri(path)
         .exchange()
@@ -100,5 +149,18 @@ public class TickerAnalyzerAppTest {
         .isOk()
         .expectBody()
         .consumeWith(func);
+  }
+
+  @ParameterizedTest
+  @MethodSource("webhookArguments")
+  public void testWebhook(Update update, Consumer<TestWebhookBot> func) {
+    webClient
+        .post().uri("/callback/webhook")
+        .body(BodyInserters.fromValue(update))
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .consumeWith(x -> func.accept(testWebhookBot));
   }
 }
