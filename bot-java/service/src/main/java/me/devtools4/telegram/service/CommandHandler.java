@@ -135,6 +135,10 @@ public class CommandHandler {
         answer = Optional.of("sma.html");
         break;
       }
+      case BLSH: {
+        answer = Optional.of("blsh.html");
+        break;
+      }
     }
     answer.ifPresent(x -> {
       try (var is = getClass().getClassLoader().getResourceAsStream(x)) {

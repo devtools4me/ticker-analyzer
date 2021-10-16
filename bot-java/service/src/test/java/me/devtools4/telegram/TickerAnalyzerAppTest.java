@@ -33,6 +33,8 @@ import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -56,47 +58,31 @@ public class TickerAnalyzerAppTest {
 
   private static Stream<Arguments> arguments() {
     return Stream.of(
-        Arguments.of("/start", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(new String(bytes), is(res2str("data/start.json")));
-        }),
-        Arguments.of("/quote/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(new String(bytes), is(res2str("data/quote.json")));
-        }),
-        Arguments.of("/history/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/history-1m.png")));
-        }),
-        Arguments.of("/history/1y/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/history-1y.png")));
-        }),
-        Arguments.of("/sma/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/sma-1m.png")));
-        }),
-        Arguments.of("/sma/1y/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/sma-1y.png")));
-        }),
-        Arguments.of("/blsh/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/blsh-1m.png")));
-        }),
-        Arguments.of("/blsh/1y/msft", (Consumer<EntityExchangeResult<byte[]>>) x -> {
-          var bytes = x.getResponseBody();
-          assertNotNull(bytes);
-          assertThat(bytes, is(TestOps.res2bytes("data/blsh-1y.png")));
-        })
+        Arguments.of("/start", checkApiStr("data/start.json")),
+        Arguments.of("/quote/msft", checkApiStr("data/quote.json")),
+        Arguments.of("/history/msft", checkApi("data/history-1m.png")),
+        Arguments.of("/history/1y/msft", checkApi("data/history-1y.png")),
+        Arguments.of("/sma/msft", checkApi("data/sma-1m.png")),
+        Arguments.of("/sma/1y/msft", checkApi("data/sma-1y.png")),
+        Arguments.of("/blsh/msft", checkApi("data/blsh-1m.png")),
+        Arguments.of("/blsh/1y/msft", checkApi("data/blsh-1y.png"))
     );
+  }
+
+  private static Consumer<EntityExchangeResult<byte[]>> checkApiStr(String file) {
+    return x -> {
+      var bytes = x.getResponseBody();
+      assertNotNull(bytes);
+      assertThat(new String(bytes), is(res2str(file)));
+    };
+  }
+
+  private static Consumer<EntityExchangeResult<byte[]>> checkApi(String file) {
+    return x -> {
+      var bytes = x.getResponseBody();
+      assertNotNull(bytes);
+      assertThat(bytes, is(res2bytes(file)));
+    };
   }
 
   private static Stream<Arguments> webhookArguments() {
@@ -109,15 +95,11 @@ public class TickerAnalyzerAppTest {
           assertThat(sm.getChatId(), is("1"));
           assertThat(sm.getText(), is("What would you like to receive?"));
         }),
-        Arguments.of(update(1L, "/quote/msft"), (Consumer<TestWebhookBot>) x -> {
-          SendChatAction a = x.get(0);
-          assertNotNull(a);
-          assertThat(a.getActionType(), is(ActionType.TYPING));
-          SendMessage sm = x.get(1);
-          assertThat(sm.getChatId(), is("1"));
-          assertThat(sm.getParseMode(), is("HTML"));
-          assertThat(sm.getText(), is(res2str("data/quote.html")));
-        }),
+        Arguments.of(update(1L, "/quote/msft"), checkMessage("1", "data/quote.html")),
+        Arguments.of(query(1L, 1,  "/quote"), checkEdit("1", 1, "quote.html")),
+        Arguments.of(query(1L, 1,  "/history"), checkEdit("1", 1, "history.html")),
+        Arguments.of(query(1L, 1,  "/sma"), checkEdit("1", 1, "sma.html")),
+        Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
         Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
         Arguments.of(update(1L, "/sma/msft"), checkPhoto("1", "data/sma-1m.png")),
@@ -125,6 +107,18 @@ public class TickerAnalyzerAppTest {
         Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
         Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );
+  }
+
+  private static Consumer<TestWebhookBot> checkMessage(String chatId, String file) {
+    return x -> {
+      SendChatAction a = x.get(0);
+      assertNotNull(a);
+      assertThat(a.getActionType(), is(ActionType.TYPING));
+      SendMessage sm = x.get(1);
+      assertThat(sm.getChatId(), is(chatId));
+      assertThat(sm.getParseMode(), is("HTML"));
+      assertThat(sm.getText(), is(res2str(file)));
+    };
   }
 
   private static Consumer<TestWebhookBot> checkPhoto(String chatId, String file) {
@@ -138,6 +132,17 @@ public class TickerAnalyzerAppTest {
     };
   }
 
+  private static Consumer<TestWebhookBot> checkEdit(String chatId, Integer messageId, String file) {
+    return x -> {
+      EditMessageText emt = x.get(0);
+      assertNotNull(emt);
+      assertThat(emt.getChatId(), is(chatId));
+      assertThat(emt.getMessageId(), is(messageId));
+      assertThat(emt.getParseMode(), is("HTML"));
+      assertThat(emt.getText(), is(res2str(file)));
+    };
+  }
+
   private static Update update(Long chatId, String text) {
     var chat = new Chat();
     chat.setId(chatId);
@@ -146,6 +151,20 @@ public class TickerAnalyzerAppTest {
     message.setText(text);
     var update = new Update();
     update.setMessage(message);
+    return update;
+  }
+
+  private static Update query(Long chatId, Integer messageId, String text) {
+    var chat = new Chat();
+    chat.setId(chatId);
+    var message = new Message();
+    message.setChat(chat);
+    message.setMessageId(messageId);
+    var q = new CallbackQuery();
+    q.setMessage(message);
+    q.setData(text);
+    var update = new Update();
+    update.setCallbackQuery(q);
     return update;
   }
 
