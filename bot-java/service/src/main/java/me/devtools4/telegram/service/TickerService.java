@@ -11,25 +11,27 @@ import static me.devtools4.telegram.api.TickerApi.SMA;
 import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.Quote;
 import com.yahoo.finanance.query1.Quote.QuoteType;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import me.devtools4.aops.annotations.Trace;
+import me.devtools4.telegram.api.Command;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.api.StartInfo;
 import me.devtools4.telegram.df.EtfRepository;
-import me.devtools4.telegram.df.Ohlcv;
 import me.devtools4.telegram.df.PngProps;
+import me.devtools4.telegram.df.chart.ChartStrategy;
 
 public class TickerService {
 
   private final Query1Api api;
   private final EtfRepository etfRepository;
+  private final Map<Command, ChartStrategy> strategies;
 
-  public TickerService(Query1Api api, EtfRepository etfRepository) {
+  public TickerService(Query1Api api, EtfRepository etfRepository, Map<Command, ChartStrategy> strategies) {
     this.api = api;
     this.etfRepository = etfRepository;
+    this.strategies = strategies;
   }
 
   private static String interval(Period period) {
@@ -85,18 +87,13 @@ public class TickerService {
         .collect(Collectors.toList());
     var res = api.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
-    var ohlcv = new Ohlcv(csv);
-    try (var os = new ByteArrayOutputStream()) {
-      ohlcv.png(os, PngProps.builder()
-          .rowKeyColumnName("Date")
-          .columnName("Adj Close")
-          .width(500)
-          .height(500)
-          .build());
-      return os.toByteArray();
-    } catch (IOException ex) {
-      throw new IllegalArgumentException(ex);
-    }
+    return strategies.get(Command.HISTORY)
+        .png(csv, PngProps.builder()
+            .rowKeyColumnName("Date")
+            .columnName("Adj Close")
+            .width(500)
+            .height(500)
+            .build());
   }
 
   @Trace(level = "INFO")
@@ -107,18 +104,13 @@ public class TickerService {
         .collect(Collectors.toList());
     var res = api.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
-    var ohlcv = new Ohlcv(csv);
-    try (var os = new ByteArrayOutputStream()) {
-      ohlcv.smaPng(os, PngProps.builder()
-          .rowKeyColumnName("Date")
-          .columnName("Adj Close")
-          .width(600)
-          .height(500)
-          .build());
-      return os.toByteArray();
-    } catch (IOException ex) {
-      throw new IllegalArgumentException(ex);
-    }
+    return strategies.get(Command.SMA)
+        .png(csv, PngProps.builder()
+            .rowKeyColumnName("Date")
+            .columnName("Adj Close")
+            .width(600)
+            .height(500)
+            .build());
   }
 
   @Trace(level = "INFO")
@@ -129,17 +121,12 @@ public class TickerService {
         .collect(Collectors.toList());
     var res = api.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
-    var ohlcv = new Ohlcv(csv);
-    try (var os = new ByteArrayOutputStream()) {
-      ohlcv.blshPng(os, PngProps.builder()
-          .rowKeyColumnName("Date")
-          .columnName("Adj Close")
-          .width(600)
-          .height(500)
-          .build());
-      return os.toByteArray();
-    } catch (IOException ex) {
-      throw new IllegalArgumentException(ex);
-    }
+    return strategies.get(Command.BLSH)
+        .png(csv, PngProps.builder()
+            .rowKeyColumnName("Date")
+            .columnName("Adj Close")
+            .width(600)
+            .height(500)
+            .build());
   }
 }

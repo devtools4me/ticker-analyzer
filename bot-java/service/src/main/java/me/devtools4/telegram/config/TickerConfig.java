@@ -1,12 +1,20 @@
 package me.devtools4.telegram.config;
 
+import static me.devtools4.telegram.api.Command.BLSH;
+import static me.devtools4.telegram.api.Command.HISTORY;
+import static me.devtools4.telegram.api.Command.SMA;
+
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.yahoo.finanance.query1.Query1Api;
 import java.io.FileInputStream;
+import java.util.Map;
 import me.devtools4.telegram.controller.TickerRequestInterceptor;
 import me.devtools4.telegram.df.EtfRepository;
+import me.devtools4.telegram.df.chart.BlshChartStrategy;
+import me.devtools4.telegram.df.chart.HistoryChartStrategy;
+import me.devtools4.telegram.df.chart.SmaChartStrategy;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
 import me.devtools4.telegram.service.StringToPeriodConverter;
@@ -37,7 +45,11 @@ public class TickerConfig {
 
   @Bean
   public TickerService tickerService(Query1Api query1Api, EtfRepository etfRepository) {
-    return new TickerService(query1Api, etfRepository);
+    return new TickerService(query1Api, etfRepository, Map.of(
+        HISTORY, new HistoryChartStrategy(),
+        SMA, new SmaChartStrategy(),
+        BLSH, new BlshChartStrategy()
+    ));
   }
 
   @Bean
