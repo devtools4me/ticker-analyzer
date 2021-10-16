@@ -18,13 +18,15 @@ public class TestOps {
   }
 
   public static byte[] res2bytes(String name) {
-    return withResource(name, x -> {
-      try {
-        return IOUtils.toByteArray(x);
-      } catch (IOException ex) {
-        throw new IllegalArgumentException(ex);
-      }
-    });
+    return withResource(name, x -> is2bytes(x));
+  }
+
+  public static byte[] is2bytes(InputStream x) {
+    try {
+      return IOUtils.toByteArray(x);
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
+    }
   }
 
   public static String res2str(String name) {

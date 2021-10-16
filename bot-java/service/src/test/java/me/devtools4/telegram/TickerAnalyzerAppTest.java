@@ -1,5 +1,7 @@
 package me.devtools4.telegram;
 
+import static me.devtools4.telegram.TestOps.is2bytes;
+import static me.devtools4.telegram.TestOps.res2bytes;
 import static me.devtools4.telegram.TestOps.res2str;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +32,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -50,13 +53,6 @@ public class TickerAnalyzerAppTest {
 
   @Autowired
   private TestWebhookBot testWebhookBot;
-
-  public static class TestConfig {
-    @Bean
-    public TestWebhookBot TestWebhookBot(CommandHandler commandHandler) {
-      return new TestWebhookBot(commandHandler);
-    }
-  }
 
   private static Stream<Arguments> arguments() {
     return Stream.of(
@@ -105,6 +101,14 @@ public class TickerAnalyzerAppTest {
 
   private static Stream<Arguments> webhookArguments() {
     return Stream.of(
+        Arguments.of(update(1L, "/start"), (Consumer<TestWebhookBot>) x -> {
+          SendChatAction a = x.get(0);
+          assertNotNull(a);
+          assertThat(a.getActionType(), is(ActionType.TYPING));
+          SendMessage sm = x.get(1);
+          assertThat(sm.getChatId(), is("1"));
+          assertThat(sm.getText(), is("What would you like to receive?"));
+        }),
         Arguments.of(update(1L, "/quote/msft"), (Consumer<TestWebhookBot>) x -> {
           SendChatAction a = x.get(0);
           assertNotNull(a);
@@ -113,8 +117,25 @@ public class TickerAnalyzerAppTest {
           assertThat(sm.getChatId(), is("1"));
           assertThat(sm.getParseMode(), is("HTML"));
           assertThat(sm.getText(), is(res2str("data/quote.html")));
-        })
+        }),
+        Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
+        Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
+        Arguments.of(update(1L, "/sma/msft"), checkPhoto("1", "data/sma-1m.png")),
+        Arguments.of(update(1L, "/sma/1y/msft"), checkPhoto("1", "data/sma-1y.png")),
+        Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
+        Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );
+  }
+
+  private static Consumer<TestWebhookBot> checkPhoto(String chatId, String file) {
+    return x -> {
+      SendChatAction a = x.get(0);
+      assertNotNull(a);
+      assertThat(a.getActionType(), is(ActionType.TYPING));
+      SendPhoto sm = x.get(1);
+      assertThat(sm.getChatId(), is(chatId));
+      assertThat(is2bytes(sm.getPhoto().getNewMediaStream()), is(res2bytes(file)));
+    };
   }
 
   private static Update update(Long chatId, String text) {
@@ -137,6 +158,8 @@ public class TickerAnalyzerAppTest {
         .responseTimeout(Duration.ofSeconds(10))
         .baseUrl(baseUri)
         .build();
+
+    testWebhookBot.clear();
   }
 
   @ParameterizedTest
@@ -162,5 +185,13 @@ public class TickerAnalyzerAppTest {
         .isOk()
         .expectBody()
         .consumeWith(x -> func.accept(testWebhookBot));
+  }
+
+  public static class TestConfig {
+
+    @Bean
+    public TestWebhookBot TestWebhookBot(CommandHandler commandHandler) {
+      return new TestWebhookBot(commandHandler);
+    }
   }
 }
