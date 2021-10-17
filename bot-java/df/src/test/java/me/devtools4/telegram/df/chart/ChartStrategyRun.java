@@ -9,10 +9,10 @@ import org.apache.commons.io.IOUtils;
 public class ChartStrategyRun {
 
   public static void main(String[] args) throws IOException {
+    var strategy = new EmaChartStrategy();
     try (var is = ChartStrategyRun.class.getClassLoader().getResourceAsStream("QCOM.csv");
         var os = new FileOutputStream("test.png", false)) {
       var csv = IOUtils.toString(is, Charset.defaultCharset());
-      var strategy = new SmaChartStrategy();
       strategy.png(csv, PngProps.builder()
           .rowKeyColumnName("Date")
           .columnName("Adj Close")

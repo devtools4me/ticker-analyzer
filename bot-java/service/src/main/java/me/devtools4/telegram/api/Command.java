@@ -1,5 +1,6 @@
 package me.devtools4.telegram.api;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,25 +17,47 @@ public enum Command {
   HISTORY("/history") {
     @Override
     public Map<String, String> params(String text) {
-      return Ops.params(text, Command.historyPatterns, HISTORY);
+      return Ops.params(text, periodPatterns(), HISTORY);
+    }
+
+    @Override
+    public List<String> periodPatterns() {
+      return Ops.periodPatterns(HISTORY);
     }
   },
   SMA("/sma") {
     @Override
     public Map<String, String> params(String text) {
-      return Ops.params(text, Command.smaPatterns, SMA);
+      return Ops.params(text, periodPatterns(), SMA);
+    }
+
+    @Override
+    public List<String> periodPatterns() {
+      return Ops.periodPatterns(SMA);
+    }
+  },
+  EMA("/ema") {
+    @Override
+    public Map<String, String> params(String text) {
+      return Ops.params(text, periodPatterns(), EMA);
+    }
+
+    @Override
+    public List<String> periodPatterns() {
+      return Ops.periodPatterns(EMA);
     }
   },
   BLSH("/blsh") {
     @Override
     public Map<String, String> params(String text) {
-      return Ops.params(text, Command.blshPatterns, BLSH);
+      return Ops.params(text, periodPatterns(), BLSH);
+    }
+
+    @Override
+    public List<String> periodPatterns() {
+      return Ops.periodPatterns(BLSH);
     }
   };
-
-  private static final List<String> historyPatterns = Ops.periodPatterns(HISTORY);
-  private static final List<String> smaPatterns = Ops.periodPatterns(SMA);
-  private static final List<String> blshPatterns = Ops.periodPatterns(BLSH);
 
   private final String path;
 
@@ -54,19 +77,18 @@ public enum Command {
     return this == other;
   }
 
+  public Boolean is(String text) {
+    return periodPatterns().stream().anyMatch(text::startsWith) || text.startsWith(getPath());
+  }
+
+  public List<String> periodPatterns() {
+    return Collections.emptyList();
+  }
+
   public static Command of(String text) {
-    if (text.startsWith(START.getPath())) {
-      return START;
-    } else if (text.startsWith(QUOTE.getPath())) {
-      return QUOTE;
-    } else if (historyPatterns.stream().anyMatch(text::startsWith) || text.startsWith(HISTORY.getPath())) {
-      return HISTORY;
-    } else if (smaPatterns.stream().anyMatch(text::startsWith) || text.startsWith(SMA.getPath())) {
-      return SMA;
-    } else if (blshPatterns.stream().anyMatch(text::startsWith) || text.startsWith(BLSH.getPath())) {
-      return BLSH;
-    } else {
-      return UNKNOWN;
-    }
+    return Arrays.stream(Command.values())
+        .filter(x -> x.is(text))
+        .findFirst()
+        .orElse(Command.UNKNOWN);
   }
 }
