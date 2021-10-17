@@ -72,7 +72,7 @@ public class CommandHandler {
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.history(id, period);
+          var bytes = service.png(Command.HISTORY, id, period);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
@@ -84,7 +84,7 @@ public class CommandHandler {
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.sma(id, period);
+          var bytes = service.png(Command.SMA, id, period);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
@@ -96,7 +96,7 @@ public class CommandHandler {
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.blsh(id, period);
+          var bytes = service.png(Command.BLSH, id, period);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));

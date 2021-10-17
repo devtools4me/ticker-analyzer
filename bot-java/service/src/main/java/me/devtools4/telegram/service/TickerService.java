@@ -13,6 +13,7 @@ import com.yahoo.finanance.query1.Quote;
 import com.yahoo.finanance.query1.Quote.QuoteType;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
@@ -80,53 +81,24 @@ public class TickerService {
   }
 
   @Trace(level = "INFO")
-  public byte[] history(String id, Period period) {
+  public byte[] png(Command cmd, String id, Period period) {
     var times = period.times()
         .stream()
         .map(Query1Api::timestamp)
         .collect(Collectors.toList());
     var res = api.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
-    return strategies.get(Command.HISTORY)
-        .png(csv, PngProps.builder()
-            .rowKeyColumnName("Date")
-            .columnName("Adj Close")
-            .width(500)
-            .height(500)
-            .build());
+    return Optional.ofNullable(strategies.get(cmd))
+        .orElseThrow(() -> new IllegalArgumentException("No strategy, cmd=" + cmd))
+        .png(csv, pngProps(cmd));
   }
 
-  @Trace(level = "INFO")
-  public byte[] sma(String id, Period period) {
-    var times = period.times()
-        .stream()
-        .map(Query1Api::timestamp)
-        .collect(Collectors.toList());
-    var res = api.download(id, interval(period), times.get(0), times.get(1));
-    var csv = bodyAsString(res);
-    return strategies.get(Command.SMA)
-        .png(csv, PngProps.builder()
-            .rowKeyColumnName("Date")
-            .columnName("Adj Close")
-            .width(600)
-            .height(500)
-            .build());
-  }
-
-  @Trace(level = "INFO")
-  public byte[] blsh(String id, Period period) {
-    var times = period.times()
-        .stream()
-        .map(Query1Api::timestamp)
-        .collect(Collectors.toList());
-    var res = api.download(id, interval(period), times.get(0), times.get(1));
-    var csv = bodyAsString(res);
-    return strategies.get(Command.BLSH)
-        .png(csv, PngProps.builder()
-            .rowKeyColumnName("Date")
-            .columnName("Adj Close")
-            .width(600)
-            .height(500)
-            .build());
+  private static PngProps pngProps(Command cmd) {
+    return PngProps.builder()
+        .rowKeyColumnName("Date")
+        .columnName("Adj Close")
+        .width(cmd.is(Command.HISTORY) ? 500 : 600)
+        .height(500)
+        .build();
   }
 }

@@ -2,6 +2,7 @@ package me.devtools4.telegram.controller;
 
 import com.yahoo.finanance.query1.Quote;
 import java.util.List;
+import me.devtools4.telegram.api.Command;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.api.StartInfo;
 import me.devtools4.telegram.api.TickerApi;
@@ -39,37 +40,37 @@ public class TickerController implements TickerApi {
   @Override
   @GetMapping(TickerApi.HISTORY_ID)
   public ResponseEntity<Resource> history(@PathVariable("id") String id) {
-    return ok(id, service.history(id, Period.OneMonth));
+    return ok(id, service.png(Command.HISTORY, id, Period.OneMonth));
   }
 
   @Override
   @GetMapping(TickerApi.HISTORY_PERIOD_ID)
   public ResponseEntity<Resource> history(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.history(id, period));
+    return ok(id, service.png(Command.HISTORY, id, period));
   }
 
   @Override
   @GetMapping(TickerApi.SMA_ID)
   public ResponseEntity<Resource> sma(@PathVariable("id") String id) {
-    return ok(id, service.sma(id, Period.OneMonth));
+    return ok(id, service.png(Command.SMA, id, Period.OneMonth));
   }
 
   @Override
   @GetMapping(TickerApi.SMA_PERIOD_ID)
   public ResponseEntity<Resource> sma(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.sma(id, period));
+    return ok(id, service.png(Command.SMA, id, period));
   }
 
   @Override
   @GetMapping(TickerApi.BLSH_ID)
   public ResponseEntity<Resource> blsh(@PathVariable("id") String id) {
-    return ok(id, service.blsh(id, Period.OneMonth));
+    return ok(id, service.png(Command.BLSH, id, Period.OneMonth));
   }
 
   @Override
   @GetMapping(TickerApi.BLSH_PERIOD_ID)
   public ResponseEntity<Resource> blsh(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.blsh(id, period));
+    return ok(id, service.png(Command.BLSH, id, period));
   }
 
   private static ResponseEntity<Resource> ok(String id, byte[] bytes) {

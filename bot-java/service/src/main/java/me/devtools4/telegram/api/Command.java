@@ -50,6 +50,10 @@ public enum Command {
     return Collections.emptyMap();
   }
 
+  public Boolean is(Command other) {
+    return this == other;
+  }
+
   public static Command of(String text) {
     if (text.startsWith(START.getPath())) {
       return START;
