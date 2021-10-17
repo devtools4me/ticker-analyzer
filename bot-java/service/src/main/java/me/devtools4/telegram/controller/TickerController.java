@@ -38,39 +38,20 @@ public class TickerController implements TickerApi {
   }
 
   @Override
-  @GetMapping(TickerApi.HISTORY_ID)
-  public ResponseEntity<Resource> history(@PathVariable("id") String id) {
-    return ok(id, service.png(Command.HISTORY, id, Period.OneMonth));
+  @GetMapping(TickerApi.STRATEGY_ID)
+  public ResponseEntity<Resource> strategy(@PathVariable("strategy") String strategy,
+      @PathVariable("id") String id)
+  {
+    return ok(id, service.png(Command.of(strategy), id, Period.OneMonth));
   }
 
   @Override
-  @GetMapping(TickerApi.HISTORY_PERIOD_ID)
-  public ResponseEntity<Resource> history(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.png(Command.HISTORY, id, period));
-  }
-
-  @Override
-  @GetMapping(TickerApi.SMA_ID)
-  public ResponseEntity<Resource> sma(@PathVariable("id") String id) {
-    return ok(id, service.png(Command.SMA, id, Period.OneMonth));
-  }
-
-  @Override
-  @GetMapping(TickerApi.SMA_PERIOD_ID)
-  public ResponseEntity<Resource> sma(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.png(Command.SMA, id, period));
-  }
-
-  @Override
-  @GetMapping(TickerApi.BLSH_ID)
-  public ResponseEntity<Resource> blsh(@PathVariable("id") String id) {
-    return ok(id, service.png(Command.BLSH, id, Period.OneMonth));
-  }
-
-  @Override
-  @GetMapping(TickerApi.BLSH_PERIOD_ID)
-  public ResponseEntity<Resource> blsh(@PathVariable("id") String id, @PathVariable("period") Period period) {
-    return ok(id, service.png(Command.BLSH, id, period));
+  @GetMapping(TickerApi.STRATEGY_PERIOD_ID)
+  public ResponseEntity<Resource> strategy(@PathVariable("strategy") String strategy,
+      @PathVariable("id") String id,
+      @PathVariable("period") Period period)
+  {
+    return ok(id, service.png(Command.of(strategy), id, period));
   }
 
   private static ResponseEntity<Resource> ok(String id, byte[] bytes) {

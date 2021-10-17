@@ -64,6 +64,8 @@ public class TickerAnalyzerAppTest {
         Arguments.of("/history/1y/msft", checkApi("data/history-1y.png")),
         Arguments.of("/sma/msft", checkApi("data/sma-1m.png")),
         Arguments.of("/sma/1y/msft", checkApi("data/sma-1y.png")),
+        Arguments.of("/ema/msft", checkApi("data/ema-1m.png")),
+        Arguments.of("/ema/1y/msft", checkApi("data/ema-1y.png")),
         Arguments.of("/blsh/msft", checkApi("data/blsh-1m.png")),
         Arguments.of("/blsh/1y/msft", checkApi("data/blsh-1y.png"))
     );
@@ -99,11 +101,14 @@ public class TickerAnalyzerAppTest {
         Arguments.of(query(1L, 1,  "/quote"), checkEdit("1", 1, "quote.html")),
         Arguments.of(query(1L, 1,  "/history"), checkEdit("1", 1, "history.html")),
         Arguments.of(query(1L, 1,  "/sma"), checkEdit("1", 1, "sma.html")),
+        Arguments.of(query(1L, 1,  "/ema"), checkEdit("1", 1, "ema.html")),
         Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
         Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
         Arguments.of(update(1L, "/sma/msft"), checkPhoto("1", "data/sma-1m.png")),
         Arguments.of(update(1L, "/sma/1y/msft"), checkPhoto("1", "data/sma-1y.png")),
+        Arguments.of(update(1L, "/ema/msft"), checkPhoto("1", "data/ema-1m.png")),
+        Arguments.of(update(1L, "/ema/1y/msft"), checkPhoto("1", "data/ema-1y.png")),
         Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
         Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );

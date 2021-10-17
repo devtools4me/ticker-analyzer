@@ -78,7 +78,9 @@ public enum Command {
   }
 
   public Boolean is(String text) {
-    return periodPatterns().stream().anyMatch(text::startsWith) || text.startsWith(getPath());
+    return periodPatterns().stream().anyMatch(text::startsWith) ||
+        text.startsWith(getPath()) ||
+        ("/" + text).startsWith(getPath());
   }
 
   public List<String> periodPatterns() {

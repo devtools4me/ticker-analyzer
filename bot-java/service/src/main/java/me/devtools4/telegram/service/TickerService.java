@@ -3,14 +3,11 @@ package me.devtools4.telegram.service;
 import static com.yahoo.finanance.query1.Query1Api.DAY;
 import static com.yahoo.finanance.query1.Query1Api.WEEK;
 import static com.yahoo.finanance.query1.Query1Api.bodyAsString;
-import static me.devtools4.telegram.api.TickerApi.BLSH;
-import static me.devtools4.telegram.api.TickerApi.HISTORY;
-import static me.devtools4.telegram.api.TickerApi.QUOTE;
-import static me.devtools4.telegram.api.TickerApi.SMA;
 
 import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.Quote;
 import com.yahoo.finanance.query1.Quote.QuoteType;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,12 +49,11 @@ public class TickerService {
   }
 
   public List<StartInfo> start() {
-    return List.of(
-        StartInfo.of(QUOTE, QUOTE),
-        StartInfo.of(HISTORY, HISTORY),
-        StartInfo.of(SMA, SMA),
-        StartInfo.of(BLSH, BLSH)
-    );
+    return Arrays.stream(Command.values())
+        .filter(x -> !Command.START.is(x) && !Command.UNKNOWN.is(x))
+        .map(Command::getPath)
+        .map(x -> StartInfo.of(x, x))
+        .collect(Collectors.toList());
   }
 
   @Trace(level = "INFO")

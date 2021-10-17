@@ -67,36 +67,15 @@ public class CommandHandler {
           consumer.accept(message);
           break;
         }
-        case HISTORY: {
-          var id = params.get("id");
-          var period = params.containsKey("period") ?
-              Period.convert(params.get("period")) :
-              Period.OneMonth;
-          var bytes = service.png(Command.HISTORY, id, period);
-          var message = new SendPhoto();
-          message.setChatId(chatId);
-          message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
-          consumer.accept(message);
-          break;
-        }
-        case SMA: {
-          var id = params.get("id");
-          var period = params.containsKey("period") ?
-              Period.convert(params.get("period")) :
-              Period.OneMonth;
-          var bytes = service.png(Command.SMA, id, period);
-          var message = new SendPhoto();
-          message.setChatId(chatId);
-          message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
-          consumer.accept(message);
-          break;
-        }
+        case HISTORY:
+        case SMA:
+        case EMA:
         case BLSH: {
           var id = params.get("id");
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.png(Command.BLSH, id, period);
+          var bytes = service.png(cmd, id, period);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
@@ -104,7 +83,7 @@ public class CommandHandler {
           break;
         }
         default:
-          throw new IllegalArgumentException("cmd=" + cmd + ", text=" + text);
+          throw new IllegalArgumentException("Unsupported cmd=" + cmd + ", text=" + text);
       }
     } catch (Throwable ex) {
       log.warn("Error: {}", ex.getMessage(), ex);
@@ -120,38 +99,21 @@ public class CommandHandler {
 
   @Trace(level = "INFO")
   public void query(String chatId, Integer messageId, String data, ApiMethodConsumer consumer) {
-    Optional<String> answer = Optional.empty();
-    var cmd = Command.of(data);
-    switch (cmd) {
-      case QUOTE: {
-        answer = Optional.of("quote.html");
-        break;
-      }
-      case HISTORY: {
-        answer = Optional.of("history.html");
-        break;
-      }
-      case SMA: {
-        answer = Optional.of("sma.html");
-        break;
-      }
-      case BLSH: {
-        answer = Optional.of("blsh.html");
-        break;
-      }
-    }
-    answer.ifPresent(x -> {
-      try (var is = getClass().getClassLoader().getResourceAsStream(x)) {
-        var message = EditMessageText.builder()
-            .chatId(chatId)
-            .messageId(messageId)
-            .text(IOUtils.toString(is, Charset.defaultCharset()))
-            .parseMode("HTML")
-            .build();
-        consumer.accept(message);
-      } catch (Exception ex) {
-        log.warn("{}, error={}", x, ex.getMessage(), ex);
-      }
-    });
+    Optional.of(Command.of(data))
+        .filter(x -> !Command.START.is(x) && !Command.UNKNOWN.is(x))
+        .map(x -> x.getPath().replace("/", "") + ".html")
+        .ifPresent(x -> {
+          try (var is = getClass().getClassLoader().getResourceAsStream(x)) {
+            var message = EditMessageText.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .text(IOUtils.toString(is, Charset.defaultCharset()))
+                .parseMode("HTML")
+                .build();
+            consumer.accept(message);
+          } catch (Exception ex) {
+            log.warn("{}, error={}", x, ex.getMessage(), ex);
+          }
+        });
   }
 }
