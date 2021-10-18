@@ -1,11 +1,11 @@
 package com.yahoo.finance.query1;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.dslplatform.json.DslJson;
 import com.yahoo.finanance.query1.QuoteResponseResponse;
 import java.io.IOException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DslJsonTest {
 

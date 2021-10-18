@@ -1,10 +1,10 @@
 package me.devtools4.telegram.df;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class EtfRepositoryTest {
 
@@ -19,7 +19,7 @@ public class EtfRepositoryTest {
 
   private EtfRepository sut;
 
-  @Before
+  @BeforeEach
   public void before() {
     sut = EtfRepository.of(CSV);
   }
