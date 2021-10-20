@@ -45,6 +45,7 @@
     <java.version>11</java.version>
     <junit-jupiter.version>5.7.2</junit-jupiter.version>
     <hamcrest.version>2.2</hamcrest.version>
+    <lombok.version>1.18.22</lombok.version>
   </properties>
 
   <dependencyManagement>
@@ -62,7 +63,7 @@
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.18.0</version>
+        <version>${lombok.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
