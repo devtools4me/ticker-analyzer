@@ -75,7 +75,7 @@ public class CommandHandler {
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.png(cmd, id, period);
+          var bytes = service.png(cmd, id, period, null);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));

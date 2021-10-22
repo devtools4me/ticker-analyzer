@@ -47,6 +47,17 @@ public enum Command {
       return Ops.periodPatterns(EMA);
     }
   },
+  APO("/apo") {
+    @Override
+    public Map<String, String> params(String text) {
+      return Ops.params(text, periodPatterns(), APO);
+    }
+
+    @Override
+    public List<String> periodPatterns() {
+      return Ops.periodPatterns(APO);
+    }
+  },
   BLSH("/blsh") {
     @Override
     public Map<String, String> params(String text) {
@@ -78,9 +89,11 @@ public enum Command {
   }
 
   public Boolean is(String text) {
-    return periodPatterns().stream().anyMatch(text::startsWith) ||
-        text.startsWith(getPath()) ||
-        ("/" + text).startsWith(getPath());
+    return periodPatterns().stream().anyMatch(text::startsWith) || startWith(text);
+  }
+
+  private boolean startWith(String text) {
+    return text.startsWith(getPath()) || ("/" + text).startsWith(getPath());
   }
 
   public List<String> periodPatterns() {

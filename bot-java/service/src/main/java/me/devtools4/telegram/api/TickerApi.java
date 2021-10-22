@@ -17,7 +17,7 @@ public interface TickerApi {
 
   Quote quote(String id);
 
-  ResponseEntity<Resource> strategy(String strategy, String id);
+  ResponseEntity<Resource> strategy(String strategy, String id, Indicator indicator);
 
-  ResponseEntity<Resource> strategy(String strategy, String id, Period period);
+  ResponseEntity<Resource> strategy(String strategy, String id, Period period, Indicator indicator);
 }

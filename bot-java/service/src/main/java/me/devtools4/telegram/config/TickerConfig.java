@@ -1,5 +1,6 @@
 package me.devtools4.telegram.config;
 
+import static me.devtools4.telegram.api.Command.APO;
 import static me.devtools4.telegram.api.Command.BLSH;
 import static me.devtools4.telegram.api.Command.EMA;
 import static me.devtools4.telegram.api.Command.HISTORY;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.util.Map;
 import me.devtools4.telegram.controller.TickerRequestInterceptor;
 import me.devtools4.telegram.df.EtfRepository;
+import me.devtools4.telegram.df.chart.ApoChartStrategy;
 import me.devtools4.telegram.df.chart.BlshChartStrategy;
 import me.devtools4.telegram.df.chart.EmaChartStrategy;
 import me.devtools4.telegram.df.chart.HistoryChartStrategy;
@@ -51,6 +53,7 @@ public class TickerConfig {
         HISTORY, new HistoryChartStrategy(),
         SMA, new SmaChartStrategy(),
         EMA, new EmaChartStrategy(),
+        APO, new ApoChartStrategy(),
         BLSH, new BlshChartStrategy()
     ));
   }

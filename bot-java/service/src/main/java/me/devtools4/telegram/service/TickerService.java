@@ -14,11 +14,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
+import me.devtools4.telegram.api.Indicator;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.api.StartInfo;
 import me.devtools4.telegram.df.EtfRepository;
 import me.devtools4.telegram.df.PngProps;
 import me.devtools4.telegram.df.chart.ChartStrategy;
+import me.devtools4.telegram.df.chart.JoinChartStrategy;
 
 public class TickerService {
 
@@ -77,16 +79,27 @@ public class TickerService {
   }
 
   @Trace(level = "INFO")
-  public byte[] png(Command cmd, String id, Period period) {
+  public byte[] png(Command cmd, String id, Period period, Indicator indicator) {
     var times = period.times()
         .stream()
         .map(Query1Api::timestamp)
         .collect(Collectors.toList());
     var res = api.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
-    return Optional.ofNullable(strategies.get(cmd))
-        .orElseThrow(() -> new IllegalArgumentException("No strategy, cmd=" + cmd))
+    return strategy(cmd, indicator)
         .png(csv, pngProps(cmd));
+  }
+
+  private ChartStrategy strategy(Command cmd, Indicator indicator) {
+    var s1 = Optional.ofNullable(strategies.get(cmd))
+        .orElseThrow(() -> new IllegalArgumentException("No strategy, cmd=" + cmd));
+    return Optional.ofNullable(indicator)
+        .map(Enum::name)
+        .map(String::toLowerCase)
+        .map(Command::of)
+        .map(strategies::get)
+        .map(x -> (ChartStrategy) new JoinChartStrategy(s1, x))
+        .orElse(s1);
   }
 
   private static PngProps pngProps(Command cmd) {

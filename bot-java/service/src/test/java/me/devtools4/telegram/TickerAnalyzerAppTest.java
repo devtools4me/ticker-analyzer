@@ -1,5 +1,6 @@
 package me.devtools4.telegram;
 
+import static me.devtools4.telegram.TestOps.bytes2file;
 import static me.devtools4.telegram.TestOps.is2bytes;
 import static me.devtools4.telegram.TestOps.res2bytes;
 import static me.devtools4.telegram.TestOps.res2str;
@@ -10,6 +11,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import com.yahoo.finanance.query1.Query1ApiController;
 import java.time.Duration;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -58,16 +60,18 @@ public class TickerAnalyzerAppTest {
 
   private static Stream<Arguments> arguments() {
     return Stream.of(
-        Arguments.of("/start", checkApiStr("data/start.json")),
-        Arguments.of("/quote/msft", checkApiStr("data/quote.json")),
-        Arguments.of("/history/msft", checkApi("data/history-1m.png")),
-        Arguments.of("/history/1y/msft", checkApi("data/history-1y.png")),
-        Arguments.of("/sma/msft", checkApi("data/sma-1m.png")),
-        Arguments.of("/sma/1y/msft", checkApi("data/sma-1y.png")),
-        Arguments.of("/ema/msft", checkApi("data/ema-1m.png")),
-        Arguments.of("/ema/1y/msft", checkApi("data/ema-1y.png")),
-        Arguments.of("/blsh/msft", checkApi("data/blsh-1m.png")),
-        Arguments.of("/blsh/1y/msft", checkApi("data/blsh-1y.png"))
+        Arguments.of("/start",          Map.of(),                   checkApiStr("data/start.json")),
+        Arguments.of("/quote/msft",     Map.of(),                   checkApiStr("data/quote.json")),
+        Arguments.of("/history/msft",   Map.of(),                   checkApi("data/history-1m.png")),
+        Arguments.of("/history/1y/msft",Map.of(),                   checkApi("data/history-1y.png")),
+        Arguments.of("/sma/msft",       Map.of(),                   checkApi("data/sma-1m.png")),
+        Arguments.of("/sma/1y/msft",    Map.of(),                   checkApi("data/sma-1y.png")),
+        Arguments.of("/ema/msft",       Map.of(),                   checkApi("data/ema-1m.png")),
+        Arguments.of("/ema/1y/msft",    Map.of(),                   checkApi("data/ema-1y.png")),
+        Arguments.of("/ema/msft",       Map.of("i", "APO"), checkApi("data/ema-apo-1m.png")),
+        Arguments.of("/ema/1y/msft",    Map.of("i", "APO"), checkApi("data/ema-apo-1y.png")),
+        Arguments.of("/blsh/msft",      Map.of(),                   checkApi("data/blsh-1m.png")),
+        Arguments.of("/blsh/1y/msft",   Map.of(),                   checkApi("data/blsh-1y.png"))
     );
   }
 
@@ -188,9 +192,15 @@ public class TickerAnalyzerAppTest {
 
   @ParameterizedTest
   @MethodSource("arguments")
-  public void testApi(String path, Consumer<EntityExchangeResult<byte[]>> func) {
+  public void testApi(String path, Map<String, String> params, Consumer<EntityExchangeResult<byte[]>> func) {
     webClient
-        .get().uri(path)
+        .get()
+        .uri(ub -> {
+          params.forEach(ub::queryParam);
+          return ub
+              .path(path)
+              .build();
+        })
         .exchange()
         .expectStatus()
         .isOk()
