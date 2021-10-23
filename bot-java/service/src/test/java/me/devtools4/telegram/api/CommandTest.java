@@ -13,15 +13,18 @@ public class CommandTest {
   @ParameterizedTest
   @CsvSource(value = {
       "/start:/start:",
-      "/quote/msft:/quote:id=msft",
-      "/history/msft:/history:id=msft",
-      "/history/1y/msft:/history:id=msft,period=1y",
-      "/sma/msft:/sma:id=msft",
-      "/sma/1y/msft:/sma:id=msft,period=1y",
-      "/ema/msft:/ema:id=msft",
-      "/ema/1y/msft:/ema:id=msft,period=1y",
-      "/blsh/msft:/blsh:id=msft",
-      "/blsh/1y/msft:/blsh:id=msft,period=1y",
+      "/quote/msft:/quote:cmd=quote,id=msft",
+      "/history/msft:/history:cmd=history,id=msft",
+      "/history/1y/msft:/history:cmd=history,id=msft,period=1y",
+      "/sma/msft:/sma:cmd=sma,id=msft",
+      "/sma/1y/msft:/sma:cmd=sma,id=msft,period=1y",
+      "/ema/msft:/ema:cmd=ema,id=msft",
+      "/ema/1y/msft:/ema:cmd=ema,id=msft,period=1y",
+      "/apo/msft:/apo:cmd=apo,id=msft",
+      "/apo/1y/msft:/apo:cmd=apo,id=msft,period=1y",
+      "/ema/msft?i=APO:/ema:cmd=ema,id=msft,indicator=APO",
+      "/blsh/msft:/blsh:cmd=blsh,id=msft",
+      "/blsh/1y/msft:/blsh:cmd=blsh,id=msft,period=1y",
       "/error:unknown:"
   }, delimiter = ':')
   public void testCommand(String text, String expected, String params) {
@@ -31,7 +34,7 @@ public class CommandTest {
     Optional.ofNullable(params)
         .filter(StringUtils::isNotBlank)
         .ifPresent(x -> {
-          assertThat(cmd.params(text), is(Ops.params(params)));
+          assertThat(Command.params(text), is(Ops.params(params)));
         });
   }
 }

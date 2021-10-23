@@ -33,8 +33,8 @@ public class TestOps {
     return withResource(name, x -> {
       try {
         return IOUtils.toString(x, Charset.defaultCharset());
-      } catch (IOException ex) {
-        throw new IllegalArgumentException(ex);
+      } catch (Exception ex) {
+        throw new IllegalArgumentException("read resource error, name=" + name, ex);
       }
     });
   }

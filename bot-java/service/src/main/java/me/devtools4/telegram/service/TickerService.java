@@ -95,8 +95,7 @@ public class TickerService {
         .orElseThrow(() -> new IllegalArgumentException("No strategy, cmd=" + cmd));
     return Optional.ofNullable(indicator)
         .map(Enum::name)
-        .map(String::toLowerCase)
-        .map(Command::of)
+        .map(Command::valueOf)
         .map(strategies::get)
         .map(x -> (ChartStrategy) new JoinChartStrategy(s1, x))
         .orElse(s1);

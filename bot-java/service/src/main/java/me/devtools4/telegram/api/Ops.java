@@ -1,6 +1,7 @@
 package me.devtools4.telegram.api;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,15 +16,20 @@ public class Ops {
         .map(x -> {
           var period = Period.convert(x.replace(command.getPath() + "/", ""));
           var id = text.replace(x + "/", "");
-          return Map.of(
-              "id", id,
-              "period", period.getPeriod()
-          );
+          var map = parseIdAndParams(id);
+          map.put("period", period.getPeriod());
+          return map;
         })
         .orElseGet(() -> {
           var id = text.replace(command.getPath() + "/", "");
-          return Map.of("id", id);
+          return parseIdAndParams(id);
         });
+  }
+
+  private static Map<String, String> parseIdAndParams(String text) {
+    var map = new HashMap<String, String>();
+    map.put("id", text);
+    return map;
   }
 
   public static Map<String, String> params(String text) {

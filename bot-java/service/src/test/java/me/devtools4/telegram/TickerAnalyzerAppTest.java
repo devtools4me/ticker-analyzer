@@ -1,6 +1,5 @@
 package me.devtools4.telegram;
 
-import static me.devtools4.telegram.TestOps.bytes2file;
 import static me.devtools4.telegram.TestOps.is2bytes;
 import static me.devtools4.telegram.TestOps.res2bytes;
 import static me.devtools4.telegram.TestOps.res2str;
@@ -106,6 +105,7 @@ public class TickerAnalyzerAppTest {
         Arguments.of(query(1L, 1,  "/history"), checkEdit("1", 1, "history.html")),
         Arguments.of(query(1L, 1,  "/sma"), checkEdit("1", 1, "sma.html")),
         Arguments.of(query(1L, 1,  "/ema"), checkEdit("1", 1, "ema.html")),
+        Arguments.of(query(1L, 1,  "/apo"), checkEdit("1", 1, "apo.html")),
         Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
         Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
@@ -113,6 +113,8 @@ public class TickerAnalyzerAppTest {
         Arguments.of(update(1L, "/sma/1y/msft"), checkPhoto("1", "data/sma-1y.png")),
         Arguments.of(update(1L, "/ema/msft"), checkPhoto("1", "data/ema-1m.png")),
         Arguments.of(update(1L, "/ema/1y/msft"), checkPhoto("1", "data/ema-1y.png")),
+        Arguments.of(update(1L, "/ema/msft?i=APO"), checkPhoto("1", "data/ema-apo-1m.png")),
+        Arguments.of(update(1L, "/ema/1y/msft?i=APO"), checkPhoto("1", "data/ema-apo-1y.png")),
         Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
         Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );

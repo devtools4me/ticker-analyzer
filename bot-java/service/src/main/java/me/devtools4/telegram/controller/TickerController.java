@@ -41,11 +41,12 @@ public class TickerController implements TickerApi {
 
   @Override
   @GetMapping(TickerApi.STRATEGY_ID)
-  public ResponseEntity<Resource> strategy(@PathVariable("strategy") String strategy,
+  public ResponseEntity<Resource> strategy(
+      @PathVariable("strategy") String strategy,
       @PathVariable("id") String id,
       @RequestParam(name = "i", required = false) Indicator indicator)
   {
-    return ok(id, service.png(Command.of(strategy), id, Period.OneMonth, indicator));
+    return ok(id, service.png(Command.valueOf(strategy.toUpperCase()), id, Period.OneMonth, indicator));
   }
 
   @Override
@@ -55,7 +56,7 @@ public class TickerController implements TickerApi {
       @PathVariable("period") Period period,
       @RequestParam(name = "i", required = false) Indicator indicator)
   {
-    return ok(id, service.png(Command.of(strategy), id, period, indicator));
+    return ok(id, service.png(Command.valueOf(strategy.toUpperCase()), id, period, indicator));
   }
 
   private static ResponseEntity<Resource> ok(String id, byte[] bytes) {

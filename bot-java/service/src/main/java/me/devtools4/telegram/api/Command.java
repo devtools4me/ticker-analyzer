@@ -1,74 +1,22 @@
 package me.devtools4.telegram.api;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.web.util.UriTemplate;
 
 public enum Command {
   UNKNOWN("unknown"),
   START("/start"),
-  QUOTE("/quote") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, Collections.emptyList(), QUOTE);
-    }
-  },
-  HISTORY("/history") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, periodPatterns(), HISTORY);
-    }
-
-    @Override
-    public List<String> periodPatterns() {
-      return Ops.periodPatterns(HISTORY);
-    }
-  },
-  SMA("/sma") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, periodPatterns(), SMA);
-    }
-
-    @Override
-    public List<String> periodPatterns() {
-      return Ops.periodPatterns(SMA);
-    }
-  },
-  EMA("/ema") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, periodPatterns(), EMA);
-    }
-
-    @Override
-    public List<String> periodPatterns() {
-      return Ops.periodPatterns(EMA);
-    }
-  },
-  APO("/apo") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, periodPatterns(), APO);
-    }
-
-    @Override
-    public List<String> periodPatterns() {
-      return Ops.periodPatterns(APO);
-    }
-  },
-  BLSH("/blsh") {
-    @Override
-    public Map<String, String> params(String text) {
-      return Ops.params(text, periodPatterns(), BLSH);
-    }
-
-    @Override
-    public List<String> periodPatterns() {
-      return Ops.periodPatterns(BLSH);
-    }
-  };
+  QUOTE("/quote"),
+  HISTORY("/history"),
+  SMA("/sma"),
+  EMA("/ema"),
+  APO("/apo"),
+  BLSH("/blsh");
 
   private final String path;
 
@@ -80,30 +28,36 @@ public enum Command {
     return path;
   }
 
-  public Map<String, String> params(String text) {
-    return Collections.emptyMap();
-  }
-
   public Boolean is(Command other) {
     return this == other;
   }
 
-  public Boolean is(String text) {
-    return periodPatterns().stream().anyMatch(text::startsWith) || startWith(text);
-  }
-
-  private boolean startWith(String text) {
-    return text.startsWith(getPath()) || ("/" + text).startsWith(getPath());
-  }
-
-  public List<String> periodPatterns() {
-    return Collections.emptyList();
-  }
-
   public static Command of(String text) {
-    return Arrays.stream(Command.values())
-        .filter(x -> x.is(text))
-        .findFirst()
+    Map<String, String> map = params(text);
+    return Optional.ofNullable(map.get("cmd"))
+        .map(String::toUpperCase)
+        .filter(names::contains)
+        .map(Command::valueOf)
         .orElse(Command.UNKNOWN);
   }
+
+  public static Map<String, String> params(String text) {
+    return templates.stream()
+        .map(x -> x.match(text))
+        .filter(x -> !x.isEmpty())
+        .findFirst()
+        .orElseGet(Map::of);
+  }
+
+  private static final Set<String> names = Arrays.stream(Command.values())
+      .map(Command::name)
+      .collect(Collectors.toSet());
+
+  private static final List<UriTemplate> templates = List.of(
+      new UriTemplate("/{cmd}/{period}/{id}?i={indicator}"),
+      new UriTemplate("/{cmd}/{period}/{id}"),
+      new UriTemplate("/{cmd}/{id}?i={indicator}"),
+      new UriTemplate("/{cmd}/{id}"),
+      new UriTemplate("/{cmd}")
+  );
 }

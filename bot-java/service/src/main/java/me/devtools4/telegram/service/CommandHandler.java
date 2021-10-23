@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
+import me.devtools4.telegram.api.Indicator;
 import me.devtools4.telegram.api.Period;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ActionType;
@@ -38,7 +39,7 @@ public class CommandHandler {
 
     try {
       var cmd = Command.of(text);
-      var params = cmd.params(text);
+      var params = Command.params(text);
       switch (cmd) {
         case START: {
           var message = new SendMessage();
@@ -75,7 +76,10 @@ public class CommandHandler {
           var period = params.containsKey("period") ?
               Period.convert(params.get("period")) :
               Period.OneMonth;
-          var bytes = service.png(cmd, id, period, null);
+          var indicator = Optional.ofNullable(params.get("indicator"))
+              .map(Indicator::valueOf)
+              .orElse(null);
+          var bytes = service.png(cmd, id, period, indicator);
           var message = new SendPhoto();
           message.setChatId(chatId);
           message.setPhoto(new InputFile(new ByteArrayInputStream(bytes), id + ".png"));
