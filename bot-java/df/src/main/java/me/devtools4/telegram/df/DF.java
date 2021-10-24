@@ -44,6 +44,14 @@ public class DF {
         .replaceKey(col1, col2));
   }
 
+  public DF mean(int windowSize) {
+    return new DF(df
+        .cols()
+        .stats()
+        .rolling(windowSize)
+        .mean());
+  }
+
   public DF concat(DF... dfs) {
     var res = DataFrame.concatColumns(
         Stream.concat(

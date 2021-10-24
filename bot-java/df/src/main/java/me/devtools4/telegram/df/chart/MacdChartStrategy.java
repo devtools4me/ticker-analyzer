@@ -58,7 +58,7 @@ public class MacdChartStrategy implements ChartStrategy {
 
     var newProps = props.withHeight((props.getHeight() + 1) / 2);
     var img1 = withOutputStream(x -> all.chartWithLinePlot(writeMacdSignal(newProps, x)));
-    var img2 = withOutputStream(x -> macd_h.chartWithBarPlot(writeMacdHist(newProps, x)));
+    var img2 = withOutputStream(x -> macd_h.chartWithLinePlot(writeMacdHist(newProps, x)));
     joinImages(img1, img2, os);
   }
 
@@ -79,7 +79,7 @@ public class MacdChartStrategy implements ChartStrategy {
       chart.title().withText(MACD);
       chart.plot().axes().domain().label().withText("Date");
       chart.plot().axes().range(0).label().withText(MACD);
-      chart.plot().style(MACD_H).withLineWidth(1f).withColor(Color.GRAY);
+      chart.plot().style(MACD_H).withLineWidth(1f).withColor(Color.RED);
       chart.legend().on().bottom();
       chart.writerPng(os, props.getWidth(), props.getHeight(), false);
     };
