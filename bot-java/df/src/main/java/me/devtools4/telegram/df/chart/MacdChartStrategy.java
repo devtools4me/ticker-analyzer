@@ -10,12 +10,15 @@ import java.nio.charset.StandardCharsets;
 import me.devtools4.telegram.df.DF;
 import me.devtools4.telegram.df.PngProps;
 
-public class EmaChartStrategy implements ChartStrategy {
+public class MacdChartStrategy implements ChartStrategy {
 
   public static final int SHORT_PERIODS_NUM = 20;
   public static final int LONG_PERIODS_NUM = 40;
   public static final String SHORT_TERM = "Short Term";
   public static final String LONG_TERM = "Long Term";
+  public static final String MACD = "MACD";
+  public static final String MACD_S = "MACD Signal";
+  public static final String MACD_H = "MACD Histogram";
 
   @Override
   public void png(String csv, PngProps props, OutputStream os) throws IOException {
@@ -24,21 +27,39 @@ public class EmaChartStrategy implements ChartStrategy {
       var close = new DF(is, props.getRowKeyColumnName())
           .select(columnName);
 
-      var sema = close.replaceKey(columnName, SHORT_TERM)
+      var sema = close
+          .replaceKey(columnName, SHORT_TERM)
           .ema(SHORT_TERM, emaSmoothConstant(SHORT_PERIODS_NUM));
 
-      var lema = close.replaceKey(columnName, LONG_TERM)
+      var lema = close
+          .replaceKey(columnName, LONG_TERM)
           .ema(LONG_TERM, emaSmoothConstant(LONG_PERIODS_NUM));
 
       var ema = close.concat(sema, lema);
 
-      ema.chart(chart -> {
-        chart.title().withText("Close");
+      var macd = ema.subtract(SHORT_TERM, LONG_TERM)
+          .select(LONG_TERM)
+          .replaceKey(LONG_TERM, MACD);
+
+      var macd_s = macd
+          .replaceKey(MACD, MACD_S)
+          .ema(MACD_S, emaSmoothConstant(SHORT_PERIODS_NUM));
+
+      var macd_macd_s = macd.concat(macd_s);
+
+      var macd_h = macd_macd_s
+          .replaceKey(MACD, MACD_H)
+          .ema(MACD_H, emaSmoothConstant(SHORT_PERIODS_NUM));
+
+      var all = macd
+          .concat(macd_s);
+
+      all.chart(chart -> {
+        chart.title().withText(MACD);
         chart.plot().axes().domain().label().withText("Date");
-        chart.plot().axes().range(0).label().withText("Price");
-        chart.plot().style(columnName).withLineWidth(1f).withColor(Color.BLUE);
-        chart.plot().style(SHORT_TERM).withLineWidth(1f).withColor(Color.GREEN);
-        chart.plot().style(LONG_TERM).withLineWidth(1f).withColor(Color.ORANGE);
+        chart.plot().axes().range(0).label().withText(MACD);
+        chart.plot().style(MACD).withLineWidth(1f).withColor(Color.BLACK);
+        chart.plot().style(MACD_S).withLineWidth(1f).withColor(Color.GREEN);
         chart.legend().on().bottom();
         chart.writerPng(os, props.getWidth(), props.getHeight(), false);
       });

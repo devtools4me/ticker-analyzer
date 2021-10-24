@@ -9,9 +9,16 @@ import org.apache.commons.io.IOUtils;
 public class ChartStrategyRun {
 
   public static void main(String[] args) throws IOException {
-    var strategy = new JoinChartStrategy(new EmaChartStrategy(), new ApoChartStrategy());
+//    var strategy = new JoinChartStrategy(new EmaChartStrategy(), new ApoChartStrategy());
+//    String fname = "ema-apo.png";
+    var strategy = new MacdChartStrategy();
+    String fname = "macd.png";
+    png(strategy, fname);
+  }
+
+  private static void png(ChartStrategy strategy, String fname) throws IOException {
     try (var is = ChartStrategyRun.class.getClassLoader().getResourceAsStream("QCOM.csv");
-        var os = new FileOutputStream("test.png", false))
+        var os = new FileOutputStream(fname, false))
     {
       var csv = IOUtils.toString(is, Charset.defaultCharset());
       strategy.png(csv, PngProps.builder()
