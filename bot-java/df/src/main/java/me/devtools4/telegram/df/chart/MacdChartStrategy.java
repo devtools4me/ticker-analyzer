@@ -56,10 +56,12 @@ public class MacdChartStrategy implements ChartStrategy {
     var all = macd
         .concat(macd_s);
 
-    var newProps = props.withHeight((props.getHeight() + 1) / 2);
-    var img1 = withOutputStream(x -> all.chartWithLinePlot(writeMacdSignal(newProps, x)));
-    var img2 = withOutputStream(x -> macd_h.chartWithLinePlot(writeMacdHist(newProps, x)));
-    joinImages(img1, img2, os);
+    all.chartWithLinePlot(writeMacdSignal(props, os));
+
+//    var newProps = props.withHeight((props.getHeight() + 1) / 2);
+//    var img1 = withOutputStream(x -> all.chartWithLinePlot(writeMacdSignal(newProps, x)));
+//    var img2 = withOutputStream(x -> macd_h.chartWithLinePlot(writeMacdHist(newProps, x)));
+//    joinImages(img1, img2, os);
   }
 
   private Consumer<Chart<XyPlot<LocalDate>>> writeMacdSignal(PngProps props, OutputStream os) {

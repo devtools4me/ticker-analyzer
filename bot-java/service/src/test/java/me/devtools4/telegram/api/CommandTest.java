@@ -23,6 +23,9 @@ public class CommandTest {
       "/apo/msft:/apo:cmd=apo,id=msft",
       "/apo/1y/msft:/apo:cmd=apo,id=msft,period=1y",
       "/ema/msft?i=APO:/ema:cmd=ema,id=msft,indicator=APO",
+      "/macd/msft:/macd:cmd=macd,id=msft",
+      "/macd/1y/msft:/macd:cmd=macd,id=msft,period=1y",
+      "/ema/msft?i=MACD:/ema:cmd=ema,id=msft,indicator=MACD",
       "/blsh/msft:/blsh:cmd=blsh,id=msft",
       "/blsh/1y/msft:/blsh:cmd=blsh,id=msft,period=1y",
       "/error:unknown:"

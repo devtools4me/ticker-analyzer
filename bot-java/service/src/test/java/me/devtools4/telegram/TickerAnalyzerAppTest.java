@@ -1,5 +1,6 @@
 package me.devtools4.telegram;
 
+import static me.devtools4.telegram.TestOps.bytes2file;
 import static me.devtools4.telegram.TestOps.is2bytes;
 import static me.devtools4.telegram.TestOps.res2bytes;
 import static me.devtools4.telegram.TestOps.res2str;
@@ -69,6 +70,8 @@ public class TickerAnalyzerAppTest {
         Arguments.of("/ema/1y/msft",    Map.of(),                   checkApi("data/ema-1y.png")),
         Arguments.of("/ema/msft",       Map.of("i", "APO"), checkApi("data/ema-apo-1m.png")),
         Arguments.of("/ema/1y/msft",    Map.of("i", "APO"), checkApi("data/ema-apo-1y.png")),
+        Arguments.of("/ema/msft",       Map.of("i", "MACD"), checkApi("data/ema-macd-1m.png")),
+        Arguments.of("/ema/1y/msft",    Map.of("i", "MACD"), checkApi("data/ema-macd-1y.png")),
         Arguments.of("/blsh/msft",      Map.of(),                   checkApi("data/blsh-1m.png")),
         Arguments.of("/blsh/1y/msft",   Map.of(),                   checkApi("data/blsh-1y.png"))
     );
@@ -86,6 +89,15 @@ public class TickerAnalyzerAppTest {
     return x -> {
       var bytes = x.getResponseBody();
       assertNotNull(bytes);
+      assertThat(bytes, is(res2bytes(file)));
+    };
+  }
+
+  private static Consumer<EntityExchangeResult<byte[]>> checkApi2(String file) {
+    return x -> {
+      var bytes = x.getResponseBody();
+      assertNotNull(bytes);
+      bytes2file("test.png", bytes);
       assertThat(bytes, is(res2bytes(file)));
     };
   }
@@ -115,6 +127,8 @@ public class TickerAnalyzerAppTest {
         Arguments.of(update(1L, "/ema/1y/msft"), checkPhoto("1", "data/ema-1y.png")),
         Arguments.of(update(1L, "/ema/msft?i=APO"), checkPhoto("1", "data/ema-apo-1m.png")),
         Arguments.of(update(1L, "/ema/1y/msft?i=APO"), checkPhoto("1", "data/ema-apo-1y.png")),
+        Arguments.of(update(1L, "/ema/msft?i=MACD"), checkPhoto("1", "data/ema-macd-1m.png")),
+        Arguments.of(update(1L, "/ema/1y/msft?i=MACD"), checkPhoto("1", "data/ema-macd-1y.png")),
         Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
         Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );

@@ -16,6 +16,7 @@ public enum Command {
   SMA("/sma"),
   EMA("/ema"),
   APO("/apo"),
+  MACD("/macd"),
   BLSH("/blsh");
 
   private final String path;
