@@ -11,11 +11,13 @@ import javax.imageio.ImageIO;
 public class Ops {
   private Ops() {}
 
-  public static void joinImages(byte[] bytes1, byte[] bytes2, OutputStream out) throws IOException {
+  public static void joinImages(byte[] bytes1, byte[] bytes2, OutputStream out) {
     try (var is1 = new ByteArrayInputStream(bytes1);
         var is2 = new ByteArrayInputStream(bytes2))
     {
       joinImages(is1, is2, out);
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
     }
   }
 

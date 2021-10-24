@@ -4,7 +4,10 @@ import com.d3x.morpheus.frame.DataFrame;
 import com.d3x.morpheus.frame.DataFrameCursor;
 import com.d3x.morpheus.viz.chart.Chart;
 import com.d3x.morpheus.viz.chart.xy.XyPlot;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,6 +25,10 @@ public class DF {
     this(DataFrame
         .read(is)
         .csv(LocalDate.class, x -> x.setRowKeyColumnName(col)));
+  }
+
+  public DF(String csv, String col) {
+    this(csv2df(csv, col));
   }
 
   public DF select(String col) {
@@ -72,11 +79,25 @@ public class DF {
     return new DF(res);
   }
 
-  public void chart(Consumer<Chart<XyPlot<LocalDate>>> consumer) {
+  public void chartWithLinePlot(Consumer<Chart<XyPlot<LocalDate>>> consumer) {
     Chart.create().asSwing().withLinePlot(df, consumer);
+  }
+
+  public void chartWithBarPlot(Consumer<Chart<XyPlot<LocalDate>>> consumer) {
+    Chart.create().asSwing().withBarPlot(df, true, consumer);
   }
 
   public static double emaSmoothConstant(int n) {
     return 2.0 / (n + 1);
+  }
+
+  private static DataFrame<LocalDate, String> csv2df(String csv, String col) {
+    try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
+      return DataFrame
+          .read(is)
+          .csv(LocalDate.class, x -> x.setRowKeyColumnName(col));
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
+    }
   }
 }

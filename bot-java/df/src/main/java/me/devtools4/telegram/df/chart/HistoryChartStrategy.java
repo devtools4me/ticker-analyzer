@@ -13,7 +13,7 @@ import me.devtools4.telegram.df.PngProps;
 public class HistoryChartStrategy implements ChartStrategy {
 
   @Override
-  public void png(String csv, PngProps props, OutputStream os) throws IOException {
+  public void png(String csv, PngProps props, OutputStream os) {
     try (var is = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8))) {
       var df = DataFrame.read(is).csv(LocalDate.class, x -> {
         x.setRowKeyColumnName(props.getRowKeyColumnName());
@@ -30,6 +30,8 @@ public class HistoryChartStrategy implements ChartStrategy {
         chart.plot().axes().range(0).label().withText("Price");
         chart.writerPng(os, props.getWidth(), props.getHeight(), false);
       });
+    } catch (IOException ex) {
+      throw new IllegalArgumentException(ex);
     }
   }
 }

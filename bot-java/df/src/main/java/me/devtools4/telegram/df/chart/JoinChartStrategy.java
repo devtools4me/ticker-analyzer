@@ -2,7 +2,6 @@ package me.devtools4.telegram.df.chart;
 
 import static me.devtools4.telegram.df.chart.Ops.joinImages;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import me.devtools4.telegram.df.PngProps;
 
@@ -16,7 +15,7 @@ public class JoinChartStrategy implements ChartStrategy {
   }
 
   @Override
-  public void png(String csv, PngProps props, OutputStream os) throws IOException {
+  public void png(String csv, PngProps props, OutputStream os) {
     var newProps = props.withHeight((props.getHeight() + 1) / 2);
     joinImages(s1.png(csv, newProps), s2.png(csv, newProps), os);
   }
