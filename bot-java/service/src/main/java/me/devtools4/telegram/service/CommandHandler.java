@@ -1,5 +1,6 @@
 package me.devtools4.telegram.service;
 
+import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.util.Optional;
@@ -45,16 +46,16 @@ public class CommandHandler {
           var message = new SendMessage();
           message.setChatId(chatId);
           message.setText("What would you like to receive?");
-          message.setReplyMarkup(InlineKeyboardMarkup.builder()
-              .keyboardRow(service.start()
-                  .stream()
-                  .map(x ->
-                      InlineKeyboardButton.builder()
+          var builder = InlineKeyboardMarkup.builder();
+          Lists.partition(service.start(), 3)
+              .forEach(p -> builder
+                  .keyboardRow(p.stream()
+                      .map(x -> InlineKeyboardButton.builder()
                           .text(x.getText())
                           .callbackData(x.getCallbackData())
-                          .build()).collect(Collectors.toList()
-                  ))
-              .build());
+                          .build())
+                      .collect(Collectors.toList())));
+          message.setReplyMarkup(builder.build());
           consumer.accept(message);
           break;
         }
@@ -77,6 +78,7 @@ public class CommandHandler {
               Period.convert(params.get("period")) :
               Period.OneMonth;
           var indicator = Optional.ofNullable(params.get("indicator"))
+              .map(String::toUpperCase)
               .map(Indicator::valueOf)
               .orElse(null);
           var bytes = service.png(cmd, id, period, indicator);

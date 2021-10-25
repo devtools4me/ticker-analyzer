@@ -129,6 +129,7 @@ public class TickerAnalyzerAppTest {
         Arguments.of(update(1L, "/ema/1y/msft?i=APO"), checkPhoto("1", "data/ema-apo-1y.png")),
         Arguments.of(update(1L, "/ema/msft?i=MACD"), checkPhoto("1", "data/ema-macd-1m.png")),
         Arguments.of(update(1L, "/ema/1y/msft?i=MACD"), checkPhoto("1", "data/ema-macd-1y.png")),
+        Arguments.of(update(1L, "/ema/1y/msft?i=macd"), checkPhoto("1", "data/ema-macd-1y.png")),
         Arguments.of(update(1L, "/blsh/msft"), checkPhoto("1", "data/blsh-1m.png")),
         Arguments.of(update(1L, "/blsh/1y/msft"), checkPhoto("1", "data/blsh-1y.png"))
     );
