@@ -11,8 +11,8 @@ public class ChartStrategyRun {
   public static void main(String[] args) throws IOException {
 //    var strategy = new JoinChartStrategy(new EmaChartStrategy(), new ApoChartStrategy());
 //    String fname = "ema-apo.png";
-    var strategy = new MacdChartStrategy();
-    String fname = "macd.png";
+    var strategy = new MomChartStrategy();
+    String fname = "mom.png";
     png(strategy, fname);
   }
 

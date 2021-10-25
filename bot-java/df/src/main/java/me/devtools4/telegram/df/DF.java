@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class DF {
+
   private final DataFrame<LocalDate, String> df;
 
   public DF(DataFrame<LocalDate, String> df) {
@@ -82,6 +83,22 @@ public class DF {
         var ema = (current - prevEma) * k + prevEma;
         ref.set(ema);
         return ema;
+      }
+    });
+    return new DF(res);
+  }
+
+  public DF momentum(String col, int offset) {
+    var ref = new RingBuffer<Double>(offset);
+    var res = df.cols().applyDoubles(col, x -> {
+      var current = (Double) ((DataFrameCursor) x).col(col).getValue();
+      if (!ref.isFull()) {
+        ref.offer(current);
+        return 0.0;
+      } else {
+        var prev = ref.poll();
+        ref.offer(current);
+        return current - prev;
       }
     });
     return new DF(res);
