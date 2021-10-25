@@ -72,6 +72,8 @@ public class CommandHandler {
         case HISTORY:
         case SMA:
         case EMA:
+        case MACD:
+        case MOM:
         case BLSH: {
           var id = params.get("id");
           var period = params.containsKey("period") ?

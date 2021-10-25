@@ -5,6 +5,7 @@ import static me.devtools4.telegram.api.Command.BLSH;
 import static me.devtools4.telegram.api.Command.EMA;
 import static me.devtools4.telegram.api.Command.HISTORY;
 import static me.devtools4.telegram.api.Command.MACD;
+import static me.devtools4.telegram.api.Command.MOM;
 import static me.devtools4.telegram.api.Command.SMA;
 
 import com.github.mustachejava.DefaultMustacheFactory;
@@ -20,6 +21,7 @@ import me.devtools4.telegram.df.chart.BlshChartStrategy;
 import me.devtools4.telegram.df.chart.EmaChartStrategy;
 import me.devtools4.telegram.df.chart.HistoryChartStrategy;
 import me.devtools4.telegram.df.chart.MacdChartStrategy;
+import me.devtools4.telegram.df.chart.MomChartStrategy;
 import me.devtools4.telegram.df.chart.SmaChartStrategy;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
@@ -57,6 +59,7 @@ public class TickerConfig {
         EMA, new EmaChartStrategy(),
         APO, new ApoChartStrategy(),
         MACD, new MacdChartStrategy(),
+        MOM, new MomChartStrategy(),
         BLSH, new BlshChartStrategy()
     ));
   }
