@@ -22,7 +22,7 @@ heroku login
 heroku container:login
 heroku apps:list
 heroku apps:create ticker-analyzer
-docker build -t registry.heroku.com/ticker-analyzer/web .
+docker build --build-arg bot_token=${BOT_TOKEN} -t registry.heroku.com/ticker-analyzer/web .
 docker images
 docker push registry.heroku.com/ticker-analyzer/web
 heroku container:release web --app=ticker-analyzer

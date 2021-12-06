@@ -17,6 +17,6 @@ yahoo:
 
 bot:
   userName: "TickerAnalyzerBot"
-  token: "1841422646:AAFCsCISuUn-BSKYWe2wHzpGi66yeMXKszk"
+  token: ${BOT_TOKEN}
   url: https://ticker-analyzer.herokuapp.com
   botPath: webhook
