@@ -1,7 +1,7 @@
 package me.devtools4.telegram.config;
 
-import com.yahoo.finanance.query1.DslJsonDecoder;
-import com.yahoo.finanance.query1.DslJsonEncoder;
+import feign.codec.DslJsonDecoder;
+import feign.codec.DslJsonEncoder;
 import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.YFinanceExceptionDecoder;
 import feign.Feign;

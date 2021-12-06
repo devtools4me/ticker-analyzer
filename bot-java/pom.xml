@@ -37,7 +37,10 @@
   <modules>
     <module>service</module>
     <module>df</module>
+    <module>alphavantage-rest</module>
     <module>yfinance-rest</module>
+    <module>dslplatform-ops</module>
+    <module>jackson-ops</module>
   </modules>
 
   <properties>
@@ -46,6 +49,7 @@
     <junit-jupiter.version>5.7.2</junit-jupiter.version>
     <hamcrest.version>2.2</hamcrest.version>
     <lombok.version>1.18.22</lombok.version>
+    <dslplatform.version>1.9.9</dslplatform.version>
   </properties>
 
   <dependencyManagement>
@@ -59,6 +63,31 @@
         <groupId>com.yahoofinance-api</groupId>
         <artifactId>YahooFinanceAPI</artifactId>
         <version>3.15.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.openfeign</groupId>
+        <artifactId>feign-core</artifactId>
+        <version>11.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.29</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dslplatform</groupId>
+        <artifactId>dsl-json-java8</artifactId>
+        <version>${dslplatform.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.10.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.10.5</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>

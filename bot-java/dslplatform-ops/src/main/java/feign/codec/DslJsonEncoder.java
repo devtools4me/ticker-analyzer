@@ -1,8 +1,7 @@
-package com.yahoo.finanance.query1;
+package feign.codec;
 
 import com.dslplatform.json.DslJson;
 import feign.RequestTemplate;
-import feign.codec.Encoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;

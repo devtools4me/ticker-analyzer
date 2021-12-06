@@ -15,6 +15,7 @@ public class DslJsonTest {
       assertNotNull(is);
       var res = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       assertNotNull(res);
+      System.out.println(res);
     }
   }
 
@@ -24,6 +25,7 @@ public class DslJsonTest {
       assertNotNull(is);
       var res = new DslJson<>().deserialize(QuoteResponseResponse.class, is);
       assertNotNull(res);
+      System.out.println(res);
     }
   }
 }
