@@ -7,7 +7,7 @@
     <groupId>me.devtools4.telegram</groupId>
     <artifactId>ticker-analyzer-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath/>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>dslplatform-ops</artifactId>

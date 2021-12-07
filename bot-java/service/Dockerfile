@@ -8,6 +8,8 @@ COPY ./entrypoint.sh /apps/entrypoint.sh
 
 ARG bot_token
 ENV BOT_TOKEN=$bot_token
+ARG av_token
+ENV AV_TOKEN=$av_token
 
 RUN chmod +x /apps/entrypoint.sh
 
