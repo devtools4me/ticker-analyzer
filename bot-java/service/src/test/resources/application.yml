@@ -15,6 +15,11 @@ yahoo:
     query1:
       url: http://localhost:8080
 
+alpha:
+  vantage:
+    url: http://localhost:8080
+    token: AVTOKEN
+
 bot:
   userName: "TickerAnalyzerBot"
   token: "1841422646:AAFCsCISuUn-BSKYWe2wHzpGi66yeMXKszk"

@@ -10,6 +10,7 @@ import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
 import me.devtools4.telegram.api.Indicator;
 import me.devtools4.telegram.api.Period;
+import me.devtools4.telegram.service.MustacheRender.TemplateType;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
@@ -61,7 +62,17 @@ public class CommandHandler {
         }
         case QUOTE: {
           var quote = service.quote(params.get("id"));
-          var html = render.html(quote);
+          var html = render.html(quote, TemplateType.Quote);
+          var message = new SendMessage();
+          message.setChatId(chatId);
+          message.setText(html);
+          message.setParseMode("HTML");
+          consumer.accept(message);
+          break;
+        }
+        case MUL: {
+          var overview = service.multipliers(params.get("id"));
+          var html = render.html(overview, TemplateType.Mul);
           var message = new SendMessage();
           message.setChatId(chatId);
           message.setText(html);
@@ -96,7 +107,7 @@ public class CommandHandler {
     } catch (Throwable ex) {
       log.warn("Error: {}", ex.getMessage(), ex);
 
-      var error = render.error(ex);
+      var error = render.html(ex, TemplateType.Error);
       var message = new SendMessage();
       message.setChatId(chatId);
       message.setText(error);

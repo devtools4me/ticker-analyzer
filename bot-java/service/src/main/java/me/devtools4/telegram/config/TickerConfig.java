@@ -8,9 +8,8 @@ import static me.devtools4.telegram.api.Command.MACD;
 import static me.devtools4.telegram.api.Command.MOM;
 import static me.devtools4.telegram.api.Command.SMA;
 
+import co.alphavantage.service.AVantageQueryService;
 import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import com.yahoo.finanance.query1.Query1Api;
 import java.io.FileInputStream;
 import java.util.Map;
@@ -25,6 +24,7 @@ import me.devtools4.telegram.df.chart.MomChartStrategy;
 import me.devtools4.telegram.df.chart.SmaChartStrategy;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
+import me.devtools4.telegram.service.MustacheRender.TemplateType;
 import me.devtools4.telegram.service.StringToPeriodConverter;
 import me.devtools4.telegram.service.TickerService;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,15 +45,17 @@ public class TickerConfig {
 
   @Bean
   public MustacheRender mustacheRender() {
-    MustacheFactory mf = new DefaultMustacheFactory();
-    Mustache m = mf.compile("quote.mustache");
-    Mustache error = mf.compile("error.mustache");
-    return new MustacheRender(m, error);
+    var mf = new DefaultMustacheFactory();
+    return new MustacheRender(Map.of(
+        TemplateType.Quote, mf.compile("quote.mustache"),
+        TemplateType.Mul, mf.compile("mul.mustache"),
+        TemplateType.Error, mf.compile("error.mustache")
+    ));
   }
 
   @Bean
-  public TickerService tickerService(Query1Api query1Api, EtfRepository etfRepository) {
-    return new TickerService(query1Api, etfRepository, Map.of(
+  public TickerService tickerService(Query1Api query1Api, AVantageQueryService avQueryService, EtfRepository etfRepository) {
+    return new TickerService(query1Api, avQueryService, etfRepository, Map.of(
         HISTORY, new HistoryChartStrategy(),
         SMA, new SmaChartStrategy(),
         EMA, new EmaChartStrategy(),

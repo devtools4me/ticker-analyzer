@@ -1,5 +1,6 @@
 package me.devtools4.telegram.controller;
 
+import co.alphavantage.OverviewResponse;
 import com.yahoo.finanance.query1.Quote;
 import java.util.List;
 import me.devtools4.telegram.api.Command;
@@ -37,6 +38,12 @@ public class TickerController implements TickerApi {
   @GetMapping(TickerApi.QUOTE_ID)
   public Quote quote(@PathVariable("id") String id) {
     return service.quote(id);
+  }
+
+  @Override
+  @GetMapping(TickerApi.MUL_ID)
+  public OverviewResponse multipliers(@PathVariable("id") String id) {
+    return service.multipliers(id);
   }
 
   @Override

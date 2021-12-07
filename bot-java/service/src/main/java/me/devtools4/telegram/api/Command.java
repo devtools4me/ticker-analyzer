@@ -12,6 +12,7 @@ public enum Command {
   UNKNOWN("unknown"),
   START("/start"),
   QUOTE("/quote"),
+  MUL("/mul"),
   HISTORY("/history"),
   SMA("/sma"),
   EMA("/ema"),

@@ -1,5 +1,6 @@
 package me.devtools4.telegram;
 
+import me.devtools4.telegram.config.AlphaVantageConfig;
 import me.devtools4.telegram.config.AspectConfig;
 import me.devtools4.telegram.config.QueryConfig;
 import me.devtools4.telegram.config.TelegramConfig;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Import;
     TelegramConfig.class,
     TelegramWebHookConfig.class,
     QueryConfig.class,
+    AlphaVantageConfig.class,
     AspectConfig.class
 })
 public class TickerAnalyzerApp {

@@ -9,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
+import co.alphavantage.AlphaVantageController;
 import com.yahoo.finanance.query1.Query1ApiController;
 import java.time.Duration;
 import java.util.Map;
@@ -47,7 +48,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
     TickerAnalyzerApp.class,
     TestConfig.class
 })
-@ComponentScan(basePackageClasses = Query1ApiController.class)
+@ComponentScan(basePackageClasses = {
+    AlphaVantageController.class,
+    Query1ApiController.class
+})
 public class TickerAnalyzerAppTest {
 
   @LocalServerPort
@@ -62,6 +66,7 @@ public class TickerAnalyzerAppTest {
     return Stream.of(
         Arguments.of("/start",          Map.of(),                   checkApiStr("data/start.json")),
         Arguments.of("/quote/msft",     Map.of(),                   checkApiStr("data/quote.json")),
+        Arguments.of("/mul/msft",       Map.of(),                   checkApiStr("data/av/mul.json")),
         Arguments.of("/history/msft",   Map.of(),                   checkApi("data/history-1m.png")),
         Arguments.of("/history/1y/msft",Map.of(),                   checkApi("data/history-1y.png")),
         Arguments.of("/history/msft",   Map.of("i", "MOM"), checkApi("data/history-mom-1m.png")),
@@ -114,13 +119,15 @@ public class TickerAnalyzerAppTest {
           assertThat(sm.getChatId(), is("1"));
           assertThat(sm.getText(), is("What would you like to receive?"));
         }),
-        Arguments.of(update(1L, "/quote/msft"), checkMessage("1", "data/quote.html")),
         Arguments.of(query(1L, 1,  "/quote"), checkEdit("1", 1, "quote.html")),
+        Arguments.of(query(1L, 1,  "/mul"), checkEdit("1", 1, "mul.html")),
         Arguments.of(query(1L, 1,  "/history"), checkEdit("1", 1, "history.html")),
         Arguments.of(query(1L, 1,  "/sma"), checkEdit("1", 1, "sma.html")),
         Arguments.of(query(1L, 1,  "/ema"), checkEdit("1", 1, "ema.html")),
         Arguments.of(query(1L, 1,  "/apo"), checkEdit("1", 1, "apo.html")),
         Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
+        Arguments.of(update(1L, "/quote/msft"), checkMessage("1", "data/quote.html")),
+        Arguments.of(update(1L, "/mul/msft"), checkMessage("1", "data/av/mul.html")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
         Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
         Arguments.of(update(1L, "/history/msft?i=MOM"), checkPhoto("1", "data/history-mom-1m.png")),

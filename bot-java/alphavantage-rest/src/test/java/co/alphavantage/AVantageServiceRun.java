@@ -1,5 +1,6 @@
 package co.alphavantage;
 
+import co.alphavantage.service.AVantageQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Feign;
 import feign.Logger.ErrorLogger;
@@ -9,7 +10,7 @@ import feign.codec.JacksonDecoder;
 import feign.codec.JacksonEncoder;
 import java.util.concurrent.TimeUnit;
 
-public class FundamentalApiRun {
+public class AVantageServiceRun {
 
   public static void main(String args[]) {
     var mapper = new ObjectMapper();
@@ -22,9 +23,10 @@ public class FundamentalApiRun {
         .logger(new ErrorLogger())
         .logLevel(Level.BASIC)
         .options(new Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
-        .target(FundamentalApi.class, "https://www.alphavantage.co");
+        .target(AVantageQueryApi.class, "https://www.alphavantage.co");
+    var service = new AVantageQueryService(api, args[0]);
 
-    var res = api.companyOverview("AAPL", args[0]);
+    var res = service.companyOverview("MSFT");
     System.out.println(res);
   }
 }

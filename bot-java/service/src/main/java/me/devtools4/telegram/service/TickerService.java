@@ -4,6 +4,8 @@ import static com.yahoo.finanance.query1.Query1Api.DAY;
 import static com.yahoo.finanance.query1.Query1Api.WEEK;
 import static com.yahoo.finanance.query1.Query1Api.bodyAsString;
 
+import co.alphavantage.OverviewResponse;
+import co.alphavantage.service.AVantageQueryService;
 import com.yahoo.finanance.query1.Query1Api;
 import com.yahoo.finanance.query1.Quote;
 import com.yahoo.finanance.query1.Quote.QuoteType;
@@ -24,12 +26,14 @@ import me.devtools4.telegram.df.chart.JoinChartStrategy;
 
 public class TickerService {
 
-  private final Query1Api api;
+  private final Query1Api queryApi;
+  private final AVantageQueryService avQueryService;
   private final EtfRepository etfRepository;
   private final Map<Command, ChartStrategy> strategies;
 
-  public TickerService(Query1Api api, EtfRepository etfRepository, Map<Command, ChartStrategy> strategies) {
-    this.api = api;
+  public TickerService(Query1Api queryApi, AVantageQueryService avQueryService, EtfRepository etfRepository, Map<Command, ChartStrategy> strategies) {
+    this.queryApi = queryApi;
+    this.avQueryService = avQueryService;
     this.etfRepository = etfRepository;
     this.strategies = strategies;
   }
@@ -60,7 +64,7 @@ public class TickerService {
 
   @Trace(level = "INFO")
   public Quote quote(String id) {
-    return api.quote(id)
+    return queryApi.quote(id)
         .getQuoteResponse()
         .getResult()
         .stream()
@@ -79,12 +83,17 @@ public class TickerService {
   }
 
   @Trace(level = "INFO")
+  public OverviewResponse multipliers(String id) {
+    return avQueryService.companyOverview(id);
+  }
+
+  @Trace(level = "INFO")
   public byte[] png(Command cmd, String id, Period period, Indicator indicator) {
     var times = period.times()
         .stream()
         .map(Query1Api::timestamp)
         .collect(Collectors.toList());
-    var res = api.download(id, interval(period), times.get(0), times.get(1));
+    var res = queryApi.download(id, interval(period), times.get(0), times.get(1));
     var csv = bodyAsString(res);
     return strategy(cmd, indicator)
         .png(csv, pngProps(cmd));

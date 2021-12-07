@@ -4,6 +4,8 @@ import com.dslplatform.json.DslJson;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.yahoo.finanance.query1.QuoteResponseResponse;
 import java.io.IOException;
+import java.util.Map;
+import me.devtools4.telegram.service.MustacheRender.TemplateType;
 import org.junit.jupiter.api.Test;
 
 public class MustacheRenderTest {
@@ -12,9 +14,11 @@ public class MustacheRenderTest {
 
   public MustacheRenderTest() {
     var mf = new DefaultMustacheFactory();
-    var m = mf.compile("quote.mustache");
-    var error = mf.compile("error.mustache");
-    mustacheRender = new MustacheRender(m, error);
+    mustacheRender = new MustacheRender(Map.of(
+        TemplateType.Quote, mf.compile("quote.mustache"),
+        TemplateType.Mul, mf.compile("mul.mustache"),
+        TemplateType.Error, mf.compile("error.mustache")
+    ));
   }
 
   @Test
@@ -25,14 +29,14 @@ public class MustacheRenderTest {
       q.setExpenseRatio("0.95%");
       q.setAum("$8.64M");
       System.out.println(q);
-      var out = mustacheRender.html(q);
+      var out = mustacheRender.html(q, TemplateType.Quote);
       System.out.println(out);
     }
   }
 
   @Test
   public void testError() {
-    var out = mustacheRender.error(new IllegalArgumentException("TEST"));
+    var out = mustacheRender.html(new IllegalArgumentException("TEST"), TemplateType.Error);
     System.out.println(out);
   }
 }
