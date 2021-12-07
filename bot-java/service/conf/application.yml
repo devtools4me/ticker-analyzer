@@ -15,6 +15,11 @@ yahoo:
     query1:
       url: https://query1.finance.yahoo.com
 
+alpha:
+  vantage:
+    url: https://www.alphavantage.co
+    token: ${AV_TOKEN}
+
 bot:
   userName: "TickerAnalyzerBot"
   token: ${BOT_TOKEN}
