@@ -1,11 +1,21 @@
 package co.alphavantage;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import me.devtools4.telegram.jackson.DoubleDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.Optional;
 import lombok.Data;
 import lombok.ToString;
+import me.devtools4.telegram.jackson.LongDeserializer;
 
 @Data
 @ToString
+@JsonInclude(Include.NON_NULL)
 public class OverviewResponse {
   @JsonProperty("Symbol")
   public String symbol;
@@ -34,69 +44,166 @@ public class OverviewResponse {
   @JsonProperty("LatestQuarter")
   public String latestQuarter;
   @JsonProperty("MarketCapitalization")
-  public String marketCapitalization;
+  public Long marketCapitalization;
+
   @JsonProperty("EBITDA")
-  public String ebitda;
+  @JsonDeserialize(using = LongDeserializer.class)
+  public Long ebitda;
+
   @JsonProperty("PERatio")
-  public String peRatio;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double peRatio;
+
   @JsonProperty("PEGRatio")
-  public String pegRatio;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double pegRatio;
+
   @JsonProperty("BookValue")
-  public String bookValue;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double bookValue;
+
   @JsonProperty("DividendPerShare")
-  public String dividendPerShare;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double dividendPerShare;
+
   @JsonProperty("DividendYield")
-  public String dividendYield;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double dividendYield;
+
   @JsonProperty("EPS")
-  public String eps;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double eps;
+
   @JsonProperty("RevenuePerShareTTM")
-  public String revenuePerShareTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double revenuePerShareTTM;
+
   @JsonProperty("ProfitMargin")
-  public String profitMargin;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double profitMargin;
+
   @JsonProperty("OperatingMarginTTM")
-  public String operatingMarginTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double operatingMarginTTM;
+
   @JsonProperty("ReturnOnAssetsTTM")
-  public String returnOnAssetsTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double returnOnAssetsTTM;
+
   @JsonProperty("ReturnOnEquityTTM")
-  public String returnOnEquityTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double returnOnEquityTTM;
+
   @JsonProperty("RevenueTTM")
-  public String revenueTTM;
+  @JsonDeserialize(using = LongDeserializer.class)
+  public Long revenueTTM;
+
   @JsonProperty("GrossProfitTTM")
-  public String grossProfitTTM;
+  @JsonDeserialize(using = LongDeserializer.class)
+  public Long grossProfitTTM;
+
   @JsonProperty("DilutedEPSTTM")
-  public String dilutedEPSTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double dilutedEPSTTM;
+
   @JsonProperty("QuarterlyEarningsGrowthYOY")
-  public String quarterlyEarningsGrowthYOY;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double quarterlyEarningsGrowthYOY;
+
   @JsonProperty("QuarterlyRevenueGrowthYOY")
-  public String quarterlyRevenueGrowthYOY;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double quarterlyRevenueGrowthYOY;
+
   @JsonProperty("AnalystTargetPrice")
-  public String analystTargetPrice;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double analystTargetPrice;
+
   @JsonProperty("TrailingPE")
-  public String trailingPE;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double trailingPE;
+
   @JsonProperty("ForwardPE")
-  public String forwardPE;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double forwardPE;
+
   @JsonProperty("PriceToSalesRatioTTM")
-  public String priceToSalesRatioTTM;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double priceToSalesRatioTTM;
+
   @JsonProperty("PriceToBookRatio")
-  public String priceToBookRatio;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double priceToBookRatio;
+
   @JsonProperty("EVToRevenue")
-  public String evToRevenue;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double evToRevenue;
+
   @JsonProperty("EVToEBITDA")
-  public String evToEBITDA;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double evToEBITDA;
+
   @JsonProperty("Beta")
-  public String beta;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double beta;
+
   @JsonProperty("52WeekHigh")
-  public String the52WeekHigh;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double the52WeekHigh;
+
   @JsonProperty("52WeekLow")
-  public String the52WeekLow;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double the52WeekLow;
+
   @JsonProperty("50DayMovingAverage")
-  public String the50DayMovingAverage;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double the50DayMovingAverage;
+
   @JsonProperty("200DayMovingAverage")
-  public String the200DayMovingAverage;
+  @JsonDeserialize(using = DoubleDeserializer.class)
+  public Double the200DayMovingAverage;
+
   @JsonProperty("SharesOutstanding")
-  public String sharesOutstanding;
+  @JsonDeserialize(using = LongDeserializer.class)
+  public Long sharesOutstanding;
+
   @JsonProperty("DividendDate")
   public String dividendDate;
   @JsonProperty("ExDividendDate")
   public String exDividendDate;
+
+  public Double getMarketCapitalizationM() {
+    return Optional.ofNullable(marketCapitalization)
+        .map(OverviewResponse::long2doubleM)
+        .orElse(Double.NaN);
+  }
+
+  public Double getLaRatio() {
+    return null;
+  }
+
+  public Double getNdToEBITDA() {
+    return evToEBITDA != null && marketCapitalization != null && ebitda != null ?
+      scale(evToEBITDA - long2double(marketCapitalization, ebitda, 2), 2) :
+      null;
+  }
+
+  private static double long2doubleM(long x) {
+    return long2double(x, Math.pow(10, 6), 2);
+  }
+
+  private static double long2double(long x, double divider, int scale) {
+    return scale(
+        new BigDecimal(x).divide(BigDecimal.valueOf(divider), MathContext.DECIMAL32),
+        scale
+    );
+  }
+
+  private static double scale(double x, int scale) {
+    return scale(BigDecimal.valueOf(x), scale);
+  }
+
+  private static double scale(BigDecimal x, int scale) {
+    return x.setScale(scale, RoundingMode.HALF_EVEN)
+        .doubleValue();
+  }
 }
