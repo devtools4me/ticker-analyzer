@@ -3,6 +3,7 @@ package co.alphavantage;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.function.Function;
 import me.devtools4.telegram.jackson.DoubleDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
@@ -185,6 +186,13 @@ public class OverviewResponse {
     return evToEBITDA != null && marketCapitalization != null && ebitda != null ?
       scale(evToEBITDA - long2double(marketCapitalization, ebitda, 2), 2) :
       null;
+  }
+
+  public Function<String, Double> percent() {
+    return v -> Optional.ofNullable(v)
+        .map(Double::parseDouble)
+        .map(x -> scale(x * 100, 2))
+        .orElse(null);
   }
 
   private static double long2doubleM(long x) {
