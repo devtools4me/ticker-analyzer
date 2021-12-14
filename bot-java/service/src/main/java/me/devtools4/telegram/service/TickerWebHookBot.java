@@ -2,6 +2,7 @@ package me.devtools4.telegram.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -61,6 +62,15 @@ public class TickerWebHookBot extends WebhookBotTemplate {
 
   @Override
   public void accept(SendPhoto t) {
+    try {
+      execute(t);
+    } catch (TelegramApiException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public void accept(SendDocument t) {
     try {
       execute(t);
     } catch (TelegramApiException e) {

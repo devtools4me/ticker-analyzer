@@ -25,6 +25,7 @@ import me.devtools4.telegram.df.chart.SmaChartStrategy;
 import me.devtools4.telegram.service.CommandHandler;
 import me.devtools4.telegram.service.MustacheRender;
 import me.devtools4.telegram.service.MustacheRender.TemplateType;
+import me.devtools4.telegram.service.PdfRender;
 import me.devtools4.telegram.service.StringToPeriodConverter;
 import me.devtools4.telegram.service.TickerService;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +64,7 @@ public class TickerConfig {
         MACD, new MacdChartStrategy(),
         MOM, new MomChartStrategy(),
         BLSH, new BlshChartStrategy()
-    ));
+    ), new PdfRender());
   }
 
   @Bean

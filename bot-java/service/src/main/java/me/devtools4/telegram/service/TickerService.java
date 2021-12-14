@@ -13,9 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
+import me.devtools4.telegram.api.Multipliers;
 import me.devtools4.telegram.api.Indicator;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.api.StartInfo;
@@ -30,12 +32,16 @@ public class TickerService {
   private final AVantageQueryService avQueryService;
   private final EtfRepository etfRepository;
   private final Map<Command, ChartStrategy> strategies;
+  private final PdfRender pdfRender;
 
-  public TickerService(Query1Api queryApi, AVantageQueryService avQueryService, EtfRepository etfRepository, Map<Command, ChartStrategy> strategies) {
+  public TickerService(Query1Api queryApi, AVantageQueryService avQueryService,
+      EtfRepository etfRepository, Map<Command, ChartStrategy> strategies,
+      PdfRender pdfRender) {
     this.queryApi = queryApi;
     this.avQueryService = avQueryService;
     this.etfRepository = etfRepository;
     this.strategies = strategies;
+    this.pdfRender = pdfRender;
   }
 
   private static String interval(Period period) {
@@ -85,6 +91,14 @@ public class TickerService {
   @Trace(level = "INFO")
   public OverviewResponse multipliers(String id) {
     return avQueryService.companyOverview(id);
+  }
+
+  @Trace(level = "INFO")
+  public byte[] compare(Set<String> ids) {
+    return pdfRender.render(ids
+        .stream()
+        .map(x -> Multipliers.of(x, avQueryService.companyOverview(x)))
+        .collect(Collectors.toList()));
   }
 
   @Trace(level = "INFO")

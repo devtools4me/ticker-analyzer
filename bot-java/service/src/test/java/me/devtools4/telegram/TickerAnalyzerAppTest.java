@@ -34,6 +34,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -67,6 +68,7 @@ public class TickerAnalyzerAppTest {
         Arguments.of("/start",          Map.of(),                   checkApiStr("data/start.json")),
         Arguments.of("/quote/msft",     Map.of(),                   checkApiStr("data/quote.json")),
         Arguments.of("/mul/msft",       Map.of(),                   checkApiStr("data/av/mul.json")),
+        Arguments.of("/cmp/msft,aapl",  Map.of(),                   checkApiSize("data/av/aapl_msft.pdf")),
         Arguments.of("/history/msft",   Map.of(),                   checkApi("data/history-1m.png")),
         Arguments.of("/history/1y/msft",Map.of(),                   checkApi("data/history-1y.png")),
         Arguments.of("/history/msft",   Map.of("i", "MOM"), checkApi("data/history-mom-1m.png")),
@@ -100,11 +102,19 @@ public class TickerAnalyzerAppTest {
     };
   }
 
+  private static Consumer<EntityExchangeResult<byte[]>> checkApiSize(String file) {
+    return x -> {
+      var bytes = x.getResponseBody();
+      assertNotNull(bytes);
+      assertThat(bytes.length, is(res2bytes(file).length));
+    };
+  }
+
   private static Consumer<EntityExchangeResult<byte[]>> checkApi2(String file) {
     return x -> {
       var bytes = x.getResponseBody();
       assertNotNull(bytes);
-      bytes2file("test.png", bytes);
+      bytes2file("test.bin", bytes);
       assertThat(bytes, is(res2bytes(file)));
     };
   }
@@ -121,6 +131,7 @@ public class TickerAnalyzerAppTest {
         }),
         Arguments.of(query(1L, 1,  "/quote"), checkEdit("1", 1, "quote.html")),
         Arguments.of(query(1L, 1,  "/mul"), checkEdit("1", 1, "mul.html")),
+        Arguments.of(query(1L, 1,  "/cmp"), checkEdit("1", 1, "cmp.html")),
         Arguments.of(query(1L, 1,  "/history"), checkEdit("1", 1, "history.html")),
         Arguments.of(query(1L, 1,  "/sma"), checkEdit("1", 1, "sma.html")),
         Arguments.of(query(1L, 1,  "/ema"), checkEdit("1", 1, "ema.html")),
@@ -128,6 +139,7 @@ public class TickerAnalyzerAppTest {
         Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
         Arguments.of(update(1L, "/quote/msft"), checkMessage("1", "data/quote.html")),
         Arguments.of(update(1L, "/mul/msft"), checkMessage("1", "data/av/mul.html")),
+        Arguments.of(update(1L, "/cmp/msft&aapl"), checkDocument("1", "data/av/aapl_msft.pdf")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),
         Arguments.of(update(1L, "/history/1y/msft"), checkPhoto("1", "data/history-1y.png")),
         Arguments.of(update(1L, "/history/msft?i=MOM"), checkPhoto("1", "data/history-mom-1m.png")),
@@ -166,6 +178,17 @@ public class TickerAnalyzerAppTest {
       SendPhoto sm = x.get(1);
       assertThat(sm.getChatId(), is(chatId));
       assertThat(is2bytes(sm.getPhoto().getNewMediaStream()), is(res2bytes(file)));
+    };
+  }
+
+  private static Consumer<TestWebhookBot> checkDocument(String chatId, String file) {
+    return x -> {
+      SendChatAction a = x.get(0);
+      assertNotNull(a);
+      assertThat(a.getActionType(), is(ActionType.TYPING));
+      SendDocument sm = x.get(1);
+      assertThat(sm.getChatId(), is(chatId));
+      assertThat(is2bytes(sm.getDocument().getNewMediaStream()).length, is(res2bytes(file).length));
     };
   }
 

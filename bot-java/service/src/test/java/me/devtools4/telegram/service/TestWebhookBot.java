@@ -3,6 +3,7 @@ package me.devtools4.telegram.service;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -35,6 +36,11 @@ public class TestWebhookBot extends WebhookBotTemplate {
 
   @Override
   public void accept(SendPhoto t) {
+    list.add(t);
+  }
+
+  @Override
+  public void accept(SendDocument t) {
     list.add(t);
   }
 

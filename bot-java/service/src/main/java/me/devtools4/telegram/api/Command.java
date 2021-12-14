@@ -13,6 +13,7 @@ public enum Command {
   START("/start"),
   QUOTE("/quote"),
   MUL("/mul"),
+  CMP("/cmp"),
   HISTORY("/history"),
   SMA("/sma"),
   EMA("/ema"),

@@ -3,17 +3,21 @@ package me.devtools4.telegram.service;
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import me.devtools4.aops.annotations.Trace;
 import me.devtools4.telegram.api.Command;
 import me.devtools4.telegram.api.Indicator;
+import me.devtools4.telegram.api.Ops;
 import me.devtools4.telegram.api.Period;
 import me.devtools4.telegram.service.MustacheRender.TemplateType;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -77,6 +81,16 @@ public class CommandHandler {
           message.setChatId(chatId);
           message.setText(html);
           message.setParseMode("HTML");
+          consumer.accept(message);
+          break;
+        }
+        case CMP: {
+          var ids = new HashSet<>(List.of(params.get("id").split("&")));
+          var bytes = service.compare(ids);
+          var fileName = ids.stream().reduce("", Ops.reduce("_")) + ".pdf";
+          var message = new SendDocument();
+          message.setChatId(chatId);
+          message.setDocument(new InputFile(new ByteArrayInputStream(bytes), fileName));
           consumer.accept(message);
           break;
         }

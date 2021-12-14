@@ -13,6 +13,8 @@ public class CommandTest {
   @ParameterizedTest
   @CsvSource(value = {
       "/start:/start:",
+      "/mul/msft:/mul:cmd=mul,id=msft",
+      "/cmp/msft&aapl:/cmp:cmd=cmp,id=msft&aapl",
       "/quote/msft:/quote:cmd=quote,id=msft",
       "/history/msft:/history:cmd=history,id=msft",
       "/history/1y/msft:/history:cmd=history,id=msft,period=1y",

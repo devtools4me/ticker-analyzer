@@ -191,12 +191,24 @@ public class OverviewResponse {
   public Function<String, Double> percent() {
     return v -> Optional.ofNullable(v)
         .map(Double::parseDouble)
-        .map(x -> scale(x * 100, 2))
+        .map(OverviewResponse::percentOf)
         .orElse(null);
+  }
+
+  public static Double billionsOf(Long x) {
+    return x != null ? long2doubleB(x) : null;
+  }
+
+  public static Double percentOf(Double x) {
+    return x != null ? scale(x * 100, 2) : null;
   }
 
   private static double long2doubleM(long x) {
     return long2double(x, Math.pow(10, 6), 2);
+  }
+
+  private static double long2doubleB(long x) {
+    return long2double(x, Math.pow(10, 9), 2);
   }
 
   private static double long2double(long x, double divider, int scale) {
