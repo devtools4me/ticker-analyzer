@@ -1,5 +1,7 @@
 package me.devtools4.telegram.service;
 
+import static co.alphavantage.OverviewResponse.isValid;
+
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -75,7 +77,12 @@ public class CommandHandler {
           break;
         }
         case MUL: {
-          var overview = service.multipliers(params.get("id"));
+          var id = params.get("id");
+          var overview = service.multipliers(id);
+          if (!isValid(overview)) {
+            throw new IllegalArgumentException("Invalid response, id=" + id + ", response=" + overview.toString());
+          }
+
           var html = render.html(overview, TemplateType.Mul);
           var message = new SendMessage();
           message.setChatId(chatId);

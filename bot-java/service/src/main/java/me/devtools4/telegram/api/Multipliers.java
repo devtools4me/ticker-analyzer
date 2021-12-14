@@ -44,9 +44,9 @@ public class Multipliers {
         str(dividendPerShare), str(dividendYield), dividendDate, exDividendDate);
   }
 
-  public static Multipliers of(String symbol, OverviewResponse x) {
+  public static Multipliers of(OverviewResponse x) {
     return Multipliers.builder()
-        .symbol(symbol)
+        .symbol(x.getSymbol())
         .name(x.getName())
         .sector(x.getSector())
         .p(x.getMarketCapitalization())

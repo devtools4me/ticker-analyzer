@@ -195,6 +195,10 @@ public class OverviewResponse {
         .orElse(null);
   }
 
+  public static Boolean isValid(OverviewResponse x) {
+    return x.getSymbol() != null && x.getAssetType() != null && x.getName() != null;
+  }
+
   public static Double billionsOf(Long x) {
     return x != null ? long2doubleB(x) : null;
   }

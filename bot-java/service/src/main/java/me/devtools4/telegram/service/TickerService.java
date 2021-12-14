@@ -97,7 +97,9 @@ public class TickerService {
   public byte[] compare(Set<String> ids) {
     return pdfRender.render(ids
         .stream()
-        .map(x -> Multipliers.of(x, avQueryService.companyOverview(x)))
+        .map(avQueryService::companyOverview)
+        .filter(OverviewResponse::isValid)
+        .map(Multipliers::of)
         .collect(Collectors.toList()));
   }
 

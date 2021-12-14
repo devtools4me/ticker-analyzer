@@ -38,7 +38,7 @@ public class AlphaVantageConfig {
         .decoder(decoder)
         .errorDecoder(new AlphaVantageExceptionDecoder(decoder))
         .logger(new ErrorLogger())
-        .logLevel(Level.BASIC)
+        .logLevel(Level.NONE)
         .options(new Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
         .target(AVantageQueryApi.class, url);
   }
