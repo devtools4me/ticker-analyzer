@@ -44,7 +44,9 @@ public class OverviewResponse {
   public String fiscalYearEnd;
   @JsonProperty("LatestQuarter")
   public String latestQuarter;
+
   @JsonProperty("MarketCapitalization")
+  @JsonDeserialize(using = LongDeserializer.class)
   public Long marketCapitalization;
 
   @JsonProperty("EBITDA")
