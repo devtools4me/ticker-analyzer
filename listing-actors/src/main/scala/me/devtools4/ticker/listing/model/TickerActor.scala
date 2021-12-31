@@ -9,9 +9,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 class TickerActor(private val symbol: String, private val service: AVantageQueryService) extends Actor {
-  private var overview: OverviewResponse = _
-  private var err: Throwable = _
-
   override def receive: Receive = idle
 
   implicit val ec = ExecutionContext.global
@@ -32,18 +29,16 @@ class TickerActor(private val symbol: String, private val service: AVantageQuery
   def receiving: Receive = {
     case GetOverviewCmd => sender() ! OverviewPendingEvent
     case OverviewReadyEvent(overview) =>
-      this.overview = overview
-      context.become(received)
+      context.become(received(overview))
     case OverviewErrorEvent(err) =>
-      this.err = err
-      context.become(error)
+      context.become(error(err))
   }
 
-  def received: Receive = {
+  def received: OverviewResponse => Receive = overview => {
     case GetOverviewCmd => sender() ! OverviewReadyEvent(overview)
   }
 
-  def error: Receive = {
+  def error: Throwable => Receive = err => {
     case GetOverviewCmd => sender() ! OverviewErrorEvent(err)
   }
 }
