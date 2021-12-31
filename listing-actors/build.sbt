@@ -11,6 +11,7 @@ resolvers += Resolver.mavenLocal
 
 libraryDependencies ++= Seq(
   "me.devtools4.telegram" % "alphavantage-rest" % "0.0.1-SNAPSHOT",
+  "io.github.zamblauskas" %% "scala-csv-parser" % "0.13.1",
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion  % Test,
   "org.scalatest" %% "scalatest" % scalaTestVersion  % Test

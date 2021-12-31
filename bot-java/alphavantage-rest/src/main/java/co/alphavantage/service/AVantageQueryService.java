@@ -16,4 +16,8 @@ public class AVantageQueryService {
   public OverviewResponse companyOverview(String symbol) {
     return api.query(Function.OVERVIEW, symbol, token);
   }
+
+  public String activeListing() {
+    return api.listing(token).body().toString();
+  }
 }

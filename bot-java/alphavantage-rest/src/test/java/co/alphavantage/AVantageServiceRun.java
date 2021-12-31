@@ -26,7 +26,10 @@ public class AVantageServiceRun {
         .target(AVantageQueryApi.class, "https://www.alphavantage.co");
     var service = new AVantageQueryService(api, args[0]);
 
-    var res = service.companyOverview("MSFT");
-    System.out.println(res);
+//    var res = service.companyOverview("MSFT");
+//    System.out.println(res);
+
+    var csv = service.activeListing();
+    System.out.println(csv);
   }
 }
