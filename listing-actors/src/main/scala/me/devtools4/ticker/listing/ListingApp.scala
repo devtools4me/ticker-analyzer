@@ -9,19 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger.{ErrorLogger, Level}
 import feign.codec.{JacksonDecoder, JacksonEncoder}
 import feign.{Feign, Request}
-import me.devtools4.ticker.listing.TickerListingApp.{actor, overview, timeout}
 import me.devtools4.ticker.listing.effect.IO
+import me.devtools4.ticker.listing.model.ListingActor
 import me.devtools4.ticker.listing.model.ListingActor.{GetListingCmd, GetListingSymbolCmd, ListingEvent}
-import me.devtools4.ticker.listing.model.{ListingActor, TickerActor}
-import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewEvent}
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.{Await, ExecutionContext}
 
 object ListingApp extends App {
-  val system = ActorSystem("Listing")
   val console = Console.system
   val maxAttempt = 3
   val avService = queryService(args(0), args(1))
@@ -30,26 +25,33 @@ object ListingApp extends App {
 
   import console._
 
-  val program = overviewThenRepeat
+  val program = init
+    .flatMap(overviewThenRepeat(_))
     .andThen(IO.exit())
 
   program.unsafeRun()
 
-  private def overviewThenRepeat(implicit ec: ExecutionContext): IO[Boolean] = {
-    listing.flatMap { _ =>
+  private def init(implicit ec: ExecutionContext) = for {
+    system <- IO.dispatch(ActorSystem("Listing"))(ec)
+    ref <- IO.dispatch(system.actorOf(ListingActor.props(avService), "listing"))(ec)
+    res <- listing(ref)
+    _ <- writeLine(s"Response=$res")
+  } yield {
+    ref
+  }
+
+  private def overviewThenRepeat(ref: ActorRef)(implicit ec: ExecutionContext): IO[Boolean] = {
+    listing2(ref).flatMap { _ =>
       repeat.retry(maxAttempt)
     }.flatMap { x =>
-      if (x) overviewThenRepeat
+      if (x) overviewThenRepeat(ref)
       else IO(x)
     }
   }
 
-  private def listing(implicit ec: ExecutionContext): IO[String] = for {
-    ref <- actor
-    _ <- listing(ref)
+  private def listing2(ref: ActorRef)(implicit ec: ExecutionContext): IO[String] = for {
     _ <- writeLine("Ticker name?")
     symbol <- readLine
-    ref <- actor
     res <- overview(ref, symbol)
     _ <- writeLine(s"Event=$res")
   } yield {
@@ -61,21 +63,21 @@ object ListingApp extends App {
     Await.result(f, timeout.duration).asInstanceOf[ListingEvent]
   }(ec)
 
-  private def overview(ref: ActorRef, symbol: String)(implicit ec: ExecutionContext): IO[ListingEvent] = IO.dispatch {
-    val f = ref ? GetListingSymbolCmd(symbol)
-    Await.result(f, timeout.duration).asInstanceOf[ListingEvent]
+  private def overview(ref: ActorRef, symbol: String)(implicit ec: ExecutionContext): IO[AnyRef] = IO.dispatch {
+    Await.result(ref ? GetListingSymbolCmd(symbol), timeout.duration).asInstanceOf[AnyRef]
   }(ec)
 
-  private def actor(implicit ec: ExecutionContext): IO[ActorRef] = IO.dispatch {
-    val promise = Promise[ActorRef]()
-    system.actorSelection("/user/listing")
-      .resolveOne()
-      .onComplete {
-        case Success(actor) => promise.success(actor)
-        case Failure(_) => promise.success(system.actorOf(ListingActor.props(avService), "listing"))
-      }
-    Await.result(promise.future, timeout.duration)
-  }(ec)
+  //  private def overview(ref: ActorSelection, symbol: String)(implicit ec: ExecutionContext): IO[Option[ListingStatus]] = IO.dispatch {
+  //    val map = Await.result(ref ? GetListingCmd, timeout.duration).asInstanceOf[ListingEvent] match {
+  //      case ListingReadyEvent(csv) =>
+  //        import zamblauskas.csv.parser._
+  //        Parser.parse[ListingStatus](csv)
+  //          .map(x => x.map(s => s.symbol -> s).toMap)
+  //          .getOrElse(Map())
+  //      case _ => Map()
+  //    }
+  //    map.get(symbol)
+  //  }(ec)
 
   private def repeat = for {
     _ <- writeLine("Repeat? [y/n]")

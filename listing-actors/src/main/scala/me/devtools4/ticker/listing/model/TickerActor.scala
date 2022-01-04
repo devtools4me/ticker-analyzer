@@ -1,6 +1,6 @@
 package me.devtools4.ticker.listing.model
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import co.alphavantage.OverviewResponse
 import co.alphavantage.service.AVantageQueryService
 import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewErrorEvent, OverviewPendingEvent, OverviewReadyEvent}
@@ -8,29 +8,39 @@ import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewEr
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class TickerActor(private val symbol: String, private val service: AVantageQueryService) extends Actor {
-  override def receive: Receive = idle
+class TickerActor(private val symbol: String, private val service: AVantageQueryService) extends Actor with ActorLogging {
 
   implicit val ec = ExecutionContext.global
 
-  def idle: Receive = {
-    case GetOverviewCmd =>
+  override def receive: Receive = {
+    case m @ GetOverviewCmd =>
+      log.info("Received message={}", m)
       context.become(receiving)
       Future {
         service.companyOverview(symbol)
       }.onComplete {
-        case Success(res) if OverviewResponse.isValid(res) => self ! OverviewReadyEvent(res)
-        case Success(res) => self ! OverviewErrorEvent(new IllegalArgumentException(s"symbol=$symbol"))
-        case Failure(err) => self ! OverviewErrorEvent(err)
+        case Success(res) if OverviewResponse.isValid(res) =>
+          log.info("Received valid overview, symbol={}, response={}", symbol, res)
+          self ! OverviewReadyEvent(res)
+        case Success(res) =>
+          log.warning("Received invalid overview, symbol={}", symbol)
+          self ! OverviewErrorEvent(new IllegalArgumentException(s"symbol=$symbol"))
+        case Failure(err) =>
+          log.error("Request failed, error={}", err, err)
+          self ! OverviewErrorEvent(err)
       }
       sender() ! OverviewPendingEvent
   }
 
   def receiving: Receive = {
-    case GetOverviewCmd => sender() ! OverviewPendingEvent
-    case OverviewReadyEvent(overview) =>
+    case m @ GetOverviewCmd =>
+      log.info("Received message={}", m)
+      sender() ! OverviewPendingEvent
+    case m @ OverviewReadyEvent(overview) =>
+      log.info("Received message={}", m)
       context.become(received(overview))
-    case OverviewErrorEvent(err) =>
+    case m @ OverviewErrorEvent(err) =>
+      log.info("Received message={}", m)
       context.become(error(err))
   }
 
