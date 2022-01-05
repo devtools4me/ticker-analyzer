@@ -197,8 +197,10 @@ public class OverviewResponse {
         .orElse(null);
   }
 
-  public static Boolean isValid(OverviewResponse x) {
-    return x.getSymbol() != null && x.getAssetType() != null && x.getName() != null;
+  public static Boolean isValid(OverviewResponse other) {
+    return Optional.ofNullable(other)
+        .filter(x -> x.getSymbol() != null && x.getAssetType() != null && x.getName() != null)
+        .isPresent();
   }
 
   public static Double billionsOf(Long x) {

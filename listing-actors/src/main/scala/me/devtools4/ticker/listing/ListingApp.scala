@@ -3,7 +3,7 @@ package me.devtools4.ticker.listing
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
-import co.alphavantage.service.AVantageQueryService
+import co.alphavantage.service.{AVantageQueryService, AVantageQueryServiceImpl}
 import co.alphavantage.{AVantageQueryApi, AlphaVantageExceptionDecoder}
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger.{ErrorLogger, Level}
@@ -67,18 +67,6 @@ object ListingApp extends App {
     Await.result(ref ? GetListingSymbolCmd(symbol), timeout.duration).asInstanceOf[AnyRef]
   }(ec)
 
-  //  private def overview(ref: ActorSelection, symbol: String)(implicit ec: ExecutionContext): IO[Option[ListingStatus]] = IO.dispatch {
-  //    val map = Await.result(ref ? GetListingCmd, timeout.duration).asInstanceOf[ListingEvent] match {
-  //      case ListingReadyEvent(csv) =>
-  //        import zamblauskas.csv.parser._
-  //        Parser.parse[ListingStatus](csv)
-  //          .map(x => x.map(s => s.symbol -> s).toMap)
-  //          .getOrElse(Map())
-  //      case _ => Map()
-  //    }
-  //    map.get(symbol)
-  //  }(ec)
-
   private def repeat = for {
     _ <- writeLine("Repeat? [y/n]")
     s <- readLine
@@ -109,6 +97,6 @@ object ListingApp extends App {
       .logLevel(Level.NONE)
       .options(new Request.Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
       .target(classOf[AVantageQueryApi], url)
-    new AVantageQueryService(api, token)
+    new AVantageQueryServiceImpl(api, token)
   }
 }

@@ -26,7 +26,7 @@ class TickerActor(private val symbol: String, private val service: AVantageQuery
           log.warning("Received invalid overview, symbol={}", symbol)
           self ! OverviewErrorEvent(new IllegalArgumentException(s"symbol=$symbol"))
         case Failure(err) =>
-          log.error("Request failed, error={}", err, err)
+          log.error(err, "Request failed, error={}", err.getCause)
           self ! OverviewErrorEvent(err)
       }
       sender() ! OverviewPendingEvent

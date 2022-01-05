@@ -3,7 +3,7 @@ package me.devtools4.ticker.listing
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
-import co.alphavantage.service.AVantageQueryService
+import co.alphavantage.service.AVantageQueryServiceImpl
 import co.alphavantage.{AVantageQueryApi, AlphaVantageExceptionDecoder}
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger.{ErrorLogger, Level}
@@ -98,6 +98,6 @@ object TickerListingApp extends App {
       .logLevel(Level.NONE)
       .options(new Request.Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
       .target(classOf[AVantageQueryApi], url)
-    new AVantageQueryService(api, token)
+    new AVantageQueryServiceImpl(api, token)
   }
 }
