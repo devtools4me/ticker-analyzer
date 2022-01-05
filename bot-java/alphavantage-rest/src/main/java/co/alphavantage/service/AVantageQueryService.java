@@ -1,23 +1,10 @@
 package co.alphavantage.service;
 
-import co.alphavantage.AVantageQueryApi;
-import co.alphavantage.AVantageQueryApi.Function;
 import co.alphavantage.OverviewResponse;
 
-public class AVantageQueryService {
-  private final AVantageQueryApi api;
-  private final String token;
+public interface AVantageQueryService {
 
-  public AVantageQueryService(AVantageQueryApi api, String token) {
-    this.api = api;
-    this.token = token;
-  }
+  OverviewResponse companyOverview(String symbol);
 
-  public OverviewResponse companyOverview(String symbol) {
-    return api.query(Function.OVERVIEW, symbol, token);
-  }
-
-  public String activeListing() {
-    return api.listing(token).body().toString();
-  }
+  String activeListing();
 }

@@ -3,6 +3,7 @@ package me.devtools4.telegram.config;
 import co.alphavantage.AlphaVantageExceptionDecoder;
 import co.alphavantage.AVantageQueryApi;
 import co.alphavantage.service.AVantageQueryService;
+import co.alphavantage.service.AVantageQueryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Feign;
 import feign.Logger.ErrorLogger;
@@ -26,7 +27,7 @@ public class AlphaVantageConfig {
 
   @Bean
   public AVantageQueryService avQueryService(AVantageQueryApi api) {
-    return new AVantageQueryService(api, token);
+    return new AVantageQueryServiceImpl(api, token);
   }
 
   @Bean
