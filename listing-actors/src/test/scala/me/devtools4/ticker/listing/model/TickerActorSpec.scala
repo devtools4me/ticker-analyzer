@@ -1,22 +1,26 @@
 package me.devtools4.ticker.listing.model
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.{EventFilter, ImplicitSender, TestKit}
 import co.alphavantage.OverviewResponse
 import co.alphavantage.service.AVantageQueryService
+import com.typesafe.config.ConfigFactory
 import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewErrorEvent, OverviewPendingEvent}
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
 
-class TickerActorSpec extends TestKit(ActorSystem("TickerActorSpec"))
+import scala.concurrent.duration._
+
+class TickerActorSpec extends TestKit(ActorSystem(
+  "TickerActorSpec",
+  ConfigFactory.load().getConfig("tickerActorSpec")))
   with ImplicitSender
   with WordSpecLike
-  with BeforeAndAfterAll
-{
+  with BeforeAndAfterAll {
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
   }
 
-  "The thing bieng tested" should {
+  "A ticker actor" should {
     "do this" in {
       val actor = system.actorOf(TickerActor
         .props(
@@ -27,13 +31,18 @@ class TickerActorSpec extends TestKit(ActorSystem("TickerActorSpec"))
             override def activeListing(): String = ???
           }
         ))
-      actor ! GetOverviewCmd
-      expectMsg(OverviewPendingEvent)
 
-      Thread.sleep(1000)
+      EventFilter.info(pattern = "Received message=GetOverviewCmd", occurrences = 1) intercept {
+        within(2 seconds) {
+          actor ! GetOverviewCmd
+          expectMsg(OverviewPendingEvent)
 
-      actor ! GetOverviewCmd
-      val m = expectMsgType[OverviewErrorEvent]
+          Thread.sleep(1000)
+
+          actor ! GetOverviewCmd
+          val m = expectMsgType[OverviewErrorEvent]
+        }
+      }
     }
   }
 }

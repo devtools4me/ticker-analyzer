@@ -1,6 +1,7 @@
 package me.devtools4.ticker.listing.model
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.SupervisorStrategy.Resume
+import akka.actor.{Actor, ActorLogging, ActorRef, OneForOneStrategy, Props, SupervisorStrategy}
 import co.alphavantage.service.AVantageQueryService
 import me.devtools4.ticker.listing.model.ListingActor._
 import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewPendingEvent}
@@ -14,6 +15,10 @@ class ListingActor(private val service: AVantageQueryService) extends Actor with
   type ListingState = (String, Map[String, ActorRef])
 
   implicit val ec = ExecutionContext.global
+
+  override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy() {
+    case _ => Resume
+  }
 
   override def receive: Receive = {
     case GetListingCmd =>
