@@ -192,6 +192,7 @@ public class OverviewResponse {
 
   public Function<String, Double> percent() {
     return v -> Optional.ofNullable(v)
+        .filter(x -> !x.isBlank())
         .map(Double::parseDouble)
         .map(OverviewResponse::percentOf)
         .orElse(null);
