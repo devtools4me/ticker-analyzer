@@ -140,6 +140,7 @@ public class TickerAnalyzerAppTest {
         Arguments.of(query(1L, 1,  "/blsh"), checkEdit("1", 1, "blsh.html")),
         Arguments.of(update(1L, "/quote/msft"), checkMessage("1", "data/quote.html")),
         Arguments.of(update(1L, "/mul/msft"), checkMessage("1", "data/av/mul.html")),
+        Arguments.of(update(1L, "/mul/hsi"), checkMessage("1", "data/av/mul-invalid.html")),
         Arguments.of(update(1L, "/cmp/msft&aapl"), checkDocument("1", "data/av/cmp.pdf")),
         Arguments.of(update(1L, "/cmp/msft&aapl&null"), checkDocument("1", "data/av/cmp.pdf")),
         Arguments.of(update(1L, "/history/msft"), checkPhoto("1", "data/history-1m.png")),

@@ -80,7 +80,7 @@ public class CommandHandler {
           var id = params.get("id");
           var overview = service.multipliers(id);
           if (!isValid(overview)) {
-            throw new IllegalArgumentException("Invalid response, id=" + id + ", response=" + overview.toString());
+            throw new IllegalArgumentException("Invalid response, id - " + id);
           }
 
           var html = render.html(overview, TemplateType.Mul);
