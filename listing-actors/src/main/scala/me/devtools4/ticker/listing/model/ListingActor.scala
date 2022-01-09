@@ -2,10 +2,12 @@ package me.devtools4.ticker.listing.model
 
 import akka.actor.SupervisorStrategy.Resume
 import akka.actor.{Actor, ActorLogging, ActorRef, OneForOneStrategy, Props, SupervisorStrategy}
+import akka.pattern.{Backoff, BackoffSupervisor}
 import co.alphavantage.service.AVantageQueryService
 import me.devtools4.ticker.listing.model.ListingActor._
 import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewPendingEvent}
 
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -15,6 +17,14 @@ class ListingActor(private val service: AVantageQueryService) extends Actor with
   type ListingState = (String, Map[String, ActorRef])
 
   implicit val ec = ExecutionContext.global
+
+  private val supervisorProps = BackoffSupervisor.props(
+    Backoff.onFailure(
+      Props[TickerActor],
+      "name",
+      3 seconds, 30 seconds,
+      0.2)
+  )
 
   override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy() {
     case _ => Resume

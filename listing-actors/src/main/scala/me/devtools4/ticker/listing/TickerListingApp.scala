@@ -63,7 +63,10 @@ object TickerListingApp extends App {
       .resolveOne()
       .onComplete {
         case Success(actor) => promise.success(actor)
-        case Failure(_) => promise.success(system.actorOf(TickerActor.props(symbol, avService), symbol))
+        case Failure(_) => promise.success(system
+          .actorOf(
+            TickerActor.propsWithSupervisor(symbol, avService),
+            symbol))
       }
     Await.result(promise.future, Duration.Inf)
   }(ec)

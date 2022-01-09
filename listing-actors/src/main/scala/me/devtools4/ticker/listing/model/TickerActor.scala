@@ -1,10 +1,13 @@
 package me.devtools4.ticker.listing.model
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.SupervisorStrategy.{Resume, Stop}
+import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props}
+import akka.pattern.{Backoff, BackoffSupervisor}
 import co.alphavantage.OverviewResponse
 import co.alphavantage.service.AVantageQueryService
 import me.devtools4.ticker.listing.model.TickerActor.{GetOverviewCmd, OverviewErrorEvent, OverviewPendingEvent, OverviewReadyEvent}
 
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -56,6 +59,19 @@ class TickerActor(private val symbol: String, private val service: AVantageQuery
 object TickerActor {
   def props(symbol: String, service: AVantageQueryService): Props =
     Props(new TickerActor(symbol, service))
+
+  def propsWithSupervisor(symbol: String, service: AVantageQueryService): Props = BackoffSupervisor.props(
+    Backoff.onFailure(
+      Props(new TickerActor(symbol, service)),
+      symbol,
+      3 seconds, 30 seconds,
+      0.2
+    ).withSupervisorStrategy(
+      OneForOneStrategy() {
+        case _ => Resume
+      }
+    )
+  )
 
   case object GetOverviewCmd
 
