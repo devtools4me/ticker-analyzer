@@ -15,7 +15,7 @@ import lombok.Data;
 public class Multipliers {
   public static List<String> COLUMNS = List.of(
       "Symbol", "Name", "Sector",
-      "P", "EV/EBITDA", "ND/EBITDA", "P/E", "ROE, %", "L/A", "ROA, %", "P/B",
+      "P", "EV/EBITDA", "ND/EBITDA", "P/E", "ROE, %", "L/A", "ROA, %", "P/S", "P/B",
       "Free-float",
       "Dividend/Share", "Dividend Yield, %", "Dividend Date", "Ex Dividend Date");
 
@@ -29,6 +29,7 @@ public class Multipliers {
   private Double roe;
   private Double laRatio;
   private Double roa;
+  private Double psRatio;
   private Double pbRatio;
   private Double freeFloat;
   private Double dividendPerShare;
@@ -39,7 +40,7 @@ public class Multipliers {
   public List<String> str() {
     return List.of(symbol, name, sector,
         str(billionsOf(p)) + "B", str(evToEbitdaRatio), str(ndToEbitdaRatio),
-        str(peRatio), str(roe), str(laRatio), str(roa), str(pbRatio),
+        str(peRatio), str(roe), str(laRatio), str(roa), str(psRatio), str(pbRatio),
         str(freeFloat),
         str(dividendPerShare), str(dividendYield), dividendDate, exDividendDate);
   }
@@ -56,6 +57,7 @@ public class Multipliers {
         .roe(percentOf(x.getReturnOnEquityTTM()))
         //.laRatio()
         .roa(percentOf(x.getReturnOnAssetsTTM()))
+        .psRatio(x.getPriceToSalesRatioTTM())
         .pbRatio(x.getPriceToBookRatio())
         //.freeFloat()
         .dividendPerShare(x.getDividendPerShare())
