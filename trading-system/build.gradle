@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: 'scala'
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    def scalaMajor = '2.13'
+    def scalaMinor = '4'
+    def catsVersion = '2.2.0'
+    def http4sVersion = '0.23.1'
+    def circeVersion = "0.14.0"
+    def sttpVersion = '3.3.13'
+    def telegramVersion = '5.0.3'
+    def mustacheVersion = '0.9.4'
+    def morpheusVersion = '1.0.31'
+    def logbackVersion = '1.2.3'
+    def slf4jVersion = '1.7.22'
+
+    dependencies {
+        compile(
+                "org.scala-lang:scala-library:$scalaMajor.$scalaMinor",
+                "org.typelevel:cats-core_$scalaMajor:$catsVersion",
+                "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2",
+                "org.http4s:http4s-blaze-server_$scalaMajor:$http4sVersion",
+                "org.http4s:http4s-dsl_$scalaMajor:$http4sVersion",
+                "org.http4s:http4s-circe_$scalaMajor:$http4sVersion",
+                "io.circe:circe-core_$scalaMajor:$circeVersion",
+                "io.circe:circe-generic_$scalaMajor:$circeVersion",
+                "io.circe:circe-parser_$scalaMajor:$circeVersion",
+                "com.softwaremill.sttp.client3:core_$scalaMajor:$sttpVersion",
+                "com.bot4s:telegram-core_$scalaMajor:$telegramVersion",
+                "com.github.spullara.mustache.java:compiler:$mustacheVersion",
+                "com.d3xsystems:d3x-morpheus-core:$morpheusVersion",
+                "com.d3xsystems:d3x-morpheus-viz:$morpheusVersion",
+                "org.jfree:jfreechart:1.0.15",
+                "org.jfree:jcommon:1.0.17",
+                "ch.qos.logback:logback-core:$logbackVersion",
+                "ch.qos.logback:logback-classic:$logbackVersion",
+                "org.slf4j:slf4j-api:$slf4jVersion"
+        )
+
+        testCompile(
+                "junit:junit:4.13.2",
+                "org.scalatest:scalatest_$scalaMajor:3.2.6",
+                "org.scalatestplus:junit-4-13_$scalaMajor:3.2.2.0"
+        )
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.5'
+    }
+
+    task spec(dependsOn: ['testClasses'], type: JavaExec) {
+        main = 'org.scalatest.tools.Runner'
+        args = ['-R', 'build/classes/test', '-o']
+        classpath = sourceSets.test.runtimeClasspath
+    }
+
+    build.dependsOn spec
+
+    assemble.dependsOn spec
+
+    sourceSets {
+        main {
+            scala {
+                srcDirs = [
+                        'src/main/scala',
+                        'src/main/java'
+                ]
+            }
+            java {
+                srcDirs = []
+            }
+        }
+    }
+
+    jar {
+        baseName = 'trading-system'
+        version =  '0.0.1-SNAPSHOT'
+        manifest {
+            attributes 'Main-Class': 'me.devtools4.ticker.TickerApp'
+        }
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+}
