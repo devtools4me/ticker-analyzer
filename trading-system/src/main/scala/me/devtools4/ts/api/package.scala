@@ -1,33 +1,40 @@
 package me.devtools4.ts
 
 package object api {
-  sealed trait Message {
-    def id: String
-  }
 
-  case class Event(override val id: String, version: Int) extends Message
+  type PriceType = BigDecimal
+  type VolumeType = Long
+  type TimeType = Long
 
-  case class Command(override val id: String) extends Message
-  case class SubmitOrderCommand(order: Order) extends Command(order.id)
+  sealed trait Command
 
-  sealed trait Side
-  case object Bid extends Side
-  case object Ask extends Side
+  case class StartMatchingCommand(id: String, symbol: String) extends Command
 
-  sealed trait Order {
-    def id: String
-    def side: Side
-    def price: BigDecimal
-    def volume: Long
-    def time: Long
-  }
-  case class SimpleOrder(id: String, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order
-  case class IcebergOrder(id: String, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order
+  case class BidCommand(id: String,
+                        price: PriceType,
+                        volume: VolumeType,
+                        time: TimeType) extends Command
+
+  case class AskCommand(id: String,
+                        price: PriceType,
+                        volume: VolumeType,
+                        time: TimeType) extends Command
+
+  case class SubmitOrderCommand(order: Order) extends Command
 
   case class BidAsk(bid: Order, ask: Order) {
+    def isTradable: Boolean = bid.price.compareTo(ask.price) >= 0
 
   }
 
+  trait EventEntityRepository[E] {
+    def save(e: E): Unit
+    def find(id: Long): Option[E]
+    def findByAggregateId(aggregateId: String): List[E]
+  }
 
-
+  trait EventStore[E] {
+    def saveEvents(aggregateId: String, events: List[E], expectedVersion: Int): Unit
+    def getEvents(aggregateId: String): List[E]
+  }
 }
