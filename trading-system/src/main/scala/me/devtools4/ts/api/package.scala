@@ -13,11 +13,10 @@ package object api {
 
   case class BidAsk(bid: Order, ask: Order) {
     def isTradable: Boolean = bid.price.compareTo(ask.price) >= 0
-
   }
 
   trait CommandHandler[C] {
-    def handle(cmd: C)
+    def handle(cmd: C): Unit
   }
 
   trait EventStoreRepository[E] {

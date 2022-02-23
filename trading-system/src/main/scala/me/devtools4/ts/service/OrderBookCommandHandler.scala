@@ -3,11 +3,11 @@ package me.devtools4.ts.service
 import me.devtools4.ts.api._
 import me.devtools4.ts.domain._
 
-class TradeEngineCommandHandler(handler: EventSourcingHandler[TradeEngineEvent, TradeEngineAggregate]
-                               ) extends CommandHandler[TradeEngineCommand] {
-  override def handle(cmd: TradeEngineCommand): Unit = cmd match {
+class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, OrderBookAggregate]
+                               ) extends CommandHandler[OrderBookCommand] {
+  override def handle(cmd: OrderBookCommand): Unit = cmd match {
     case c @ StartCommand(_, _) =>
-      val a = TradeEngineAggregate(c)
+      val a = OrderBookAggregate(c)
       handler.save(a)
     case BidCommand(id, price, volume, time) =>
       val a = handler.find(id)

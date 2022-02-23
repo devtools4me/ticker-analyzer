@@ -1,14 +1,14 @@
 package me.devtools4.ts.service
 
-import me.devtools4.ts.api.{EventStoreRepository, EventStore, TradeEngineEvent, Version}
-import me.devtools4.ts.domain.TradeEngineAggregate
-import me.devtools4.ts.model.TradeEngineEventEntity
+import me.devtools4.ts.api.{EventStoreRepository, EventStore, OrderBookEvent, Version}
+import me.devtools4.ts.domain.OrderBookAggregate
+import me.devtools4.ts.model.OrderBookEventEntity
 
 import java.time.ZonedDateTime
 import java.util.ConcurrentModificationException
 
-class TradeEngineEventStore(repository: EventStoreRepository[TradeEngineEventEntity]) extends EventStore[TradeEngineEvent] {
-  override def save(aggregateId: String, events: List[TradeEngineEvent], expectedVersion: Version): Unit = {
+class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]) extends EventStore[OrderBookEvent] {
+  override def save(aggregateId: String, events: List[OrderBookEvent], expectedVersion: Version): Unit = {
     if (expectedVersion.isDefined) {
       repository.findByAggregateId(aggregateId)
         .lastOption
@@ -19,11 +19,11 @@ class TradeEngineEventStore(repository: EventStoreRepository[TradeEngineEventEnt
     events.foldLeft(expectedVersion.version) { (v, e) =>
       val newVersion = v + 1
       repository.save(
-        TradeEngineEventEntity(
+        OrderBookEventEntity(
           -1, //TODO: DB ID
           ZonedDateTime.now(),
           aggregateId,
-          TradeEngineAggregate.getClass.getTypeName,
+          OrderBookAggregate.getClass.getTypeName,
           newVersion,
           e.getClass.getTypeName,
           e))
@@ -35,7 +35,7 @@ class TradeEngineEventStore(repository: EventStoreRepository[TradeEngineEventEnt
     }
   }
 
-  override def find(aggregateId: String): List[TradeEngineEvent] = {
+  override def find(aggregateId: String): List[OrderBookEvent] = {
     repository.findByAggregateId(aggregateId)
       .map(_.eventData)
   }
