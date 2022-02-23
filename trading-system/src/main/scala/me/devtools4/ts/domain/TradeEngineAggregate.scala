@@ -1,6 +1,6 @@
 package me.devtools4.ts.domain
 
-import me.devtools4.ts.`match`.{MatchStrategy, OrderBook, OrderContainer}
+import me.devtools4.ts.`match`.{MatchStrategy, OrderBook, OrderContainer, SimpleMatchStrategy}
 import me.devtools4.ts.api._
 
 class TradeEngineAggregate(override var id: String,
@@ -29,4 +29,8 @@ class TradeEngineAggregate(override var id: String,
 object TradeEngineAggregate {
   def apply(id: String, symbol: String, strategies: Map[OrderType, MatchStrategy]) =
     new TradeEngineAggregate(id, symbol, strategies)
+
+  def apply(cmd: StartCommand): TradeEngineAggregate = TradeEngineAggregate(cmd.id,
+    cmd.symbol,
+    Map(SimpleOrderType -> SimpleMatchStrategy()))
 }

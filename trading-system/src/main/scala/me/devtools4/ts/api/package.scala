@@ -11,25 +11,13 @@ package object api {
     def nextVersion: Version = new Version(version + 1)
   }
 
-  sealed trait Command
-
-  case class StartMatchingCommand(id: String, symbol: String) extends Command
-
-  case class BidCommand(id: String,
-                        price: PriceType,
-                        volume: VolumeType,
-                        time: TimeType) extends Command
-
-  case class AskCommand(id: String,
-                        price: PriceType,
-                        volume: VolumeType,
-                        time: TimeType) extends Command
-
-  case class SubmitOrderCommand(order: Order) extends Command
-
   case class BidAsk(bid: Order, ask: Order) {
     def isTradable: Boolean = bid.price.compareTo(ask.price) >= 0
 
+  }
+
+  trait CommandHandler[C] {
+    def handle(cmd: C)
   }
 
   trait EventStoreRepository[E] {
