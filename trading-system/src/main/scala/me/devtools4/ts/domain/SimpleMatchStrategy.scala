@@ -1,4 +1,5 @@
-package me.devtools4.ts.`match`
+package me.devtools4.ts.domain
+
 import me.devtools4.ts.api
 
 class SimpleMatchStrategy extends MatchStrategy {

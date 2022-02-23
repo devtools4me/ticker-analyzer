@@ -1,6 +1,5 @@
 package me.devtools4.ts.domain
 
-import me.devtools4.ts.`match`.{MatchStrategy, OrderBook, OrderContainer, SimpleMatchStrategy}
 import me.devtools4.ts.api._
 
 class OrderBookAggregate(override var id: String,
