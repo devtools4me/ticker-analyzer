@@ -19,6 +19,10 @@ package object api {
     def handle(cmd: C): Unit
   }
 
+  trait EventHandler[E] {
+    def handle(event: E): Unit
+  }
+
   trait EventStoreRepository[E] {
     def save(e: E): Option[E]
     def find(id: Long): Option[E]
@@ -28,5 +32,13 @@ package object api {
   trait EventStore[E] {
     def save(aggregateId: String, events: List[E], expectedVersion: Version): Unit
     def find(aggregateId: String): List[E]
+  }
+
+  trait EventProducer[E] {
+    def send(event: E): Unit
+  }
+
+  trait EventConsumer[E] {
+    def consume(event: E): Unit
   }
 }

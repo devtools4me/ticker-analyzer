@@ -1,13 +1,14 @@
 package me.devtools4.ts.service
 
-import me.devtools4.ts.api.{EventStoreRepository, EventStore, OrderBookEvent, Version}
+import me.devtools4.ts.api.{EventProducer, EventStore, EventStoreRepository, OrderBookEvent, Version}
 import me.devtools4.ts.domain.OrderBookAggregate
 import me.devtools4.ts.model.OrderBookEventEntity
 
 import java.time.ZonedDateTime
 import java.util.ConcurrentModificationException
 
-class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]) extends EventStore[OrderBookEvent] {
+class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity],
+                          producer: EventProducer[OrderBookEvent]) extends EventStore[OrderBookEvent] {
   override def save(aggregateId: String, events: List[OrderBookEvent], expectedVersion: Version): Unit = {
     if (expectedVersion.isDefined) {
       repository.findByAggregateId(aggregateId)
@@ -27,9 +28,8 @@ class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]
           newVersion,
           e.getClass.getTypeName,
           e))
-        .foreach(x => {
-          //TODO: broadcast
-        })
+        .map(_.eventData)
+        .foreach(producer.send)
 
       newVersion
     }
