@@ -1,11 +1,13 @@
 package me.devtools4.ts.api
 
-sealed trait TradeEngineEvent
+sealed trait TradeEngineEvent {
+  def version: Version
+}
 
-case class TradeEngineStartedEvent(id: String, symbol: String) extends TradeEngineEvent
+case class TradeEngineStartedEvent(id: String, symbol: String, version: Version) extends TradeEngineEvent
 
-case class OrderSubmittedEvent(order: Order) extends TradeEngineEvent
+case class OrderSubmittedEvent(order: Order, version: Version) extends TradeEngineEvent
 
-case class TradeMatchedEvent(trades: List[Trade]) extends TradeEngineEvent
+case class TradeMatchedEvent(trades: List[Trade], version: Version) extends TradeEngineEvent
 
-case object TradeEngineStoppedEvent extends TradeEngineEvent
+case class TradeEngineStoppedEvent(version: Version) extends TradeEngineEvent

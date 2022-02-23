@@ -1,14 +1,14 @@
 package me.devtools4.ts.repository
 
-import me.devtools4.ts.api.EventEntityRepository
+import me.devtools4.ts.api.EventStoreRepository
 import me.devtools4.ts.model.TradeEngineEventEntity
 
-class TradeEngineEventRepository extends EventEntityRepository[TradeEngineEventEntity] {
+class TradeEngineEventStoreRepository extends EventStoreRepository[TradeEngineEventEntity] {
   import scalikejdbc._
 
   implicit val session = AutoSession
 
-  override def save(e: TradeEngineEventEntity): Unit = {
+  override def save(e: TradeEngineEventEntity): Option[TradeEngineEventEntity] = {
     val te = TradeEngineEventEntity.syntax
     sql"""
     insert into ${TradeEngineEventEntity.as(te)}
@@ -16,6 +16,7 @@ class TradeEngineEventRepository extends EventEntityRepository[TradeEngineEventE
     values
     (${e.createdAt}, ${e.aggregateId}, ${e.aggregateType}, ${e.version}, ${e.eventType}, ${e.eventData})
     """.update.apply()
+    Some(e)
   }
 
   override def find(id: Long): Option[TradeEngineEventEntity] = {

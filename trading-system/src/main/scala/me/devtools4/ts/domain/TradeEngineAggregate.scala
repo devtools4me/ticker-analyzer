@@ -9,20 +9,20 @@ class TradeEngineAggregate(override var id: String,
 
   private val book: OrderBook = OrderBook(new OrderContainer(), new OrderContainer())
 
-  riseEvent(TradeEngineStartedEvent(id, symbol))
+  riseEvent(TradeEngineStartedEvent(id, symbol, getVersion.nextVersion))
 
-  def submitOrder(o: Order): Unit = riseEvent(OrderSubmittedEvent(o))
+  def submitOrder(o: Order): Unit = riseEvent(OrderSubmittedEvent(o, getVersion.nextVersion))
 
-  def stop(): Unit = riseEvent(TradeEngineStoppedEvent)
+  def stop(): Unit = riseEvent(TradeEngineStoppedEvent(getVersion.nextVersion))
 
   override protected def apply(e: TradeEngineEvent): Unit = e match {
-    case TradeEngineStartedEvent(i, s) =>
-    case OrderSubmittedEvent(o) => strategies.get(o.orderType)
+    case TradeEngineStartedEvent(i, s, v) =>
+    case OrderSubmittedEvent(o, v) => strategies.get(o.orderType)
       .map(x => x.matchOrder(book, o))
-      .map(TradeMatchedEvent)
+      .map(x => TradeMatchedEvent(x, v.nextVersion))
       .foreach(riseEvent(_))
-    case TradeMatchedEvent(trades) => ???
-    case TradeEngineStoppedEvent =>
+    case TradeMatchedEvent(trades, v) => ???
+    case TradeEngineStoppedEvent(v) =>
   }
 }
 

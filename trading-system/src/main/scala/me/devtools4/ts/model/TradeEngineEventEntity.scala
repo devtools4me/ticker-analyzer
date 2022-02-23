@@ -1,6 +1,6 @@
 package me.devtools4.ts.model
 
-import me.devtools4.ts.api.{EventEntityRepository, TradeEngineEvent, TradeEngineStoppedEvent}
+import me.devtools4.ts.api.{EventStoreRepository, TradeEngineEvent, TradeEngineStoppedEvent}
 
 import java.time.ZonedDateTime
 
@@ -24,5 +24,5 @@ object TradeEngineEventEntity extends SQLSyntaxSupport[TradeEngineEventEntity] {
     rs.string("aggregate_type"),
     rs.int("version"),
     rs.string("event_type"),
-    TradeEngineStoppedEvent)
+    null)
 }
