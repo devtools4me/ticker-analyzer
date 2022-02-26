@@ -1,0 +1,6 @@
+plugins {
+    id 'trading.system.scala-library-conventions'
+}
+
+dependencies {
+}

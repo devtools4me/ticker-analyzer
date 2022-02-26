@@ -1,0 +1,51 @@
+plugins {
+    id 'scala'
+}
+
+repositories {
+    mavenCentral()
+}
+
+def scalaMajor = '2.13'
+def scalaMinor = '6'
+def logbackVersion = '1.2.3'
+def slf4jVersion = '1.7.22'
+
+dependencies {
+    constraints {
+        // Define dependency versions as constraints
+        implementation 'org.apache.commons:commons-text:1.9'
+
+        implementation "org.scala-lang:scala-library:$scalaMajor.$scalaMinor"
+        implementation "org.scalikejdbc:scalikejdbc_$scalaMajor:4.0.0"
+
+        implementation 'org.flywaydb:flyway-core:8.4.3'
+        implementation 'org.postgresql:postgresql:42.2.8'
+        implementation 'com.opentable.components:otj-pg-embedded:1.0.0'
+
+
+        implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2"
+        implementation "ch.qos.logback:logback-core:$logbackVersion"
+        implementation "ch.qos.logback:logback-classic:$logbackVersion"
+        implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    }
+
+    // Use Scala 2.13 in our library project
+    implementation 'org.scala-lang:scala-library'
+    implementation "org.scalikejdbc:scalikejdbc_$scalaMajor"
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.postgresql:postgresql'
+    implementation 'com.opentable.components:otj-pg-embedded'
+
+    implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor"
+    implementation "ch.qos.logback:logback-core"
+    implementation "ch.qos.logback:logback-classic"
+    implementation "org.slf4j:slf4j-api"
+
+    // Use JUnit Jupiter for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

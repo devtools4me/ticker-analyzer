@@ -1,0 +1,4 @@
+rootProject.name = 'trading-system'
+include('common',
+        'orderbook-cmd',
+        'orderbook-query')

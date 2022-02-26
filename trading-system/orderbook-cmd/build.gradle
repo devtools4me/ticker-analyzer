@@ -1,0 +1,11 @@
+plugins {
+    id 'trading.system.scala-application-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+}
+
+application {
+    mainClass = 'me.devtools4.ts.orderbook.OrderBookCmdApp'
+}
