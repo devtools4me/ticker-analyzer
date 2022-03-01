@@ -24,6 +24,6 @@ package object event {
   }
 
   trait EventConsumer[E] {
-    def consume(event: E): Unit
+    def consume(event: E, doneFunc: => Unit): Unit
   }
 }
