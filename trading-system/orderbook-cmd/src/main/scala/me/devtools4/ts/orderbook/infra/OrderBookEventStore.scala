@@ -41,3 +41,9 @@ class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]
       .map(_.eventData)
   }
 }
+
+object OrderBookEventStore {
+  def apply(repository: EventStoreRepository[OrderBookEventEntity],
+            producer: EventProducer[OrderBookEvent]) =
+    new OrderBookEventStore(repository, producer)
+}

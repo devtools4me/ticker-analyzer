@@ -20,3 +20,8 @@ class OrderBookEventSourcingHandler(store: EventStore[OrderBookEvent], func: => 
     aggregate
   }
 }
+
+object OrderBookEventSourcingHandler {
+  def apply(store: EventStore[OrderBookEvent], func: => OrderBookAggregate) =
+    new OrderBookEventSourcingHandler(store, func)
+}

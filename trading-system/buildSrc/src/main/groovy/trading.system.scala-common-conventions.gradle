@@ -16,6 +16,8 @@ dependencies {
         // Define dependency versions as constraints
         implementation 'org.apache.commons:commons-text:1.9'
 
+        implementation "com.lihaoyi:cask_$scalaMajor:0.7.3"
+
         implementation "org.scala-lang:scala-library:$scalaMajor.$scalaMinor"
         implementation "org.scalikejdbc:scalikejdbc_$scalaMajor:4.0.0"
 
@@ -32,6 +34,7 @@ dependencies {
 
     // Use Scala 2.13 in our library project
     implementation 'org.scala-lang:scala-library'
+    implementation "com.lihaoyi:cask_$scalaMajor"
     implementation "org.scalikejdbc:scalikejdbc_$scalaMajor"
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.postgresql:postgresql'

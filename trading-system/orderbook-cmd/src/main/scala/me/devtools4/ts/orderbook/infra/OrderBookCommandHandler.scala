@@ -22,3 +22,8 @@ class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, Orde
     case StopCommand => ???
   }
 }
+
+object OrderBookCommandHandler {
+  def apply(handler: EventSourcingHandler[OrderBookEvent, OrderBookAggregate]) =
+    new OrderBookCommandHandler(handler)
+}

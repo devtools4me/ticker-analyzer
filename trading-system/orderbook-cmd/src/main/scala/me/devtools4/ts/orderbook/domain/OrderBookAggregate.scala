@@ -27,11 +27,15 @@ class OrderBookAggregate(override var id: String,
 }
 
 object OrderBookAggregate {
+  val map: Map[OrderType, MatchStrategy] = Map(SimpleOrderType -> SimpleMatchStrategy())
+
   def apply(id: String, symbol: String, strategies: Map[OrderType, MatchStrategy]) =
     new OrderBookAggregate(id, symbol, strategies)
 
-  def apply(cmd: StartCommand): OrderBookAggregate = OrderBookAggregate(cmd.id,
-    cmd.symbol,
-    Map(SimpleOrderType -> SimpleMatchStrategy()))
+  def apply(cmd: StartCommand): OrderBookAggregate = {
+    OrderBookAggregate(cmd.id,
+      cmd.symbol,
+      map)
+  }
 }
 
