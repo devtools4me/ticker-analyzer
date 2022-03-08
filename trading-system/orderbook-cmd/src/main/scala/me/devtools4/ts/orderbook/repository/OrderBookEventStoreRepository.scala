@@ -33,3 +33,7 @@ class OrderBookEventStoreRepository extends EventStoreRepository[OrderBookEventE
       .list.apply()
   }
 }
+
+object OrderBookEventStoreRepository {
+  def apply(): OrderBookEventStoreRepository = new OrderBookEventStoreRepository()
+}

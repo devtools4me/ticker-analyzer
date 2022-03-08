@@ -17,6 +17,7 @@ dependencies {
         implementation 'org.apache.commons:commons-text:1.9'
 
         implementation "com.lihaoyi:cask_$scalaMajor:0.7.3"
+        implementation "com.lihaoyi:upickle_$scalaMajor:0.7.1"
 
         implementation "org.scala-lang:scala-library:$scalaMajor.$scalaMinor"
         implementation "org.scalikejdbc:scalikejdbc_$scalaMajor:4.0.0"
@@ -25,6 +26,7 @@ dependencies {
         implementation 'org.postgresql:postgresql:42.2.8'
         implementation 'com.opentable.components:otj-pg-embedded:1.0.0'
 
+        implementation 'org.apache.kafka:kafka-clients:3.0.0'
 
         implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2"
         implementation "ch.qos.logback:logback-core:$logbackVersion"
@@ -34,11 +36,16 @@ dependencies {
 
     // Use Scala 2.13 in our library project
     implementation 'org.scala-lang:scala-library'
+
     implementation "com.lihaoyi:cask_$scalaMajor"
+    implementation "com.lihaoyi:upickle_$scalaMajor"
+
     implementation "org.scalikejdbc:scalikejdbc_$scalaMajor"
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.postgresql:postgresql'
     implementation 'com.opentable.components:otj-pg-embedded'
+
+    implementation 'org.apache.kafka:kafka-clients'
 
     implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor"
     implementation "ch.qos.logback:logback-core"
