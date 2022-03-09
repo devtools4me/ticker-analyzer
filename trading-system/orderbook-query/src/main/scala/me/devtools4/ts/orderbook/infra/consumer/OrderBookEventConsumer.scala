@@ -8,11 +8,11 @@ class OrderBookEventConsumer(eventHandler: EventHandler[OrderBookEvent]) extends
     event match {
       case e @ OrderBookStartedEvent(id, sym, ver) =>
         eventHandler.handle(e)
-      case e @ OrderSubmittedEvent(o, ver) =>
+      case e @ OrderSubmittedEvent(o, sym, ver) =>
         eventHandler.handle(e)
-      case e @ TradeMatchedEvent(list, ver) =>
+      case e @ TradeMatchedEvent(list, sym, ver) =>
         eventHandler.handle(e)
-      case e @ OrderBookStoppedEvent(ver) =>
+      case e @ OrderBookStoppedEvent(sym, ver) =>
         eventHandler.handle(e)
     }
     doneFunc

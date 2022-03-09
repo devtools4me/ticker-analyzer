@@ -6,6 +6,12 @@ package object dto {
   type VolumeType = Long
   type TimeType = Long
 
+  class Ticker(val symbol: String) extends AnyVal
+
+  object Ticker {
+    def apply(symbol: String): Ticker = new Ticker(symbol)
+  }
+
   class Version(val version: Int = -1) extends AnyVal {
     def isDefined: Boolean = version > -1
     def nextVersion: Version = new Version(version + 1)
