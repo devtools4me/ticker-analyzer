@@ -17,7 +17,7 @@ dependencies {
         implementation 'org.apache.commons:commons-text:1.9'
 
         implementation "com.lihaoyi:cask_$scalaMajor:0.7.3"
-        implementation "com.lihaoyi:upickle_$scalaMajor:0.7.1"
+        implementation "com.lihaoyi:upickle_$scalaMajor:1.4.3"
 
         implementation "org.scala-lang:scala-library:$scalaMajor.$scalaMinor"
         implementation "org.scalikejdbc:scalikejdbc_$scalaMajor:4.0.0"

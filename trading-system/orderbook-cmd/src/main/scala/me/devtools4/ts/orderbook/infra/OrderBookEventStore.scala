@@ -15,10 +15,10 @@ class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]
       repository.findByAggregateId(aggregateId)
         .lastOption
         .map(e => e.version)
-        .filter(x => expectedVersion.version == x)
+        .filter(x => expectedVersion.value == x)
         .getOrElse(() => throw new ConcurrentModificationException())
     }
-    events.foldLeft(expectedVersion.version) { (v, e) =>
+    events.foldLeft(expectedVersion.value) { (v, e) =>
       val newVersion = v + 1
       repository.save(
         OrderBookEventEntity(

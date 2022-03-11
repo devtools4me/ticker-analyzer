@@ -1,7 +1,7 @@
 package me.devtools4.ts.orderbook
 
 import me.devtools4.ts.cmd.CommandDispatcher
-import me.devtools4.ts.dto.{OrderBookCommand, Ticker}
+import me.devtools4.ts.dto.OrderBookCommand
 import me.devtools4.ts.infra.kafka.KafkaMessageProducer
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.infra.{OrderBookCommandHandler, OrderBookEventProducer, OrderBookEventSourcingHandler, OrderBookEventStore}
@@ -21,7 +21,7 @@ object OrderBookCmdApp extends cask.MainRoutes {
   private lazy val eventStoreRepository = OrderBookEventStoreRepository()
   private lazy val eventStore = OrderBookEventStore(eventStoreRepository, eventProducer)
   private lazy val eventSrcHandler = OrderBookEventSourcingHandler(eventStore,
-    OrderBookAggregate("", Ticker(""), OrderBookAggregate.map)
+    OrderBookAggregate("", "", OrderBookAggregate.map)
   )
   private lazy val cmdHandler = OrderBookCommandHandler(eventSrcHandler)
   private lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)

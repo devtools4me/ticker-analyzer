@@ -1,27 +1,25 @@
 package me.devtools4.ts
 
+import upickle.default.{ReadWriter, macroRW}
+
 package object dto {
 
   type PriceType = BigDecimal
   type VolumeType = Long
   type TimeType = Long
+  type Ticker = String
+  type Side = String
 
-  class Ticker(val symbol: String) extends AnyVal
+  val Bid: Side = "B"
+  val Ask: Side = "S"
 
-  object Ticker {
-    def apply(symbol: String): Ticker = new Ticker(symbol)
+  case class Version(value: Int = -1) extends AnyVal {
+    def isDefined: Boolean = value > -1
+
+    def nextVersion: Version = Version(value + 1)
   }
 
-  class Version(val version: Int = -1) extends AnyVal {
-    def isDefined: Boolean = version > -1
-    def nextVersion: Version = new Version(version + 1)
-  }
-
-  sealed trait Side
-  case object Bid extends Side
-  case object Ask extends Side
-
-  case class BidAsk(bid: Order, ask: Order) {
-    def isTradable: Boolean = bid.price.compareTo(ask.price) >= 0
+  object Version {
+    implicit val rw: ReadWriter[Version] = macroRW
   }
 }
