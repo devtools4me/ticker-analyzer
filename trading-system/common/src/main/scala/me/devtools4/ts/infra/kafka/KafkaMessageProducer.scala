@@ -8,16 +8,14 @@ class KafkaMessageProducer[K, V](kafka: KafkaProducer[K, V])(implicit executor: 
   def send(t: String, k: K, v: V): Future[RecordMetadata] = {
     val rec = new ProducerRecord[K, V](t, k, v)
     val promise = Promise[RecordMetadata]()
-    Future {
-      kafka.send(rec, (m: RecordMetadata, e: Exception) => {
-        if (m != null) {
-          promise.success(m)
-        } else {
-          promise.failure(e)
-        }
-        ()
-      })
-    }
+    kafka.send(rec, (m: RecordMetadata, e: Exception) => {
+      if (m != null) {
+        promise.success(m)
+      } else {
+        promise.failure(e)
+      }
+      ()
+    })
     promise.future
   }
 }

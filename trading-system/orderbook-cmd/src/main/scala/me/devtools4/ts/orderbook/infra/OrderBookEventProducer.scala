@@ -3,7 +3,6 @@ package me.devtools4.ts.orderbook.infra
 import me.devtools4.ts.dto.OrderBookEvent
 import me.devtools4.ts.event.EventProducer
 import me.devtools4.ts.infra.kafka.KafkaMessageProducer
-import upickle.default.ReadWriter
 
 class OrderBookEventProducer(topic: String, mp: KafkaMessageProducer[String, Array[Byte]]) extends EventProducer[OrderBookEvent] {
   override def send(event: OrderBookEvent): Unit = {
