@@ -1,7 +1,7 @@
 package me.devtools4.ts.orderbook
 
 import me.devtools4.ts.cmd.CommandDispatcher
-import me.devtools4.ts.dto.OrderBookCommand
+import me.devtools4.ts.dto._
 import me.devtools4.ts.infra.kafka.KafkaMessageProducer
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.infra.{OrderBookCommandHandler, OrderBookEventProducer, OrderBookEventSourcingHandler, OrderBookEventStore}
@@ -26,25 +26,34 @@ object OrderBookCmdApp extends cask.MainRoutes {
   private lazy val cmdHandler = OrderBookCommandHandler(eventSrcHandler)
   private lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)
 
-  @cask.get("/order")
-  def get(): String = {
+  @cask.get("/order/:id")
+  def get(id: String): String = {
     "Hello World!"
   }
 
-  @cask.post("/post")
-  def add(request: cask.Request): String = {
-    //cmdDispatcher.send()
-    request.text()
+  @cask.post("/order")
+  def post(request: cask.Request): Unit = {
+    upickle.default.read[OrderBookCommand](request.text()) match {
+      case cmd @ BidCommand(_, _, _, _) => cmdDispatcher.send(cmd)
+      case cmd @ AskCommand(_, _, _, _) => cmdDispatcher.send(cmd)
+      case _ => ???
+    }
   }
 
-  @cask.patch("/post")
-  def update(request: cask.Request): String = {
-    request.text().reverse
+  @cask.patch("/order")
+  def patch(request: cask.Request): Unit = {
+    upickle.default.read[OrderBookCommand](request.text()) match {
+      case cmd @ AmendCommand(_, _, _, _) => cmdDispatcher.send(cmd)
+      case _ => ???
+    }
   }
 
   @cask.delete("/delete")
-  def delete(request: cask.Request): String = {
-    request.text().reverse
+  def delete(request: cask.Request): Unit = {
+    upickle.default.read[OrderBookCommand](request.text()) match {
+      case cmd @ DeleteCommand(_) => cmdDispatcher.send(cmd)
+      case _ => ???
+    }
   }
 
   initialize()

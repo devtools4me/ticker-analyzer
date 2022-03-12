@@ -19,7 +19,8 @@ class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, Orde
       val a = handler.find(id)
       a.submitOrder(SimpleOrder(id, Ask, price, volume, time))
       handler.save(a)
-    case StopCommand => ???
+    case AmendCommand(_, _, _, _) => ???
+    case StopCommand() => ???
   }
 }
 
