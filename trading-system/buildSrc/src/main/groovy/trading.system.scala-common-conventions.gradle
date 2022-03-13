@@ -8,6 +8,7 @@ repositories {
 
 def scalaMajor = '2.13'
 def scalaMinor = '6'
+def kafkaVersion= '3.0.0'
 def logbackVersion = '1.2.3'
 def slf4jVersion = '1.7.22'
 
@@ -26,7 +27,8 @@ dependencies {
         implementation 'org.postgresql:postgresql:42.2.8'
         implementation 'com.opentable.components:otj-pg-embedded:1.0.0'
 
-        implementation 'org.apache.kafka:kafka-clients:3.0.0'
+        implementation "org.apache.kafka:kafka-clients:$kafkaVersion"
+        implementation "org.apache.kafka:kafka-streams:$kafkaVersion"
 
         implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor:3.9.2"
         implementation "ch.qos.logback:logback-core:$logbackVersion"
@@ -46,6 +48,7 @@ dependencies {
     implementation 'com.opentable.components:otj-pg-embedded'
 
     implementation 'org.apache.kafka:kafka-clients'
+    implementation 'org.apache.kafka:kafka-streams'
 
     implementation "com.typesafe.scala-logging:scala-logging_$scalaMajor"
     implementation "ch.qos.logback:logback-core"

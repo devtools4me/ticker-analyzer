@@ -18,3 +18,7 @@ class OrderBookEventConsumer(eventHandler: EventHandler[OrderBookEvent]) extends
     doneFunc
   }
 }
+
+object OrderBookEventConsumer {
+  def apply(eventHandler: EventHandler[OrderBookEvent]) = new OrderBookEventConsumer(eventHandler)
+}

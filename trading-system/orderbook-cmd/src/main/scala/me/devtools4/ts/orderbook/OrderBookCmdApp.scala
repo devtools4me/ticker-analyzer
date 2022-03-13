@@ -26,11 +26,6 @@ object OrderBookCmdApp extends cask.MainRoutes {
   private lazy val cmdHandler = OrderBookCommandHandler(eventSrcHandler)
   private lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)
 
-  @cask.get("/order/:id")
-  def get(id: String): String = {
-    "Hello World!"
-  }
-
   @cask.post("/order")
   def post(request: cask.Request): Unit = {
     upickle.default.read[OrderBookCommand](request.text()) match {
