@@ -27,28 +27,31 @@ object OrderBookCmdApp extends cask.MainRoutes {
   private lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)
 
   @cask.post("/order")
-  def post(request: cask.Request): Unit = {
+  def post(request: cask.Request): String = {
     upickle.default.read[OrderBookCommand](request.text()) match {
       case cmd @ BidCommand(_, _, _, _) => cmdDispatcher.send(cmd)
       case cmd @ AskCommand(_, _, _, _) => cmdDispatcher.send(cmd)
       case _ => ???
     }
+    upickle.default.write(SuccessResponse("done"))
   }
 
   @cask.patch("/order")
-  def patch(request: cask.Request): Unit = {
+  def patch(request: cask.Request): String = {
     upickle.default.read[OrderBookCommand](request.text()) match {
       case cmd @ AmendCommand(_, _, _, _) => cmdDispatcher.send(cmd)
       case _ => ???
     }
+    upickle.default.write(SuccessResponse("done"))
   }
 
   @cask.delete("/delete")
-  def delete(request: cask.Request): Unit = {
+  def delete(request: cask.Request): String = {
     upickle.default.read[OrderBookCommand](request.text()) match {
       case cmd @ DeleteCommand(_) => cmdDispatcher.send(cmd)
       case _ => ???
     }
+    upickle.default.write(SuccessResponse("done"))
   }
 
   initialize()

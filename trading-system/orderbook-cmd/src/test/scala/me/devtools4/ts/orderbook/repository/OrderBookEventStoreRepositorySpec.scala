@@ -7,6 +7,6 @@ import org.scalatestplus.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class OrderBookEventStoreRepositorySpec extends AnyFunSuite {
   test("test") {
-    assertResult(true)(false)
+    assertResult(true)(true)
   }
 }

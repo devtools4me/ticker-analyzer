@@ -20,6 +20,7 @@ class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, Orde
       a.submitOrder(SimpleOrder(id, Ask, price, volume, time))
       handler.save(a)
     case AmendCommand(_, _, _, _) => ???
+    case DeleteCommand(_) => ???
     case StopCommand() => ???
   }
 }
