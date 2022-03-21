@@ -7,4 +7,7 @@ package object config {
                       user: String,
                       password: String,
                       logLevel: String)
+
+  case class ServiceConfig(kafka: Map[String, String],
+                           db: DbConfig)
 }
