@@ -1,6 +1,7 @@
 package me.devtools4.ts
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres
+import me.devtools4.ts.config.DbConfig
 import me.devtools4.ts.dto.{OrderBookStartedEvent, Version}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.model.OrderBookEventEntity
@@ -13,18 +14,26 @@ import java.time.ZonedDateTime
 object EmbeddedPostgresRun extends App {
   val db = EmbeddedPostgres.builder()
     .start()
-  System.out.println(s"host=${db.getHost}, port=${db.getPort}")
+  System.out.println(s"host=${db.getHost}, port=${db.getPort}, url=${db.getJdbcUrl("postgres")}")
 
   val ds = db.getPostgresDatabase()
   val fw = Flyway.configure().dataSource(ds).load()
   fw.migrate()
 
-  Class.forName("org.postgresql.Driver")
-  ConnectionPool.singleton(db.getJdbcUrl("postgres"), "postgres", "postgres")
+  import pureconfig._
+  import pureconfig.generic.auto._
+
+  val config = ConfigSource.resources("db.conf").load[DbConfig] match {
+    case Right(conf) => conf.copy(url = db.getJdbcUrl("postgres"))
+    case Left(error) => throw new Exception(error.toString())
+  }
+
+  Class.forName(config.driver)
+  ConnectionPool.singleton(config.url, config.user, config.password)
   GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
     enabled = true,
     singleLineMode = true,
-    logLevel = Symbol("debug").name
+    logLevel = Symbol(config.logLevel).name
   )
 
   val repo = OrderBookEventStoreRepository()
