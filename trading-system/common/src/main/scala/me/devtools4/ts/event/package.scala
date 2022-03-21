@@ -10,6 +10,7 @@ package object event {
 
   trait EventStoreRepository[E] {
     def save(e: E): Option[E]
+    def findAll(): List[E]
     def find(id: Long): Option[E]
     def findByAggregateId(aggregateId: String): List[E]
   }

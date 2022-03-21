@@ -6,10 +6,16 @@ sealed trait OrderBookEvent {
   def ticker: Ticker
 
   def version: Version
+
+  def json: String = upickle.default.write(this)
 }
 
 object OrderBookEvent {
   implicit val rw: ReadWriter[OrderBookEvent] = macroRW
+
+  def apply(json: String): OrderBookEvent = {
+    upickle.default.read(json)
+  }
 }
 
 case class OrderBookStartedEvent(id: String, ticker: Ticker, version: Version) extends OrderBookEvent

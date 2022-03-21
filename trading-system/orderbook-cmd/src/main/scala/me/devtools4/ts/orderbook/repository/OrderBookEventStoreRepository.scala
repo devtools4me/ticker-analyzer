@@ -14,7 +14,7 @@ class OrderBookEventStoreRepository extends EventStoreRepository[OrderBookEventE
     insert into ${OrderBookEventEntity.as(te)}
     (created_at, aggregate_id, aggregate_type, version,event_type, event_data)
     values
-    (${e.createdAt}, ${e.aggregateId}, ${e.aggregateType}, ${e.version}, ${e.eventType}, ${e.eventData})
+    (${e.createdAt}, ${e.aggregateId}, ${e.aggregateType}, ${e.version}, ${e.eventType}, ${e.eventData.json}::jsonb)
     """.update.apply()
     Some(e)
   }
@@ -31,6 +31,14 @@ class OrderBookEventStoreRepository extends EventStoreRepository[OrderBookEventE
     sql"select * from ${OrderBookEventEntity.as(e)}"
       .map(OrderBookEventEntity(_))
       .list.apply()
+  }
+
+  override def findAll(): List[OrderBookEventEntity] = {
+    val e = OrderBookEventEntity.syntax
+    sql"select * from ${OrderBookEventEntity.as(e)}"
+      .map(OrderBookEventEntity(_))
+      .list
+      .apply()
   }
 }
 
