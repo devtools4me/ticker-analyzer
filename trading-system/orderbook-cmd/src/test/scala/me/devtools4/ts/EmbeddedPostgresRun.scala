@@ -32,7 +32,7 @@ object EmbeddedPostgresRun extends App {
   System.out.println(s"list = $list")
 
   val event = OrderBookStartedEvent("", "", Version().nextVersion)
-  val saved = repo.save(OrderBookEventEntity(1L,
+  val saved = repo.save(OrderBookEventEntity(
     ZonedDateTime.now(),
     "TEST",
     OrderBookAggregate.getClass.getTypeName,

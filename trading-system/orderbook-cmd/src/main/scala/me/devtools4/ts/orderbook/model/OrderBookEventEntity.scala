@@ -25,5 +25,20 @@ object OrderBookEventEntity extends SQLSyntaxSupport[OrderBookEventEntity] {
     rs.int("version"),
     rs.string("event_type"),
     OrderBookEvent(rs.string("event_data")))
+
+  def apply(createdAt: ZonedDateTime,
+            aggregateId: String,
+            aggregateType: String,
+            version: Int,
+            eventType: String,
+            eventData: OrderBookEvent): OrderBookEventEntity = new OrderBookEventEntity(
+    0,
+    createdAt,
+    aggregateId,
+    aggregateType,
+    version,
+    eventType,
+    eventData
+  )
 }
 
