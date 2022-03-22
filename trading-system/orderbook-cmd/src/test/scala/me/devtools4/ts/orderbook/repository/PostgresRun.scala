@@ -32,7 +32,7 @@ object PostgresRun extends App {
 
   val repo = OrderBookEventStoreRepository()
   val list = repo.findAll()
-  System.out.println(s"list = $list")
+  println(s"list = $list")
 
   val event = OrderBookStartedEvent("", "", Version().nextVersion)
   val saved = repo.save(OrderBookEventEntity(
@@ -42,11 +42,11 @@ object PostgresRun extends App {
     Version().nextVersion.value,
     event.getClass.getTypeName,
     event))
-  System.out.println(s"saved = $saved")
+  println(s"saved = $saved")
 
   val found = repo.findByAggregateId("TEST")
-  System.out.println(s"found = $found")
+  println(s"found = $found")
 
   val all = repo.findAll()
-  System.out.println(s"all = $all")
+  println(s"all = $all")
 }

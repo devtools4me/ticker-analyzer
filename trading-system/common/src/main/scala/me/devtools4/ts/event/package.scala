@@ -20,8 +20,8 @@ package object event {
     def find(aggregateId: String): List[E]
   }
 
-  trait EventProducer[E] {
-    def send(event: E): Unit
+  trait EventProducer[E, R] {
+    def send(event: E): R
   }
 
   trait EventConsumer[E] {

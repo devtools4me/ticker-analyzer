@@ -4,12 +4,15 @@ import me.devtools4.ts.dto.{OrderBookEvent, Version}
 import me.devtools4.ts.event.{EventProducer, EventStore, EventStoreRepository}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.model.OrderBookEventEntity
+import org.apache.kafka.clients.producer.RecordMetadata
 
 import java.time.ZonedDateTime
 import java.util.ConcurrentModificationException
+import scala.concurrent.Future
 
 class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity],
-                          producer: EventProducer[OrderBookEvent]) extends EventStore[OrderBookEvent] {
+                          producer: EventProducer[OrderBookEvent, Future[RecordMetadata]])
+  extends EventStore[OrderBookEvent] {
   override def save(aggregateId: String, events: List[OrderBookEvent], expectedVersion: Version): Unit = {
     if (expectedVersion.isDefined) {
       repository.findByAggregateId(aggregateId)
@@ -44,6 +47,6 @@ class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]
 
 object OrderBookEventStore {
   def apply(repository: EventStoreRepository[OrderBookEventEntity],
-            producer: EventProducer[OrderBookEvent]) =
+            producer: EventProducer[OrderBookEvent, Future[RecordMetadata]]) =
     new OrderBookEventStore(repository, producer)
 }

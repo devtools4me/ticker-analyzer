@@ -10,12 +10,12 @@ import me.devtools4.ts.orderbook.repository.OrderBookEventStoreRepository
 import org.apache.kafka.clients.producer.KafkaProducer
 import scalikejdbc.{ConnectionPool, GlobalSettings, LoggingSQLAndTimeSettings}
 
-import java.util.Properties
+import java.nio.ByteBuffer
 import scala.concurrent.ExecutionContext
 
 class AppContext(conf: ServiceConfig)(implicit executor: ExecutionContext)  {
-  lazy val kafkaProducer: KafkaProducer[String, Array[Byte]] = kafkaProducer(conf.kafka)
-  lazy val messageProducer = KafkaMessageProducer[String, Array[Byte]](kafkaProducer)
+  lazy val kafkaProducer: KafkaProducer[String, ByteBuffer] = kafkaProducer(conf.kafka)
+  lazy val messageProducer = KafkaMessageProducer[String, ByteBuffer](kafkaProducer)
   lazy val eventProducer = OrderBookEventProducer("order.book", messageProducer)
 
   lazy val eventStoreRepository: OrderBookEventStoreRepository = eventStoreRepository(conf.db)
@@ -28,13 +28,8 @@ class AppContext(conf: ServiceConfig)(implicit executor: ExecutionContext)  {
   lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)
 
   private def kafkaProducer(conf: Map[String, String]) = {
-    val props = conf.foldLeft(new Properties()) {
-      (p, a) => {
-        p.put(a._1, a._2)
-        p
-      }
-    }
-    new KafkaProducer[String, Array[Byte]](props)
+    import me.devtools4.ts.config.Ops._
+    new KafkaProducer[String, ByteBuffer](conf.properties)
   }
 
   private def eventStoreRepository(conf: DbConfig) = {

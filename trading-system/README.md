@@ -38,3 +38,10 @@ database: postgres
 user: postgres
 password: postgres
 ```
+
+## Kafka
+
+```
+zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties
+kafka-server-start /opt/homebrew/etc/kafka/server.properties
+```
