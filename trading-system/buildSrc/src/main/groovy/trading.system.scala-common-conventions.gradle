@@ -63,6 +63,8 @@ dependencies {
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.scalatest:scalatest_$scalaMajor:3.2.6"
     testImplementation "org.scalatestplus:junit-4-13_$scalaMajor:3.2.2.0"
+    testImplementation "com.dimafeng:testcontainers-scala-scalatest_$scalaMajor:0.40.3"
+    testImplementation "com.dimafeng:testcontainers-scala-postgresql_$scalaMajor:0.40.3"
 }
 
 tasks.named('test') {
