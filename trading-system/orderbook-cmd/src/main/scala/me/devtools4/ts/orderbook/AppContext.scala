@@ -8,6 +8,7 @@ import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.infra.{OrderBookCommandHandler, OrderBookEventProducer, OrderBookEventSourcingHandler, OrderBookEventStore}
 import me.devtools4.ts.orderbook.repository.OrderBookEventStoreRepository
 import org.apache.kafka.clients.producer.KafkaProducer
+import org.flywaydb.core.Flyway
 import scalikejdbc.{ConnectionPool, GlobalSettings, LoggingSQLAndTimeSettings}
 
 import java.nio.ByteBuffer
@@ -35,6 +36,11 @@ class AppContext(conf: ServiceConfig)(implicit executor: ExecutionContext)  {
   private def eventStoreRepository(conf: DbConfig) = {
     Class.forName(conf.driver)
     ConnectionPool.singleton(conf.url, conf.user, conf.password)
+
+    val ds = ConnectionPool.get().dataSource
+    val fw = Flyway.configure().dataSource(ds).load()
+    fw.migrate()
+
     GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
       enabled = true,
       singleLineMode = true,

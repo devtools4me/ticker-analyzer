@@ -21,7 +21,8 @@ class OrderBookAggregate(override var id: String,
       .map(x => x.matchOrder(book, o))
       .map(x => TradeMatchedEvent(x, s, v.nextVersion))
       .foreach(riseEvent(_))
-    case TradeMatchedEvent(trades, s, v) => ???
+    case TradeMatchedEvent(List(), s, v) =>
+    case TradeMatchedEvent(trades, s, v) =>
     case OrderBookStoppedEvent(s, v) =>
   }
 }
