@@ -21,6 +21,7 @@ dependencies {
 
         implementation "com.lihaoyi:cask_$scalaMajor:0.7.3"
         implementation "com.lihaoyi:upickle_$scalaMajor:1.4.3"
+        implementation "com.lihaoyi:requests_$scalaMajor:0.7.0"
 
         implementation "org.scala-lang:scala-library:$scalaMajor.$scalaMinor"
         implementation "org.scalikejdbc:scalikejdbc_$scalaMajor:4.0.0"
@@ -45,6 +46,7 @@ dependencies {
 
     implementation "com.lihaoyi:cask_$scalaMajor"
     implementation "com.lihaoyi:upickle_$scalaMajor"
+    implementation "com.lihaoyi:requests_$scalaMajor"
 
     implementation "org.scalikejdbc:scalikejdbc_$scalaMajor"
     implementation 'org.flywaydb:flyway-core'

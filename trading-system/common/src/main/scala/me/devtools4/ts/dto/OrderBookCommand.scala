@@ -15,6 +15,7 @@ object StartCommand {
 }
 
 case class BidCommand(id: String,
+                      symbol: Ticker,
                       price: PriceType,
                       volume: VolumeType,
                       time: TimeType) extends OrderBookCommand
@@ -24,6 +25,7 @@ object BidCommand {
 }
 
 case class AskCommand(id: String,
+                      symbol: Ticker,
                       price: PriceType,
                       volume: VolumeType,
                       time: TimeType) extends OrderBookCommand

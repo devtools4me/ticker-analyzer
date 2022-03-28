@@ -24,7 +24,7 @@ object Order {
   implicit val rw: ReadWriter[Order] = macroRW
 }
 
-case class SimpleOrder(id: String, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order {
+case class SimpleOrder(id: String, ticker: Ticker, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order {
   override def orderType: OrderType = SimpleOrderType
 }
 
@@ -32,7 +32,7 @@ object SimpleOrder {
   implicit val rw: ReadWriter[SimpleOrder] = macroRW
 }
 
-case class IcebergOrder(id: String, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order {
+case class IcebergOrder(id: String, ticker: Ticker, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order {
   override def orderType: OrderType = IcebergOrderType
 }
 

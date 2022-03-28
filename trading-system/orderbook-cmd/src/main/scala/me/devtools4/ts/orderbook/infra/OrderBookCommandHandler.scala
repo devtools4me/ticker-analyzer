@@ -11,13 +11,13 @@ class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, Orde
     case c @ StartCommand(_, _) =>
       val a = OrderBookAggregate(c)
       handler.save(a)
-    case BidCommand(id, price, volume, time) =>
+    case BidCommand(id, ticker, price, volume, time) =>
       val a = handler.find(id)
-      a.submitOrder(SimpleOrder(id, Bid, price, volume, time))
+      a.submitOrder(SimpleOrder(id, ticker, Bid, price, volume, time))
       handler.save(a)
-    case AskCommand(id, price, volume, time) =>
+    case AskCommand(id, ticker, price, volume, time) =>
       val a = handler.find(id)
-      a.submitOrder(SimpleOrder(id, Ask, price, volume, time))
+      a.submitOrder(SimpleOrder(id, ticker, Ask, price, volume, time))
       handler.save(a)
     case AmendCommand(_, _, _, _) => ???
     case DeleteCommand(_) => ???

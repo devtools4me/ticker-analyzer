@@ -1,13 +1,17 @@
 package me.devtools4.ts.orderbook
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, KafkaContainer, MultipleContainers, PostgreSQLContainer}
+import io.undertow.Undertow
 import me.devtools4.ts.config.{DbConfig, ServiceConfig}
-import me.devtools4.ts.dto.BidCommand
+import me.devtools4.ts.dto.{BidCommand, SuccessResponse}
+import me.devtools4.ts.orderbook.client.OrderBookCmdClient
+import me.devtools4.ts.orderbook.route.OrderBookCmdRoutes
 import org.junit.runner.RunWith
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext
 
 @RunWith(classOf[JUnitRunner])
@@ -24,6 +28,9 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
   )
 
   private var sut: AppContext = _
+  private var app: cask.Main = _
+  private var server: Undertow = _
+  private var client: OrderBookCmdClient = _
 
   override def beforeAll(): Unit = {
     val conf = ServiceConfig(
@@ -41,9 +48,19 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
         "debug"
       ))
     sut = AppContext(conf)(ExecutionContext.global)
+    app = new cask.Main() {
+      val allRoutes = Seq(OrderBookCmdRoutes(sut.cmdDispatcher))
+    }
+    server = Undertow.builder
+      .addHttpListener(8081, "localhost")
+      .setHandler(app.defaultHandler)
+      .build
+    server.start()
+    client = OrderBookCmdClient("http://localhost:8081")
   }
 
-  it should "do something" in {
-    sut.cmdDispatcher.send(BidCommand("AAPL", 10, 10, 10))
+  "Bid order" should "be submitted" in {
+    val r = client.send(BidCommand(UUID.randomUUID().toString, "AAPL", 10, 10, 10))
+    assertResult(SuccessResponse("done"))(r)
   }
 }
