@@ -21,7 +21,7 @@ object OrderBookEventProducerRun extends App {
   val messageProducer = KafkaMessageProducer[String, ByteBuffer](kafkaProducer)
   val eventProducer = OrderBookEventProducer("order.book", messageProducer)
 
-  val f1 = eventProducer.send(OrderBookStartedEvent("TEST", "AAPL", Version().nextVersion))
+  val f1 = eventProducer.send(OrderBookStartedEvent("AAPL", Version().nextVersion))
   for {
     r <- f1
   } yield {

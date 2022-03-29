@@ -5,18 +5,18 @@ import me.devtools4.ts.domain._
 import me.devtools4.ts.dto._
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 
-class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, OrderBookAggregate]
-                             ) extends CommandHandler[OrderBookCommand] {
+class OrderBookCommandHandler(handler: EventSourcingHandler[OrderBookEvent, OrderBookAggregate])
+  extends CommandHandler[OrderBookCommand] {
   override def handle(cmd: OrderBookCommand): Unit = cmd match {
     case c @ StartCommand(_, _) =>
       val a = OrderBookAggregate(c)
       handler.save(a)
     case BidCommand(id, ticker, price, volume, time) =>
-      val a = handler.find(id)
+      val a = handler.find(ticker)
       a.submitOrder(SimpleOrder(id, ticker, Bid, price, volume, time))
       handler.save(a)
     case AskCommand(id, ticker, price, volume, time) =>
-      val a = handler.find(id)
+      val a = handler.find(ticker)
       a.submitOrder(SimpleOrder(id, ticker, Ask, price, volume, time))
       handler.save(a)
     case AmendCommand(_, _, _, _) => ???

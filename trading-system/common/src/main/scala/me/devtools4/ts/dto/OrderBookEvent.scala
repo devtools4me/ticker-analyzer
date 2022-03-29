@@ -18,7 +18,7 @@ object OrderBookEvent {
   }
 }
 
-case class OrderBookStartedEvent(id: String, ticker: Ticker, version: Version) extends OrderBookEvent
+case class OrderBookStartedEvent(ticker: Ticker, version: Version) extends OrderBookEvent
 
 object OrderBookStartedEvent {
   implicit val rw: ReadWriter[OrderBookStartedEvent] = macroRW

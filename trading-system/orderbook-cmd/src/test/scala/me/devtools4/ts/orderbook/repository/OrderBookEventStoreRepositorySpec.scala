@@ -4,7 +4,6 @@ import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
 import me.devtools4.ts.dto.{OrderBookStartedEvent, Version}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.model.OrderBookEventEntity
-import me.devtools4.ts.orderbook.repository.PostgresRun.repo
 import org.flywaydb.core.Flyway
 import org.junit.runner.RunWith
 import org.scalatest.BeforeAndAfterAll
@@ -17,8 +16,7 @@ import java.time.ZonedDateTime
 @RunWith(classOf[JUnitRunner])
 class OrderBookEventStoreRepositorySpec extends AnyFlatSpec
   with BeforeAndAfterAll
-  with ForAllTestContainer
-{
+  with ForAllTestContainer {
   override val container: PostgreSQLContainer = PostgreSQLContainer(
     dockerImageNameOverride = "postgres:14.2"
   )
@@ -49,17 +47,17 @@ class OrderBookEventStoreRepositorySpec extends AnyFlatSpec
   it should "do something" in {
     assertResult(sut.findAll())(List())
 
-    val event = OrderBookStartedEvent("", "", Version().nextVersion)
+    val event = OrderBookStartedEvent("AAPL", Version().nextVersion)
     val saved = sut.save(OrderBookEventEntity(
       ZonedDateTime.now(),
-      "TEST",
+      "AAPL",
       OrderBookAggregate.getClass.getTypeName,
       Version().nextVersion.value,
       event.getClass.getTypeName,
       event))
     assertResult(saved.isDefined)(true)
 
-    val found = sut.findByAggregateId("TEST")
+    val found = sut.findByAggregateId("AAPL")
     assertResult(found.isEmpty)(false)
 
     val all = sut.findAll()

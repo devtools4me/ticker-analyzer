@@ -23,7 +23,7 @@ class AppContext(conf: ServiceConfig)(implicit executor: ExecutionContext)  {
 
   lazy val eventStore = OrderBookEventStore(eventStoreRepository, eventProducer)
   lazy val eventSrcHandler = OrderBookEventSourcingHandler(eventStore,
-    OrderBookAggregate("", "", OrderBookAggregate.map)
+    id => OrderBookAggregate(id, OrderBookAggregate.map)
   )
   lazy val cmdHandler = OrderBookCommandHandler(eventSrcHandler)
   lazy val cmdDispatcher = CommandDispatcher[OrderBookCommand](cmdHandler)

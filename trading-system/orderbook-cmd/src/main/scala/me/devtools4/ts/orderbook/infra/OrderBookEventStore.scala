@@ -1,5 +1,6 @@
 package me.devtools4.ts.orderbook.infra
 
+import com.typesafe.scalalogging.LazyLogging
 import me.devtools4.ts.dto.{OrderBookEvent, Version}
 import me.devtools4.ts.event.{EventProducer, EventStore, EventStoreRepository}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
@@ -12,8 +13,9 @@ import scala.concurrent.Future
 
 class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity],
                           producer: EventProducer[OrderBookEvent, Future[RecordMetadata]])
-  extends EventStore[OrderBookEvent] {
+  extends EventStore[OrderBookEvent] with LazyLogging  {
   override def save(aggregateId: String, events: List[OrderBookEvent], expectedVersion: Version): Unit = {
+    logger.info(s"save, aggregateId=$aggregateId, events=$events, expectedVersion=$expectedVersion")
     if (expectedVersion.isDefined) {
       repository.findByAggregateId(aggregateId)
         .lastOption
@@ -23,17 +25,14 @@ class OrderBookEventStore(repository: EventStoreRepository[OrderBookEventEntity]
     }
     events.foldLeft(expectedVersion.value) { (v, e) =>
       val newVersion = v + 1
-      repository.save(
-        OrderBookEventEntity(
-          -1, //TODO: DB ID
-          ZonedDateTime.now(),
-          aggregateId,
-          OrderBookAggregate.getClass.getTypeName,
-          newVersion,
-          e.getClass.getTypeName,
-          e))
-        .map(_.eventData)
-        .foreach(producer.send)
+      repository.save(OrderBookEventEntity(
+        ZonedDateTime.now(),
+        aggregateId,
+        OrderBookAggregate.getClass.getTypeName,
+        newVersion,
+        e.getClass.getTypeName,
+        e)
+      ).map(_.eventData).foreach(producer.send)
 
       newVersion
     }

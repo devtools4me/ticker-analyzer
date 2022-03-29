@@ -1,6 +1,7 @@
 package me.devtools4.ts.orderbook
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, KafkaContainer, MultipleContainers, PostgreSQLContainer}
+import com.typesafe.scalalogging.LazyLogging
 import io.undertow.Undertow
 import me.devtools4.ts.config.{DbConfig, ServiceConfig}
 import me.devtools4.ts.dto.{BidCommand, SuccessResponse}
@@ -17,7 +18,8 @@ import scala.concurrent.ExecutionContext
 @RunWith(classOf[JUnitRunner])
 class OrderBookCmdAppSpec extends AnyFlatSpec
   with BeforeAndAfterAll
-  with ForAllTestContainer {
+  with ForAllTestContainer
+  with LazyLogging {
   private val postgresContainer = PostgreSQLContainer(
     dockerImageNameOverride = "postgres:14.2"
   )
@@ -27,7 +29,7 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
     postgresContainer, kafkaContainer
   )
 
-  private var sut: AppContext = _
+  private var ctx: AppContext = _
   private var app: cask.Main = _
   private var server: Undertow = _
   private var client: OrderBookCmdClient = _
@@ -47,9 +49,9 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
         postgresContainer.password,
         "debug"
       ))
-    sut = AppContext(conf)(ExecutionContext.global)
+    ctx = AppContext(conf)(ExecutionContext.global)
     app = new cask.Main() {
-      val allRoutes = Seq(OrderBookCmdRoutes(sut.cmdDispatcher))
+      val allRoutes = Seq(OrderBookCmdRoutes(ctx.cmdDispatcher))
     }
     server = Undertow.builder
       .addHttpListener(8081, "localhost")
@@ -60,7 +62,13 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
   }
 
   "Bid order" should "be submitted" in {
-    val r = client.send(BidCommand(UUID.randomUUID().toString, "AAPL", 10, 10, 10))
+    val sym = "AAPL"
+    val r = client.send(BidCommand(UUID.randomUUID().toString, sym, 10, 10, 10))
     assertResult(SuccessResponse("done"))(r)
+
+    val events = ctx.eventStoreRepository.findByAggregateId(sym)
+    logger.info(s"events=$events")
+
+    assertResult(false)(events.isEmpty)
   }
 }
