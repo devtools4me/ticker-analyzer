@@ -36,6 +36,11 @@ class OrderContainer extends Container[Order] {
   override def size: Int = orders.size
 }
 
+object OrderContainer {
+  def apply() = new OrderContainer
+}
+
 case class OrderBook(bids: Container[Order], asks: Container[Order]) {
+  def findTradable() = ???
   override def toString: String = s"bids(${bids.size}), asks(${asks.size})"
 }

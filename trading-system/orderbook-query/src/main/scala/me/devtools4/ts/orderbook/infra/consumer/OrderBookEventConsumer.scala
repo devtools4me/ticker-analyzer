@@ -6,7 +6,7 @@ import me.devtools4.ts.event.{EventConsumer, EventHandler}
 class OrderBookEventConsumer(eventHandler: EventHandler[OrderBookEvent]) extends EventConsumer[OrderBookEvent] {
   override def consume(event: OrderBookEvent, doneFunc: => Unit): Unit = {
     event match {
-      case e @ OrderBookStartedEvent(id, sym, ver) =>
+      case e @ OrderBookStartedEvent(sym, ver) =>
         eventHandler.handle(e)
       case e @ OrderSubmittedEvent(o, sym, ver) =>
         eventHandler.handle(e)
