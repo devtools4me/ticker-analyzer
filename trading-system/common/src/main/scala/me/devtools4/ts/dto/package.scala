@@ -7,30 +7,15 @@ package object dto {
   type PriceType = BigDecimal
   type VolumeType = Long
   type TimeType = Long
-  type Ticker = String
 
-  sealed trait Side {
-    val value: String
-  }
+  case class Ticker(value: String) extends AnyVal {}
 
-  case object Bid extends Side {
-    override val value: String = "B"
-  }
+  object Ticker {
+    implicit val rw: ReadWriter[Ticker] = macroRW
 
-  case object Ask extends Side {
-    override val value: String = "S"
-  }
+    private val pattern = "[A-Z]".r
 
-  object Side {
-    implicit val rw: ReadWriter[Side] = macroRW
-
-    def apply(s: String): Side = s match {
-      case "B" => Bid
-      case "S" => Ask
-      case _ => ???
-    }
-
-    def isValid(s: String): Boolean = Bid.value == s || Ask.value == s
+    def toTicker(s: String): Option[Ticker] = pattern.findFirstMatchIn(s).map(_ => Ticker(s))
   }
 
   case class Version(value: Int = -1) extends AnyVal {
