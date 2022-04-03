@@ -4,7 +4,7 @@ import com.dimafeng.testcontainers.{ForAllTestContainer, KafkaContainer, Multipl
 import com.typesafe.scalalogging.LazyLogging
 import io.undertow.Undertow
 import me.devtools4.ts.config.{DbConfig, ServiceConfig}
-import me.devtools4.ts.dto.{BidCommand, SuccessResponse}
+import me.devtools4.ts.dto.{BidCommand, SuccessResponse, Ticker}
 import me.devtools4.ts.orderbook.client.OrderBookCmdClient
 import me.devtools4.ts.orderbook.route.OrderBookCmdRoutes
 import org.junit.runner.RunWith
@@ -63,7 +63,7 @@ class OrderBookCmdAppSpec extends AnyFlatSpec
 
   "Bid order" should "be submitted" in {
     val sym = "AAPL"
-    val r = client.send(BidCommand(UUID.randomUUID().toString, sym, 10, 10, 10))
+    val r = client.send(BidCommand(UUID.randomUUID().toString, Ticker(sym), 10, 10, 10))
     assertResult(SuccessResponse("done"))(r)
 
     val events = ctx.eventStoreRepository.findByAggregateId(sym)

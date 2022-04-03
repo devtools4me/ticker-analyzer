@@ -1,7 +1,7 @@
 package me.devtools4.ts.orderbook.repository
 
 import me.devtools4.ts.config.DbConfig
-import me.devtools4.ts.dto.{OrderBookStartedEvent, Version}
+import me.devtools4.ts.dto.{OrderBookStartedEvent, Ticker, Version}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.model.OrderBookEventEntity
 import org.flywaydb.core.Flyway
@@ -34,7 +34,7 @@ object PostgresRun extends App {
   val list = repo.findAll()
   println(s"list = $list")
 
-  val event = OrderBookStartedEvent("AAPL", Version().nextVersion)
+  val event = OrderBookStartedEvent(Ticker("AAPL"), Version().nextVersion)
   val saved = repo.save(OrderBookEventEntity(
     ZonedDateTime.now(),
     "AAPL",

@@ -3,8 +3,8 @@ package me.devtools4.ts.orderbook.domain
 import me.devtools4.ts.domain.AggregateRoot
 import me.devtools4.ts.dto._
 
-class OrderBookAggregate(override var id: String,
-                         strategies: Map[OrderType, MatchStrategy]) extends AggregateRoot[OrderBookEvent] {
+class OrderBookAggregate(override var id: Ticker,
+                         strategies: Map[OrderType, MatchStrategy]) extends AggregateRoot[Ticker, OrderBookEvent] {
 
   private val book: OrderBook = OrderBook(new OrderContainer(), new OrderContainer())
 
@@ -33,8 +33,8 @@ class OrderBookAggregate(override var id: String,
 object OrderBookAggregate {
   val map: Map[OrderType, MatchStrategy] = Map(SimpleOrderType -> SimpleMatchStrategy())
 
-  def apply(symbol: Ticker, strategies: Map[OrderType, MatchStrategy]) =
-    new OrderBookAggregate(symbol, strategies)
+  def apply(ticker: Ticker, strategies: Map[OrderType, MatchStrategy]) =
+    new OrderBookAggregate(ticker, strategies)
 
   def apply(cmd: StartCommand): OrderBookAggregate = {
     OrderBookAggregate(cmd.symbol, map)

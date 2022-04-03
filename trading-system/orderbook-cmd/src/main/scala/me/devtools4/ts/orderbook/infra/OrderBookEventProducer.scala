@@ -13,7 +13,7 @@ class OrderBookEventProducer(topic: String, mp: KafkaMessageProducer[String, Byt
 {
   override def send(event: OrderBookEvent): Future[RecordMetadata] = {
     val json = upickle.default.write(event)
-    mp.send(topic, event.ticker, ByteBuffer.wrap(json.getBytes))
+    mp.send(topic, event.ticker.value, ByteBuffer.wrap(json.getBytes))
   }
 }
 

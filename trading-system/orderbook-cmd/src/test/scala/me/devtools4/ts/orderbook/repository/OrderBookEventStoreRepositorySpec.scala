@@ -1,7 +1,7 @@
 package me.devtools4.ts.orderbook.repository
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
-import me.devtools4.ts.dto.{OrderBookStartedEvent, Version}
+import me.devtools4.ts.dto.{OrderBookStartedEvent, Ticker, Version}
 import me.devtools4.ts.orderbook.domain.OrderBookAggregate
 import me.devtools4.ts.orderbook.model.OrderBookEventEntity
 import org.flywaydb.core.Flyway
@@ -47,7 +47,7 @@ class OrderBookEventStoreRepositorySpec extends AnyFlatSpec
   it should "do something" in {
     assertResult(sut.findAll())(List())
 
-    val event = OrderBookStartedEvent("AAPL", Version().nextVersion)
+    val event = OrderBookStartedEvent(Ticker("AAPL"), Version().nextVersion)
     val saved = sut.save(OrderBookEventEntity(
       ZonedDateTime.now(),
       "AAPL",

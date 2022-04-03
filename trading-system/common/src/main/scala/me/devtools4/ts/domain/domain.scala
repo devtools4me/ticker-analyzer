@@ -3,12 +3,12 @@ package me.devtools4.ts
 import me.devtools4.ts.dto.Version
 
 package object domain {
-  abstract class AggregateRoot[E] {
-    protected var id: String
+  abstract class AggregateRoot[I, E] {
+    protected var id: I
     protected var version: Version = new Version()
     private var changes: List[E] = List()
 
-    def getId: String = id
+    def getId: I = id
 
     def getVersion: Version = version
 
@@ -37,8 +37,8 @@ package object domain {
     protected def apply(e: E): Unit
   }
 
-  trait EventSourcingHandler[E, T] {
-    def save(aggregate: AggregateRoot[E]): Unit
-    def find(id: String): T
+  trait EventSourcingHandler[I, E, T] {
+    def save(aggregate: AggregateRoot[I, E]): Unit
+    def find(id: I): T
   }
 }

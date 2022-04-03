@@ -1,7 +1,7 @@
 package me.devtools4.ts.orderbook.infra
 
 import me.devtools4.ts.config.Ops._
-import me.devtools4.ts.dto.{OrderBookStartedEvent, Version}
+import me.devtools4.ts.dto.{OrderBookStartedEvent, Ticker, Version}
 import me.devtools4.ts.infra.kafka.KafkaMessageProducer
 import org.apache.kafka.clients.producer.KafkaProducer
 import pureconfig._
@@ -21,7 +21,7 @@ object OrderBookEventProducerRun extends App {
   val messageProducer = KafkaMessageProducer[String, ByteBuffer](kafkaProducer)
   val eventProducer = OrderBookEventProducer("order.book", messageProducer)
 
-  val f1 = eventProducer.send(OrderBookStartedEvent("AAPL", Version().nextVersion))
+  val f1 = eventProducer.send(OrderBookStartedEvent(Ticker("AAPL"), Version().nextVersion))
   for {
     r <- f1
   } yield {
