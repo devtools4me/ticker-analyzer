@@ -19,6 +19,8 @@ sealed trait Order {
 
   def orderType: OrderType
 
+  def ticker: Ticker
+
   def side: Side
 
   def price: PriceType
@@ -47,12 +49,16 @@ sealed trait Order {
 object Order {
   implicit val rw: ReadWriter[Order] = macroRW
 
+  def toOrders(list: List[String]): List[Order] = list.flatMap(toOrder)
+
   def toOrder(s: String): Option[Order] = toOrder(s, System.nanoTime())
 
   def toOrder(s: String, time: TimeType): Option[Order] = s.split(",").toList match {
     case List(id, sym, side, price, vol) => toSimpleOrder(id, sym, side, price, vol, time)
     case _ => None
   }
+
+  val emptyStr: String = String.format("%10s %6s", "", "")
 }
 
 case class SimpleOrder(id: String, ticker: Ticker, side: Side, price: BigDecimal, volume: Long, time: Long) extends Order {
